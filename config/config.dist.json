@@ -1,0 +1,19 @@
+{
+  "sql": {
+      "username": "echos",
+      "database": "echos",
+      "host": "127.0.0.1",
+      "dialect": "mysql",
+      "password": "pouet"
+  },
+  "sql_import": {
+      "username": "audit_prod",
+      "password": "audit_prod",
+      "database": "audit_prod",
+      "host": "127.0.0.1",
+      "dialect": "mysql"
+  },
+  "httpd": {
+      "secret": "ksdfoQjskqssd_çD9zDzed23eDZdcj8skZ8_JSdc8sduQSzd8sdKQSuizd8zdlnvbqgapmqsdfhyzejk8kDNj"
+  }
+}

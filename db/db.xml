@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- SQL XML created by WWW SQL Designer, https://github.com/ondras/wwwsqldesigner/ -->
+<!-- Active URL: https://croll.fr/sqldesigner/ -->
+<sql>
+<datatypes db="mysql">
+	<group label="Numeric" color="rgb(238,238,170)">
+		<type label="Integer" length="0" sql="INTEGER" quote=""/>
+	 	<type label="TINYINT" length="0" sql="TINYINT" quote=""/>
+	 	<type label="SMALLINT" length="0" sql="SMALLINT" quote=""/>
+	 	<type label="MEDIUMINT" length="0" sql="MEDIUMINT" quote=""/>
+	 	<type label="INT" length="0" sql="INT" quote=""/>
+		<type label="BIGINT" length="0" sql="BIGINT" quote=""/>
+		<type label="Decimal" length="1" sql="DECIMAL" re="DEC" quote=""/>
+		<type label="Single precision" length="0" sql="FLOAT" quote=""/>
+		<type label="Double precision" length="0" sql="DOUBLE" re="DOUBLE" quote=""/>
+	</group>
+
+	<group label="Character" color="rgb(255,200,200)">
+		<type label="Char" length="1" sql="CHAR" quote="'"/>
+		<type label="Varchar" length="1" sql="VARCHAR" quote="'"/>
+		<type label="Text" length="0" sql="MEDIUMTEXT" re="TEXT" quote="'"/>
+		<type label="Binary" length="1" sql="BINARY" quote="'"/>
+		<type label="Varbinary" length="1" sql="VARBINARY" quote="'"/>
+		<type label="BLOB" length="0" sql="BLOB" re="BLOB" quote="'"/>
+	</group>
+
+	<group label="Date &amp; Time" color="rgb(200,255,200)">
+		<type label="Date" length="0" sql="DATE" quote="'"/>
+		<type label="Time" length="0" sql="TIME" quote="'"/>
+		<type label="Datetime" length="0" sql="DATETIME" quote="'"/>
+		<type label="Year" length="0" sql="YEAR" quote=""/>
+		<type label="Timestamp" length="0" sql="TIMESTAMP" quote="'"/>
+	</group>
+
+	<group label="Miscellaneous" color="rgb(200,200,255)">
+		<type label="ENUM" length="1" sql="ENUM" quote=""/>
+		<type label="SET" length="1" sql="SET" quote=""/>
+		<type label="Bit" length="0" sql="bit" quote=""/>
+	</group>
+</datatypes><table x="598" y="21" name="audit">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+</row>
+<row name="id_etablissement" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<relation table="etablissement" row="id" />
+</row>
+<row name="key" null="0" autoincrement="0">
+<datatype>VARCHAR(64)</datatype>
+</row>
+<row name="active" null="0" autoincrement="0">
+<datatype>TINYINT(1)</datatype>
+</row>
+<row name="synthesis" null="0" autoincrement="0">
+<datatype>MEDIUMTEXT</datatype>
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="808" y="461" name="choice_hist">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+</row>
+<row name="id_choice" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<relation table="choice" row="id" />
+</row>
+<row name="title" null="0" autoincrement="0">
+<datatype>VARCHAR(255)</datatype>
+</row>
+<row name="comment" null="0" autoincrement="0">
+<datatype>VARCHAR(255)</datatype>
+</row>
+<row name="position" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>0</default></row>
+<row name="impact" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="state" null="0" autoincrement="0">
+<datatype>ENUM('latest','modified','deleted')</datatype>
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="85" y="17" name="etablissement">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+</row>
+<row name="name" null="0" autoincrement="0">
+<datatype>VARCHAR(255)</datatype>
+</row>
+<row name="address" null="0" autoincrement="0">
+<datatype>VARCHAR(300)</datatype>
+</row>
+<row name="postalcode" null="0" autoincrement="0">
+<datatype>VARCHAR(20)</datatype>
+</row>
+<row name="city" null="0" autoincrement="0">
+<datatype>VARCHAR(100)</datatype>
+</row>
+<row name="phone" null="0" autoincrement="0">
+<datatype>VARCHAR(20)</datatype>
+</row>
+<row name="mail" null="0" autoincrement="0">
+<datatype>VARCHAR(100)</datatype>
+</row>
+<row name="type" null="0" autoincrement="0">
+<datatype>INT</datatype>
+<comment>creche, halte-garderie, micro-crèche, etc.</comment>
+</row>
+<row name="status" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<comment>association, association parental, publique, etc.</comment>
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="806" y="118" name="answer">
+<row name="id_audit" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<relation table="audit" row="id" />
+</row>
+<row name="id_node" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<relation table="node" row="id" />
+</row>
+<row name="ignored" null="0" autoincrement="0">
+<datatype>TINYINT(1)</datatype>
+</row>
+<row name="value" null="0" autoincrement="0">
+<datatype>MEDIUMTEXT</datatype>
+</row>
+<key type="PRIMARY" name="">
+<part>id_audit</part>
+<part>id_node</part>
+</key>
+</table>
+<table x="379" y="521" name="node_hist">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+</row>
+<row name="id_directory" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<relation table="node" row="id" />
+</row>
+<row name="type" null="0" autoincrement="0">
+<datatype>ENUM('directory','q_radio','q_checkbox','q_percents','q_text','q_numeric')</datatype>
+<default>'directory'</default></row>
+<row name="title" null="0" autoincrement="0">
+<datatype>VARCHAR(255)</datatype>
+</row>
+<row name="description" null="0" autoincrement="0">
+<datatype>VARCHAR(200)</datatype>
+</row>
+<row name="position" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>0</default></row>
+<row name="color" null="1" autoincrement="0">
+<datatype>VARCHAR(6)</datatype>
+<default>NULL</default></row>
+<row name="state" null="0" autoincrement="0">
+<datatype>ENUM('latest','modified','deleted')</datatype>
+<default>'latest'</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="60" y="351" name="users">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+</row>
+<row name="name" null="0" autoincrement="0">
+<datatype>VARCHAR(64)</datatype>
+</row>
+<row name="password_hash" null="0" autoincrement="0">
+<datatype>VARCHAR(255)</datatype>
+</row>
+<row name="email" null="0" autoincrement="0">
+<datatype>VARCHAR(64)</datatype>
+</row>
+<row name="account_type" null="0" autoincrement="0">
+<datatype>ENUM('admin','agent')</datatype>
+<default>'agent'</default><comment>orig: agent=1, admin=2</comment>
+</row>
+<row name="rememberme_token" null="0" autoincrement="0">
+<datatype>VARCHAR(64)</datatype>
+</row>
+<row name="creation_timestamp" null="0" autoincrement="0">
+<datatype>BIGINT(20)</datatype>
+</row>
+<row name="last_login_timestamp" null="1" autoincrement="0">
+<datatype>BIGINT(20)</datatype>
+<default>NULL</default></row>
+<row name="failed_logins" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>0</default></row>
+<row name="last_failed_login" null="1" autoincrement="0">
+<datatype>INTEGER(10)</datatype>
+<default>NULL</default></row>
+<row name="password_reset_hash" null="1" autoincrement="0">
+<datatype>CHAR(40)</datatype>
+<default>NULL</default></row>
+<row name="password_reset_timestamp" null="1" autoincrement="0">
+<datatype>BIGINT(20)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<key type="UNIQUE" name="">
+<part>name</part>
+</key>
+<key type="UNIQUE" name="">
+<part>email</part>
+</key>
+</table>
+<table x="280" y="128" name="questionnaire">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+</row>
+<row name="title" null="0" autoincrement="0">
+<datatype>VARCHAR(100)</datatype>
+</row>
+<row name="description" null="0" autoincrement="0">
+<datatype>VARCHAR(200)</datatype>
+</row>
+<row name="position" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>0</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="382" y="412" name="node">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+</row>
+<row name="id_directory_parent" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="node" row="id" />
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="656" y="445" name="choice">
+<row name="id" null="0" autoincrement="1">
+<datatype>INTEGER</datatype>
+</row>
+<row name="id_node" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<relation table="node" row="id" />
+</row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
+<table x="361" y="311" name="questionnaire_node">
+<row name="id_questionnaire" null="0" autoincrement="0">
+<datatype>INTEGER</datatype>
+<relation table="questionnaire" row="id" />
+</row>
+<row name="id_node" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="node" row="id" />
+</row>
+<key type="PRIMARY" name="">
+<part>id_questionnaire</part>
+<part>id_node</part>
+</key>
+</table>
+</sql>

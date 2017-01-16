@@ -1,0 +1,27 @@
+/* jshint indent: 2 */
+
+module.exports = function(sequelize, DataTypes) {
+  return sequelize.define('questionnaire', {
+    id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    position: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      defaultValue: "0"
+    }
+  }, {
+    tableName: 'questionnaire'
+  });
+};

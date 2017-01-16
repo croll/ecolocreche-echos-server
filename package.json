@@ -1,0 +1,21 @@
+{
+  "name": "ecolocreche-echos-server",
+  "version": "1.0.0",
+  "description": "EcoloCreche Echos Server, is the Server part of Echos, an application to audit the ecological level of child care centers",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicolas Dimitrijevic, Christophe Beveraggi",
+  "license": "GPLv3",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "client-sessions": "^0.7.0",
+    "epilogue": "^0.7.1",
+    "express": "^4.14.0",
+    "mysql": "^2.12.0",
+    "restify": "^4.3.0",
+    "sequelize": "^3.29.0",
+    "serve-static-restify": "^1.0.0"
+  }
+}
