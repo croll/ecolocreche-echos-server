@@ -50,7 +50,7 @@ if (USE_RESTIFY) {
 // Initialize epilogue
 epilogue.initialize({
   app: app,
-  sequelize: database
+  sequelize: models.sequelize
 });
 
 // Create REST resource
@@ -111,7 +111,7 @@ userResource.list.auth(function(req, res, context) {
 */
 
 // Create database and listen
-database
+models.sequelize
   .sync({ force: true })
   .then(function() {
     server.listen(1242, function() {
