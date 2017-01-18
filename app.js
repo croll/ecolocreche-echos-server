@@ -112,7 +112,7 @@ userResource.list.auth(function(req, res, context) {
 
 // Create database and listen
 models.sequelize
-  .sync({ force: true })
+  .sync({ force: false })
   .then(function() {
     server.listen(1242, function() {
       var host = server.address().address,
