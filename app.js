@@ -11,13 +11,6 @@ var config    = require(__dirname + '/config/config.json');
 
 var models = require(__dirname + '/models');
 
-// Define your models
-var database = new Sequelize(config.sql.database, config.sql.username, config.sql.password);
-var User = database.define('User', {
-  username: Sequelize.STRING,
-  birthday: Sequelize.DATE
-});
-
 // Initialize server
 var server, app;
 if (USE_RESTIFY) {
@@ -111,10 +104,11 @@ var userResource = epilogue.resource({
   endpoints: ['/rest/users', '/rest/users/:id']
 });
 
+/*
 userResource.list.auth(function(req, res, context) {
     throw new epilogue.Errors.ForbiddenError("you are not authized to list users !");
 });
-
+*/
 
 // Create database and listen
 database
