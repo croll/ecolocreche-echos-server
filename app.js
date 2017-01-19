@@ -31,11 +31,20 @@ if (USE_RESTIFY) {
   }));
 
   // Initialize http
-  server.get(/^((?!\/rest\/).)*$/, restify.serveStatic({
-          directory: './public_html/',
-          default: 'index.html'
+  server.get(/^((?!\/rest\/).)*$/, function(req, res, next) {
+      if (req.url.indexOf(".") !== -1) {
+          return restify.serveStatic({
+              directory: './public_html/',
+              default: 'index.html'
+          })(req, res, next);
+      } else {
+          return restify.serveStatic({
+              directory: './public_html/',
+              file: 'index.html'
+          })(req, res, next);
       }
-  ));
+    }
+  );
 } else {
   var express = require('express'),
       bodyParser = require('body-parser');
