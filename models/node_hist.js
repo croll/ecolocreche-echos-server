@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    id_directory: {
+    id_node: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {

@@ -1,13 +1,13 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('questionnaire_node', {
-    id_questionnaire: {
+  return sequelize.define('inqueryform_node', {
+    id_inqueryform: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       references: {
-        model: 'questionnaire',
+        model: 'inqueryform',
         key: 'id'
       }
     },
@@ -21,6 +21,6 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'questionnaire_node'
+    tableName: 'inqueryform_node'
   });
 };

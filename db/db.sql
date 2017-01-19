@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS `audit`;
 
 CREATE TABLE `audit` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
-  `id_etablissement` INTEGER NOT NULL,
+  `id_establishment` INTEGER NOT NULL,
   `key` VARCHAR(64) NOT NULL,
   `active` TINYINT(1) NOT NULL,
   `synthesis` MEDIUMTEXT NOT NULL,
@@ -40,13 +40,13 @@ CREATE TABLE `choice_hist` (
 );
 
 -- ---
--- Table 'etablissement'
+-- Table 'establishment'
 --
 -- ---
 
-DROP TABLE IF EXISTS `etablissement`;
+DROP TABLE IF EXISTS `establishment`;
 
-CREATE TABLE `etablissement` (
+CREATE TABLE `establishment` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `address` VARCHAR(300) NOT NULL,
@@ -83,7 +83,7 @@ DROP TABLE IF EXISTS `node_hist`;
 
 CREATE TABLE `node_hist` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
-  `id_directory` INTEGER NOT NULL,
+  `id_node` INTEGER NOT NULL,
   `type` ENUM('directory','q_radio','q_checkbox','q_percents','q_text','q_numeric') NOT NULL DEFAULT 'directory',
   `title` VARCHAR(255) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
@@ -119,13 +119,13 @@ CREATE TABLE `users` (
 );
 
 -- ---
--- Table 'questionnaire'
+-- Table 'inqueryform'
 --
 -- ---
 
-DROP TABLE IF EXISTS `questionnaire`;
+DROP TABLE IF EXISTS `inqueryform`;
 
-CREATE TABLE `questionnaire` (
+CREATE TABLE `inqueryform` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(100) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
@@ -160,31 +160,31 @@ CREATE TABLE `choice` (
 );
 
 -- ---
--- Table 'questionnaire_node'
+-- Table 'inqueryform_node'
 --
 -- ---
 
-DROP TABLE IF EXISTS `questionnaire_node`;
+DROP TABLE IF EXISTS `inqueryform_node`;
 
-CREATE TABLE `questionnaire_node` (
-  `id_questionnaire` INTEGER NOT NULL,
+CREATE TABLE `inqueryform_node` (
+  `id_inqueryform` INTEGER NOT NULL,
   `id_node` INTEGER NULL DEFAULT NULL,
-  PRIMARY KEY (`id_questionnaire`, `id_node`)
+  PRIMARY KEY (`id_inqueryform`, `id_node`)
 );
 
 -- ---
 -- Foreign Keys
 -- ---
 
-ALTER TABLE `audit` ADD FOREIGN KEY (id_etablissement) REFERENCES `etablissement` (`id`);
+ALTER TABLE `audit` ADD FOREIGN KEY (id_establishment) REFERENCES `establishment` (`id`);
 ALTER TABLE `choice_hist` ADD FOREIGN KEY (id_choice) REFERENCES `choice` (`id`);
 ALTER TABLE `answer` ADD FOREIGN KEY (id_audit) REFERENCES `audit` (`id`);
 ALTER TABLE `answer` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
-ALTER TABLE `node_hist` ADD FOREIGN KEY (id_directory) REFERENCES `node` (`id`);
+ALTER TABLE `node_hist` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 ALTER TABLE `node` ADD FOREIGN KEY (id_directory_parent) REFERENCES `node` (`id`);
 ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
-ALTER TABLE `questionnaire_node` ADD FOREIGN KEY (id_questionnaire) REFERENCES `questionnaire` (`id`);
-ALTER TABLE `questionnaire_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
+ALTER TABLE `inqueryform_node` ADD FOREIGN KEY (id_inqueryform) REFERENCES `inqueryform` (`id`);
+ALTER TABLE `inqueryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 
 -- ---
 -- Table Properties
@@ -192,36 +192,36 @@ ALTER TABLE `questionnaire_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`i
 
 -- ALTER TABLE `audit` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `choice_hist` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `etablissement` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `establishment` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `answer` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `node_hist` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `questionnaire` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `inqueryform` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `choice` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `questionnaire_node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `inqueryform_node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ---
 -- Test Data
 -- ---
 
--- INSERT INTO `audit` (`id`,`id_etablissement`,`key`,`active`,`synthesis`) VALUES
+-- INSERT INTO `audit` (`id`,`id_establishment`,`key`,`active`,`synthesis`) VALUES
 -- ('','','','','');
 -- INSERT INTO `choice_hist` (`id`,`id_choice`,`title`,`comment`,`position`,`impact`,`state`) VALUES
 -- ('','','','','','','');
--- INSERT INTO `etablissement` (`id`,`name`,`address`,`postalcode`,`city`,`phone`,`mail`,`type`,`status`) VALUES
+-- INSERT INTO `establishment` (`id`,`name`,`address`,`postalcode`,`city`,`phone`,`mail`,`type`,`status`) VALUES
 -- ('','','','','','','','','');
 -- INSERT INTO `answer` (`id_audit`,`id_node`,`ignored`,`value`) VALUES
 -- ('','','','');
--- INSERT INTO `node_hist` (`id`,`id_directory`,`type`,`title`,`description`,`position`,`color`,`state`) VALUES
+-- INSERT INTO `node_hist` (`id`,`id_node`,`type`,`title`,`description`,`position`,`color`,`state`) VALUES
 -- ('','','','','','','','');
 -- INSERT INTO `users` (`id`,`name`,`password_hash`,`email`,`account_type`,`rememberme_token`,`creation_timestamp`,`last_login_timestamp`,`failed_logins`,`last_failed_login`,`password_reset_hash`,`password_reset_timestamp`) VALUES
 -- ('','','','','','','','','','','','');
--- INSERT INTO `questionnaire` (`id`,`title`,`description`,`position`) VALUES
+-- INSERT INTO `inqueryform` (`id`,`title`,`description`,`position`) VALUES
 -- ('','','','');
 -- INSERT INTO `node` (`id`,`id_directory_parent`) VALUES
 -- ('','');
 -- INSERT INTO `choice` (`id`,`id_node`) VALUES
 -- ('','');
--- INSERT INTO `questionnaire_node` (`id_questionnaire`,`id_node`) VALUES
+-- INSERT INTO `inqueryform_node` (`id_inqueryform`,`id_node`) VALUES
 -- ('','');

@@ -41,9 +41,9 @@
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
-<row name="id_etablissement" null="0" autoincrement="0">
+<row name="id_establishment" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
-<relation table="etablissement" row="id" />
+<relation table="establishment" row="id" />
 </row>
 <row name="key" null="0" autoincrement="0">
 <datatype>VARCHAR(64)</datatype>
@@ -85,7 +85,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="85" y="17" name="etablissement">
+<table x="85" y="17" name="establishment">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -143,7 +143,7 @@
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
-<row name="id_directory" null="0" autoincrement="0">
+<row name="id_node" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <relation table="node" row="id" />
 </row>
@@ -217,7 +217,7 @@
 <part>email</part>
 </key>
 </table>
-<table x="280" y="128" name="questionnaire">
+<table x="280" y="128" name="inqueryform">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -258,17 +258,17 @@
 <part>id</part>
 </key>
 </table>
-<table x="361" y="311" name="questionnaire_node">
-<row name="id_questionnaire" null="0" autoincrement="0">
+<table x="361" y="311" name="inqueryform_node">
+<row name="id_inqueryform" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
-<relation table="questionnaire" row="id" />
+<relation table="inqueryform" row="id" />
 </row>
 <row name="id_node" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="node" row="id" />
 </row>
 <key type="PRIMARY" name="">
-<part>id_questionnaire</part>
+<part>id_inqueryform</part>
 <part>id_node</part>
 </key>
 </table>

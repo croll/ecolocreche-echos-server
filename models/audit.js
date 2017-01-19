@@ -8,11 +8,11 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    id_etablissement: {
+    id_establishment: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'etablissement',
+        model: 'establishment',
         key: 'id'
       }
     },

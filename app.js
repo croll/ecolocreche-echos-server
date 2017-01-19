@@ -59,14 +59,14 @@ var auditResource = epilogue.resource({
   endpoints: ['/rest/audits', '/rest/audits/:id']
 });
 
-var questionnaireResource = epilogue.resource({
-  model: models.questionnaire,
-  endpoints: ['/rest/questionnaires', '/rest/questionnaires/:id']
+var inqueryformResource = epilogue.resource({
+  model: models.inqueryform,
+  endpoints: ['/rest/inqueryforms', '/rest/inqueryforms/:id']
 });
 
-var questionnaire_nodeResource = epilogue.resource({
-  model: models.questionnaire_node,
-  endpoints: ['/rest/questionnaires_nodes', '/rest/questionnaires_nodes/:id_questionnaire']
+var inqueryform_nodeResource = epilogue.resource({
+  model: models.inqueryform_node,
+  endpoints: ['/rest/inqueryforms_nodes', '/rest/inqueryforms_nodes/:id_inqueryform']
 });
 
 var nodeResource = epilogue.resource({
@@ -94,9 +94,9 @@ var answerResource = epilogue.resource({
   endpoints: ['/rest/answers', '/rest/answers/:id_audit/:id_node']
 });
 
-var etablissementResource = epilogue.resource({
-  model: models.etablissement,
-  endpoints: ['/rest/etablissements', '/rest/etablissements/:id']
+var establishmentResource = epilogue.resource({
+  model: models.establishment,
+  endpoints: ['/rest/establishments', '/rest/establishments/:id']
 });
 
 var userResource = epilogue.resource({
