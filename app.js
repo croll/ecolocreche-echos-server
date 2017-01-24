@@ -11,6 +11,8 @@ var config    = require(__dirname + '/config/config.json');
 
 var models = require(__dirname + '/models');
 
+var bcrypt = require('bcryptjs');
+
 // Initialize server
 var server, app;
 if (USE_RESTIFY) {
@@ -55,6 +57,54 @@ if (USE_RESTIFY) {
   app.use(express.static('public_html'));
   server = http.createServer(app);
 }
+
+// login
+server.post('/rest/login', function (req, res, next) {
+    console.log("params: ", req.params);
+    models.users.findOne({
+        where: {
+            $or: [
+                {
+                    name: req.params.username,
+                },
+                {
+                    email: req.params.username,
+                },
+            ]
+        },
+        plain: true,
+    }).then(function(user) {
+        if (user) { // user found, check password
+            var ok = bcrypt.compareSync(req.params.password, user.dataValues.password_hash);
+            console.log("user found: ", user.dataValues.name, "ok ?", ok);
+            delete user.dataValues.password_hash;
+            req.session.user = user.dataValues;
+            res.send({
+                user: user.dataValues
+            });
+        } else {
+            req.session.user = null;
+            res.send({
+                user: null
+            });
+        }
+    }, function(err) {
+        req.session.user = null;
+        res.send({
+            user: null
+        });
+        console.log("login err: ", err);
+    });
+    return next();
+});
+
+// logout
+server.post('/rest/logout', function (req, res, next) {
+    req.session.user = null;
+    res.send({
+        user: null
+    });
+});
 
 // Initialize epilogue
 epilogue.initialize({
@@ -113,11 +163,17 @@ var userResource = epilogue.resource({
   endpoints: ['/rest/users', '/rest/users/:id']
 });
 
-/*
+
 userResource.list.auth(function(req, res, context) {
-    throw new epilogue.Errors.ForbiddenError("you are not authized to list users !");
+    if ('user' in req.session && req.session.user) {
+        // ok
+        return context.continue;
+    } else {
+        // not ok
+        throw new epilogue.Errors.ForbiddenError("you are not authized to list users !");
+    }
 });
-*/
+
 
 // Create database and listen
 models.sequelize

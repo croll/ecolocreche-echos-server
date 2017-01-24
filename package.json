@@ -9,6 +9,7 @@
   "author": "Nicolas Dimitrijevic, Christophe Beveraggi",
   "license": "GPLv3",
   "dependencies": {
+    "bcryptjs": "^2.4.0",
     "body-parser": "^1.15.2",
     "client-sessions": "^0.7.0",
     "epilogue": "^0.7.1",
