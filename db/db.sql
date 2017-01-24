@@ -54,8 +54,8 @@ CREATE TABLE `establishment` (
   `city` VARCHAR(100) NOT NULL,
   `phone` VARCHAR(20) NOT NULL,
   `mail` VARCHAR(100) NOT NULL,
-  `type` INT NOT NULL COMMENT 'creche, halte-garderie, micro-crèche, etc.',
-  `status` INTEGER NOT NULL COMMENT 'association, association parental, publique, etc.',
+  `type` ENUM('creche','halte-garderie','micro-creche','multi-accueil','relais-d-assistante','autre') NOT NULL DEFAULT 'autre' COMMENT 'creche, halte-garderie, micro-crèche, etc.',
+  `status` ENUM('association','association-parentale','entreprise','publique','indetermine','autre') NOT NULL DEFAULT 'autre' COMMENT 'association, association parental, publique, etc.',
   PRIMARY KEY (`id`)
 );
 
@@ -160,13 +160,13 @@ CREATE TABLE `choice` (
 );
 
 -- ---
--- Table 'inqueryform_node'
+-- Table 'questionnaire_node'
 --
 -- ---
 
-DROP TABLE IF EXISTS `inqueryform_node`;
+DROP TABLE IF EXISTS `questionnaire_node`;
 
-CREATE TABLE `inqueryform_node` (
+CREATE TABLE `questionnaire_node` (
   `id_inqueryform` INTEGER NOT NULL,
   `id_node` INTEGER NULL DEFAULT NULL,
   PRIMARY KEY (`id_inqueryform`, `id_node`)
@@ -183,8 +183,8 @@ ALTER TABLE `answer` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 ALTER TABLE `node_hist` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 ALTER TABLE `node` ADD FOREIGN KEY (id_directory_parent) REFERENCES `node` (`id`);
 ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
-ALTER TABLE `inqueryform_node` ADD FOREIGN KEY (id_inqueryform) REFERENCES `inqueryform` (`id`);
-ALTER TABLE `inqueryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
+ALTER TABLE `questionnaire_node` ADD FOREIGN KEY (id_inqueryform) REFERENCES `inqueryform` (`id`);
+ALTER TABLE `questionnaire_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 
 -- ---
 -- Table Properties
@@ -199,7 +199,7 @@ ALTER TABLE `inqueryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`
 -- ALTER TABLE `inqueryform` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `choice` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `inqueryform_node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `questionnaire_node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ---
 -- Test Data
@@ -223,5 +223,5 @@ ALTER TABLE `inqueryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`
 -- ('','');
 -- INSERT INTO `choice` (`id`,`id_node`) VALUES
 -- ('','');
--- INSERT INTO `inqueryform_node` (`id_inqueryform`,`id_node`) VALUES
+-- INSERT INTO `questionnaire_node` (`id_inqueryform`,`id_node`) VALUES
 -- ('','');
