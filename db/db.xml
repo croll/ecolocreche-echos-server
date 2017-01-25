@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!-- SQL XML created by WWW SQL Designer, https://github.com/ondras/wwwsqldesigner/ -->
-<!-- Active URL: https://www.croll.fr/sqldesigner/ -->
+<!-- Active URL: https://croll.fr/sqldesigner/ -->
 <sql>
 <datatypes db="mysql">
 	<group label="Numeric" color="rgb(238,238,170)">
@@ -109,11 +109,11 @@
 </row>
 <row name="type" null="0" autoincrement="0">
 <datatype>ENUM('creche','halte-garderie','micro-creche','multi-accueil','relais-d-assistante','autre')</datatype>
-<comment>creche, halte-garderie, micro-crèche, etc.</comment>
+<default>'autre'</default><comment>creche, halte-garderie, micro-crèche, etc.</comment>
 </row>
 <row name="status" null="0" autoincrement="0">
 <datatype>ENUM('association','association-parentale','entreprise','publique','indetermine','autre')</datatype>
-<comment>association, association parental, publique, etc.</comment>
+<default>'autre'</default><comment>association, association parental, publique, etc.</comment>
 </row>
 <key type="PRIMARY" name="">
 <part>id</part>
@@ -258,7 +258,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="361" y="311" name="questionnaire_node">
+<table x="361" y="311" name="inqueryform_node">
 <row name="id_inqueryform" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <relation table="inqueryform" row="id" />
