@@ -78,6 +78,54 @@ models.sequelize.sync({
         console.error("can't import establishment: ", err);
     });
 
+    // import des themes
+    p = p.then(function() {
+        return models_import.theme.findAll({
+            order: [
+                ['identifiant', 'ASC'],
+                ['version', 'ASC'],
+            ]
+        });
+    });
+    p = p.then(function(rows) {
+        var p2 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        themes.forEach(function(theme) {
+            p2=p2.then(function() {
+                return models.node.create({
+                });
+            });
+            p2=p2.then(function(node) {
+                var id_node = node.dataValues.id;
+                return models.node_hist.create({
+                    id_node: id_node,
+                    type: 'directory',
+                    title: theme.intitule ? theme.intitule : '',
+                    description: theme.description ? theme.description : '',
+                    position: theme.position ? theme.position : 0,
+                    color: theme.couleur ? theme.couleur : "#000000",
+                    state: theme.etat['latest','modified','deleted'],
+                    createdAt: theme.horodatage,
+                    updatedAt: theme.horodatage,
+                }).then(function(node_hist) {
+                    console.log("theme "+theme.intitule+" imported.");
+                    return node_hist;
+                }, function(err) {
+                    console.log("theme "+theme.intitule+" error: ", err);
+                });
+            });
+
+
+        return p2;
+    }).then(function() {
+        console.log("theme imported ok");
+    }, function(err) {
+        console.error("can't import theme: ", err);
+    });
+
+
+    // end
     return p;
 
 }, function(err) {
