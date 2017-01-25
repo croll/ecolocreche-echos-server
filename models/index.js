@@ -34,3 +34,8 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 module.exports = db;
+
+
+
+// associations
+db.node.hasMany(db.node_hist, { foreignKey: "id_node"});
