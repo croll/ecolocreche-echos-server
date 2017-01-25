@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('inqueryform', {
+  return sequelize.define('inquiryform', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -22,6 +22,6 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: "0"
     }
   }, {
-    tableName: 'inqueryform'
+    tableName: 'inquiryform'
   });
 };

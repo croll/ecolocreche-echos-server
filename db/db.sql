@@ -119,13 +119,13 @@ CREATE TABLE `users` (
 );
 
 -- ---
--- Table 'inqueryform'
+-- Table 'inquiryform'
 --
 -- ---
 
-DROP TABLE IF EXISTS `inqueryform`;
+DROP TABLE IF EXISTS `inquiryform`;
 
-CREATE TABLE `inqueryform` (
+CREATE TABLE `inquiryform` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(100) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
@@ -160,16 +160,16 @@ CREATE TABLE `choice` (
 );
 
 -- ---
--- Table 'inqueryform_node'
+-- Table 'inquiryform_node'
 --
 -- ---
 
-DROP TABLE IF EXISTS `inqueryform_node`;
+DROP TABLE IF EXISTS `inquiryform_node`;
 
-CREATE TABLE `inqueryform_node` (
-  `id_inqueryform` INTEGER NOT NULL,
+CREATE TABLE `inquiryform_node` (
+  `id_inquiryform` INTEGER NOT NULL,
   `id_node` INTEGER NULL DEFAULT NULL,
-  PRIMARY KEY (`id_inqueryform`, `id_node`)
+  PRIMARY KEY (`id_inquiryform`, `id_node`)
 );
 
 -- ---
@@ -183,8 +183,8 @@ ALTER TABLE `answer` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 ALTER TABLE `node_hist` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 ALTER TABLE `node` ADD FOREIGN KEY (id_directory_parent) REFERENCES `node` (`id`);
 ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
-ALTER TABLE `inqueryform_node` ADD FOREIGN KEY (id_inqueryform) REFERENCES `inqueryform` (`id`);
-ALTER TABLE `inqueryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
+ALTER TABLE `inquiryform_node` ADD FOREIGN KEY (id_inquiryform) REFERENCES `inquiryform` (`id`);
+ALTER TABLE `inquiryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 
 -- ---
 -- Table Properties
@@ -196,10 +196,10 @@ ALTER TABLE `inqueryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`
 -- ALTER TABLE `answer` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `node_hist` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `inqueryform` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `inquiryform` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `choice` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `inqueryform_node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `inquiryform_node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ---
 -- Test Data
@@ -217,11 +217,11 @@ ALTER TABLE `inqueryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`
 -- ('','','','','','','','');
 -- INSERT INTO `users` (`id`,`name`,`password_hash`,`email`,`account_type`,`rememberme_token`,`creation_timestamp`,`last_login_timestamp`,`failed_logins`,`last_failed_login`,`password_reset_hash`,`password_reset_timestamp`) VALUES
 -- ('','','','','','','','','','','','');
--- INSERT INTO `inqueryform` (`id`,`title`,`description`,`position`) VALUES
+-- INSERT INTO `inquiryform` (`id`,`title`,`description`,`position`) VALUES
 -- ('','','','');
 -- INSERT INTO `node` (`id`,`id_directory_parent`) VALUES
 -- ('','');
 -- INSERT INTO `choice` (`id`,`id_node`) VALUES
 -- ('','');
--- INSERT INTO `inqueryform_node` (`id_inqueryform`,`id_node`) VALUES
+-- INSERT INTO `inquiryform_node` (`id_inquiryform`,`id_node`) VALUES
 -- ('','');

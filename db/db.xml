@@ -217,7 +217,7 @@
 <part>email</part>
 </key>
 </table>
-<table x="280" y="128" name="inqueryform">
+<table x="280" y="128" name="inquiryform">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -258,17 +258,17 @@
 <part>id</part>
 </key>
 </table>
-<table x="361" y="311" name="inqueryform_node">
-<row name="id_inqueryform" null="0" autoincrement="0">
+<table x="361" y="311" name="inquiryform_node">
+<row name="id_inquiryform" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
-<relation table="inqueryform" row="id" />
+<relation table="inquiryform" row="id" />
 </row>
 <row name="id_node" null="1" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="node" row="id" />
 </row>
 <key type="PRIMARY" name="">
-<part>id_inqueryform</part>
+<part>id_inquiryform</part>
 <part>id_node</part>
 </key>
 </table>

@@ -106,6 +106,13 @@ server.post('/rest/logout', function (req, res, next) {
     });
 });
 
+// whoami
+server.get('/rest/whoami', function (req, res, next) {
+    res.send({
+        user: 'user' in req.session ? req.session.user : null
+    });
+});
+
 // Initialize epilogue
 epilogue.initialize({
   app: app,
