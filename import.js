@@ -78,6 +78,19 @@ models.sequelize.sync({
         console.error("can't import establishment: ", err);
     });
 
+    // création d'un premier questionnaire
+    p=p.then(function() {
+        return models.inquiryform.create({
+            title: "Questionnaire original",
+            description: "Le questionnaire tel qu'il existait dans l'ancienne version",
+        }).then(function() {
+            console.log("questionnaire created.");
+        }, function(err) {
+            console.log("questionnaire creation error: ", err);
+        });
+    });
+
+
     // import des themes
     p = p.then(function() {
         return models_import.theme.findAll({
