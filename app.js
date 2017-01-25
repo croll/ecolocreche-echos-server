@@ -126,13 +126,13 @@ var auditResource = epilogue.resource({
 });
 
 var inqueryformResource = epilogue.resource({
-  model: models.inqueryform,
-  endpoints: ['/rest/inqueryforms', '/rest/inqueryforms/:id']
+  model: models.inquiryform,
+  endpoints: ['/rest/inquiryforms', '/rest/inquiryforms/:id']
 });
 
 var inqueryform_nodeResource = epilogue.resource({
-  model: models.inqueryform_node,
-  endpoints: ['/rest/inqueryforms_nodes', '/rest/inqueryforms_nodes/:id_inqueryform']
+  model: models.inquiryform_node,
+  endpoints: ['/rest/inquiryforms_nodes', '/rest/inquiryforms_nodes/:id_inquiryform']
 });
 
 var nodeResource = epilogue.resource({
