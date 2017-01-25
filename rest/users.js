@@ -55,4 +55,21 @@ module.exports = function(server, epilogue, models) {
             user: 'user' in req.session ? req.session.user : null
         });
     });
+
+
+    var userResource = epilogue.resource({
+      model: models.users,
+      endpoints: ['/rest/users', '/rest/users/:id']
+    });
+
+    userResource.list.auth(function(req, res, context) {
+        if ('user' in req.session && req.session.user) {
+            // ok
+            return context.continue;
+        } else {
+            // not ok
+            throw new epilogue.Errors.ForbiddenError("you are not authized to list users !");
+        }
+    });
+
 };

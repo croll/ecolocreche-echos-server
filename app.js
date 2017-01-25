@@ -110,28 +110,11 @@ var establishmentResource = epilogue.resource({
   endpoints: ['/rest/establishments', '/rest/establishments/:id']
 });
 
-var userResource = epilogue.resource({
-  model: models.users,
-  endpoints: ['/rest/users', '/rest/users/:id']
-});
-
 var nodeResource = epilogue.resource({
   model: models.node,
   endpoints: ['/rest/directories', '/rest/directories/:id']
 });
 
-
-
-
-userResource.list.auth(function(req, res, context) {
-    if ('user' in req.session && req.session.user) {
-        // ok
-        return context.continue;
-    } else {
-        // not ok
-        throw new epilogue.Errors.ForbiddenError("you are not authized to list users !");
-    }
-});
 
 
 // Create database and listen
