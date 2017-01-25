@@ -87,19 +87,21 @@ models.sequelize.sync({
             ]
         });
     });
-    p = p.then(function(rows) {
+    p = p.then(function(themes) {
         var p2 = new Promise(function (resolve, reject) {
             resolve();
         });
         themes.forEach(function(theme) {
+            var node_theme;
+            var node_theme_hist;
             p2=p2.then(function() {
                 return models.node.create({
                 });
             });
-            p2=p2.then(function(node) {
-                var id_node = node.dataValues.id;
+            p2=p2.then(function(_node_theme) {
+                node_theme=_node_theme;
                 return models.node_hist.create({
-                    id_node: id_node,
+                    id_node: node_theme.dataValues.id,
                     type: 'directory',
                     title: theme.intitule ? theme.intitule : '',
                     description: theme.description ? theme.description : '',
@@ -108,14 +110,61 @@ models.sequelize.sync({
                     state: theme.etat['latest','modified','deleted'],
                     createdAt: theme.horodatage,
                     updatedAt: theme.horodatage,
-                }).then(function(node_hist) {
+                }).then(function(_node_theme_hist) {
+                    node_theme_hist = _node_theme_hist;
                     console.log("theme "+theme.intitule+" imported.");
-                    return node_hist;
                 }, function(err) {
                     console.log("theme "+theme.intitule+" error: ", err);
                 });
             });
 
+            // import des rubriques
+            p2 = p2.then(function() {
+                return models_import.rubrique.findAll({
+                    order: [
+                        ['identifiant', 'ASC'],
+                        ['version', 'ASC'],
+                    ],
+                    where: {
+                        theme: theme.identifiant,
+                    }
+                });
+            });
+            p2=p2.then(function(rubriques) {
+                var p3 = new Promise(function (resolve, reject) {
+                    resolve();
+                });
+                rubriques.forEach(function(rubrique) {
+                    var node_rubrique;
+                    var node_rubrique_hist;
+                    p3=p3.then(function() {
+                        return models.node.create({
+                            id_directory_parent: node_theme.dataValues.id,
+                        });
+                    });
+                    p3=p3.then(function(_node_rubrique) {
+                        node_rubrique = _node_rubrique;
+                        return models.node_hist.create({
+                            id_node: node_rubrique.dataValues.id,
+                            type: 'directory',
+                            title: rubrique.intitule ? rubrique.intitule : '',
+                            description: rubrique.description ? rubrique.description : '',
+                            position: rubrique.position ? rubrique.position : 0,
+                            color: "#000000", // no color in original rubrique
+                            state: rubrique.etat['latest','modified','deleted'],
+                            createdAt: rubrique.horodatage,
+                            updatedAt: rubrique.horodatage,
+                        }).then(function(_node_rubrique_hist) {
+                            node_rubrique_hist = _node_rubrique_hist;
+                            console.log("rubrique "+rubrique.intitule+" imported.");
+                        }, function(err) {
+                            console.log("rubrique "+rubrique.intitule+" error: ", err);
+                        });
+                    });
+                });
+                return p3;
+            });
+        }); // import des rubriques
 
         return p2;
     }).then(function() {
