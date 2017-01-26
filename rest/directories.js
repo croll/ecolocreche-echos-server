@@ -67,6 +67,8 @@ module.exports = function(server, epilogue, models) {
             && req.params.id_directory_parent !== "null") {
             q+=' and node.id_directory_parent = ?';
             replacements.push(req.params.id_directory_parent);
+        } else {
+            q+=' and node.id_directory_parent is null';
         }
 
         return models.sequelize.query(q,{
