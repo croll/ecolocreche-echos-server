@@ -38,11 +38,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: true
     },
-    state: {
-      type: DataTypes.ENUM('latest','modified','deleted'),
-      allowNull: false,
-      defaultValue: "latest"
-    }
   }, {
     tableName: 'node_hist',
     timestamps: true,
