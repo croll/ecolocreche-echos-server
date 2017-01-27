@@ -1,3 +1,5 @@
+var dbtools = require(__dirname + '/../lib/dbtools.js');
+
 module.exports = function(server, epilogue, models) {
 
 
@@ -105,7 +107,39 @@ module.exports = function(server, epilogue, models) {
      * edit a directory
      */
     server.put('/rest/hist/directories/:id_node', function (req, res, next) {
+        return dbtools.getLatestNodeHist(models, {
+            id_node: req.params.id_node,
+        }).then(function(dir_hist) {
+            return models.node_hist.findOne({
+                where: {
+                    id: dir_hist.dataValues.id,
+                }
+            });
+        }).then(function(node_hist) {
+            return node_hist.update(req.params, {
+                fields: [
+                    'type', 'title', 'description', 'position', 'color'
+                ],
+            })
+        }).then(function(node_hist) {
+                res.send(node_hist);
+        });
         //return models.node.get()
     });
 
+    server.del('/rest/hist/directories/:id_node', function (req, res, next) {
+        return dbtools.getLatestNodeHist(models, {
+            id_node: req.params.id_node,
+        }).then(function(dir_hist) {
+            return models.node_hist.findOne({
+                where: {
+                    id: dir_hist.dataValues.id,
+                }
+            });
+        }).then(function(node_hist) {
+            return node_hist.destroy();
+        }).then(function(node_hist) {
+            res.send(node_hist);
+        });
+    });
 }
