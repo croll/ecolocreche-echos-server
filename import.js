@@ -232,7 +232,7 @@ models.sequelize.sync({
                     var node_rubrique_hist;
                     p3=p3.then(function() {
                         return models.node.create({
-                            id_directory_parent: node_theme.dataValues.id,
+                            id_node_parent: node_theme.dataValues.id,
                         });
                     });
                     p3=p3.then(function(_node_rubrique) {
