@@ -105,19 +105,16 @@ module.exports = function(server, epilogue, models) {
         return dbtools.getLatestNodeHist(models, {
             id_node: req.params.id_node,
         }).then(function(dir_hist) {
-            return models.node_hist.findOne({
-                where: {
-                    id: dir_hist.dataValues.id,
-                }
-            });
-        }).then(function(node_hist) {
-            return node_hist.update(req.params, {
-                fields: [
-                    'type', 'title', 'description', 'position', 'color'
-                ],
+            return models.node_hist.create(req.params, {
+                id_node: dir_hist.id,
+                type: req.params.type,
+                title: req.params.title,
+                description: req.params.description,
+                position: req.params.position,
+                color: req.params.color,
             })
         }).then(function(node_hist) {
-                res.send(node_hist);
+            res.send(node_hist);
         }, function(err) {
             throw new epilogue.Errors.EpilogueError(500, err);
         });
@@ -129,7 +126,7 @@ module.exports = function(server, epilogue, models) {
         }).then(function(dir_hist) {
             return models.node_hist.findOne({
                 where: {
-                    id: dir_hist.dataValues.id,
+                    id: dir_hist.id,
                 }
             });
         }).then(function(node_hist) {
