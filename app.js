@@ -64,6 +64,7 @@ epilogue.initialize({
 
 require(__dirname+'/rest/users')(server, epilogue, models);
 require(__dirname+'/rest/nodes')(server, epilogue, models);
+require(__dirname+'/rest/choices')(server, epilogue, models);
 
 // Create REST resource
 var auditResource = epilogue.resource({
