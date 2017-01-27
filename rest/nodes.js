@@ -120,7 +120,7 @@ module.exports = function(server, epilogue, models) {
                     });
                 });
                 p.then(function() {
-                    return null;
+                    return node_hist;
                 });
                 return p;
             }
@@ -139,14 +139,71 @@ module.exports = function(server, epilogue, models) {
         return dbtools.getLatestNodeHist(models, {
             id_node: req.params.id_node,
         }).then(function(dir_hist) {
-            return models.node_hist.create(req.params, {
-                id_node: dir_hist.id,
+            return models.node_hist.create({
+                id_node: dir_hist.id_node,
                 type: req.params.type,
                 title: req.params.title,
                 description: req.params.description,
                 position: req.params.position,
                 color: req.params.color,
-            })
+            });
+        }).then(function(node_hist) {
+            if (node_hist.get("type") == "directory") {
+                return node_hist;
+            } else {
+                console.log("TODO: delete removed choices !!")
+                // update choices
+                var p = new Promise(function (resolve, reject) {
+                    resolve();
+                });
+                req.params.choices.forEach(function(param_choice) {
+
+                    if ('id_choice' in param_choice) {
+                        p=p.then(function() {
+                            return models.choice.findOne({
+                                where: {
+                                    id: param_choice.id_choice,
+                                    id_node: node_hist.get("id_node"),
+                                }
+                            });
+                        });
+                    } else {
+                        p=p.then(function() {
+                            return models.choice.create({
+                                id_node: node_hist.get("id_node"),
+                            });
+                        });
+                    }
+
+                    p=p.then(function(choice) {
+                        return dbtools.getLatestChoiceHist(models, {
+                            id_choice: choice.get("id"),
+                        });
+                    });
+
+                    // create a new version..
+                    p=p.then(function(fullchoice) {
+                        if (!('id_choice' in param_choice)
+                            || param_choice.title != fullchoice.title
+                            || param_choice.comment != fullchoice.comment
+                            || param_choice.position != fullchoice.position
+                            || param_choice.impact != fullchoice.impact
+                        ) {
+                            return models.choice_hist.create({
+                                id_choice: fullchoice.id_choice,
+                                title: param_choice.title,
+                                comment: param_choice.comment,
+                                position: param_choice.position,
+                                impact: param_choice.impact,
+                            });
+                        }
+                    });
+                });
+                p.then(function() {
+                    return node_hist;
+                });
+                return p;
+            }
         }).then(function(node_hist) {
             res.send(node_hist);
         }, function(err) {
