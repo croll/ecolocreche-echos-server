@@ -17,6 +17,8 @@ module.exports = function(server, epilogue, models) {
         }
         return dbtools.getLatestChoiceHist(models, req.params).then(function(dirs) {
             res.send(dirs);
+        }, function(err) {
+            throw new epilogue.Errors.EpilogueError(500, err);
         });
     });
 
@@ -30,6 +32,8 @@ module.exports = function(server, epilogue, models) {
     server.get('/rest/hist/choices/:id_choice', function (req, res, next) {
         return dbtools.getLatestChoiceHist(models, req.params).then(function(dir_hist) {
             res.send(dir_hist);
+        }, function(err) {
+            throw new epilogue.Errors.EpilogueError(500, err);
         });
     });
 
@@ -50,6 +54,8 @@ module.exports = function(server, epilogue, models) {
             });
         }).then(function(choice_hist) {
             res.send(choice_hist);
+        }, function(err) {
+            throw new epilogue.Errors.EpilogueError(500, err);
         });
     });
 
@@ -73,8 +79,9 @@ module.exports = function(server, epilogue, models) {
             })
         }).then(function(choice_hist) {
                 res.send(choice_hist);
+        }, function(err) {
+            throw new epilogue.Errors.EpilogueError(500, err);
         });
-        //return models.choice.get()
     });
 
     server.del('/rest/hist/choices/:id_choice', function (req, res, next) {
@@ -90,6 +97,8 @@ module.exports = function(server, epilogue, models) {
             return choice_hist.destroy();
         }).then(function(choice_hist) {
             res.send(choice_hist);
+        }, function(err) {
+            throw new epilogue.Errors.EpilogueError(500, err);
         });
     });
 }

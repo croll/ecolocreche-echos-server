@@ -45,6 +45,8 @@ module.exports = function(server, epilogue, models) {
         }
         return dbtools.getLatestNodeHist(models, req.params).then(function(dirs) {
             res.send(dirs);
+        }, function(err) {
+            throw new epilogue.Errors.EpilogueError(500, err);
         });
     });
 
@@ -58,6 +60,8 @@ module.exports = function(server, epilogue, models) {
     server.get('/rest/hist/nodes/:id_node', function (req, res, next) {
         return dbtools.getLatestNodeHist(models, req.params).then(function(dir_hist) {
             res.send(dir_hist);
+        }, function(err) {
+            throw new epilogue.Errors.EpilogueError(500, err);
         });
     });
 
@@ -78,6 +82,8 @@ module.exports = function(server, epilogue, models) {
             });
         }).then(function(node_hist) {
             res.send(node_hist);
+        }, function(err) {
+            throw new epilogue.Errors.EpilogueError(500, err);
         });
     });
 
@@ -101,8 +107,9 @@ module.exports = function(server, epilogue, models) {
             })
         }).then(function(node_hist) {
                 res.send(node_hist);
+        }, function(err) {
+            throw new epilogue.Errors.EpilogueError(500, err);
         });
-        //return models.node.get()
     });
 
     server.del('/rest/hist/nodes/:id_node', function (req, res, next) {
@@ -118,6 +125,8 @@ module.exports = function(server, epilogue, models) {
             return node_hist.destroy();
         }).then(function(node_hist) {
             res.send(node_hist);
+        }, function(err) {
+            throw new epilogue.Errors.EpilogueError(500, err);
         });
     });
 }
