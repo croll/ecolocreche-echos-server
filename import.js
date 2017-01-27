@@ -6,6 +6,67 @@ var config    = require(__dirname + '/config/config.json');
 var models = require(__dirname + '/models');
 var models_import = require(__dirname + '/models_import');
 
+function getLatestNodeHist(params) {
+    return new Promise(function(resolve, reject) {
+        var date = '2222-12-22';
+
+        if ('date' in params) {
+            date = params.date;
+        }
+
+        var query = `
+            select
+             node.id_node_parent,
+             nh1.*
+            from node
+            left join node_hist nh1 ON nh1.id_node = node.id
+            where nh1.createdAt=(
+             select max(createdAt)
+             from node_hist nh2
+             where nh1.id_node = nh2.id_node
+             and createdAt <= ?
+         )`;
+            //and deletedAt IS NOT NULL`;
+
+        var replacements = [ date ];
+
+
+        if ('id_node_parent' in params
+            && params.id_node_parent !== null
+            && params.id_node_parent !== "null") {
+            query+=' and node.id_node_parent = ?';
+            replacements.push(params.id_node_parent);
+        } else {
+            query+=' and node.id_node_parent is null';
+        }
+
+        if ('id_node' in params
+            && params.id_node !== null
+            && params.id_node !== "null") {
+            query+=' and node.id = ?';
+            replacements.push(params.id_node);
+        }
+
+        return models.sequelize.query(query, {
+                replacements: replacements,
+                type: models.sequelize.QueryTypes.SELECT
+            }
+        ).then(function(directories) {
+            if ('id_node' in params) {
+                if (directories.length == 1) {
+                    resolve(directories[0]);
+                } else {
+                    reject("latest node_hist not found !");
+                }
+            } else {
+                resolve(directories);
+            }
+        }, function(err) {
+            reject(err);
+        });
+    });
+}
+
 models.sequelize.sync({
     force: true,
 }).then(function() {
@@ -15,6 +76,9 @@ models.sequelize.sync({
 
     // import des users
     p = p.then(function() {
+        console.log("#########");
+        console.log("######### import des users");
+        console.log("#########");
         return models_import.users.findAll();
     });
     p = p.then(function(rows) {
@@ -47,6 +111,9 @@ models.sequelize.sync({
 
     // import des etablissements
     p = p.then(function() {
+        console.log("#########");
+        console.log("######### import des etablissements");
+        console.log("#########");
         return models_import.etablissement.findAll();
     });
     p = p.then(function(rows) {
@@ -92,12 +159,21 @@ models.sequelize.sync({
 
 
     // import des themes
+    var themes_identifiants = {};
     p = p.then(function() {
+        console.log("#########");
+        console.log("######### import des themes");
+        console.log("#########");
         return models_import.theme.findAll({
             order: [
                 ['identifiant', 'ASC'],
                 ['version', 'ASC'],
-            ]
+            ],
+            where: {
+                etat: {
+                    $ne: 2
+                }
+            }
         });
     });
     p = p.then(function(themes) {
@@ -113,6 +189,7 @@ models.sequelize.sync({
             });
             p2=p2.then(function(_node_theme) {
                 node_theme=_node_theme;
+                themes_identifiants[theme.dataValues.identifiant] = node_theme.dataValues.id;
                 return models.node_hist.create({
                     id_node: node_theme.dataValues.id,
                     type: 'directory',
@@ -120,7 +197,6 @@ models.sequelize.sync({
                     description: theme.description ? theme.description : '',
                     position: theme.position ? theme.position : 0,
                     color: theme.couleur ? theme.couleur : "#000000",
-                    state: theme.etat['latest','modified','deleted'],
                     createdAt: theme.horodatage,
                     updatedAt: theme.horodatage,
                 }).then(function(_node_theme_hist) {
@@ -140,6 +216,9 @@ models.sequelize.sync({
                     ],
                     where: {
                         theme: theme.identifiant,
+                        etat: {
+                            $ne: 2
+                        }
                     }
                 });
             });
@@ -164,7 +243,6 @@ models.sequelize.sync({
                             description: rubrique.description ? rubrique.description : '',
                             position: rubrique.position ? rubrique.position : 0,
                             color: "#000000", // no color in original rubrique
-                            state: rubrique.etat['latest','modified','deleted'],
                             createdAt: rubrique.horodatage,
                             updatedAt: rubrique.horodatage,
                         }).then(function(_node_rubrique_hist) {
@@ -177,14 +255,67 @@ models.sequelize.sync({
                 });
                 return p3;
             });
-        }); // import des rubriques
-
+        }); // /import des rubriques
         return p2;
     }).then(function() {
-        console.log("theme imported ok");
+        console.log("themes imported ok");
     }, function(err) {
-        console.error("can't import theme: ", err);
+        console.error("@@@@@@@@ can't import themes: ", err);
     });
+
+
+    //
+    // import des themes deleted
+    //
+    p = p.then(function() {
+        console.log("#########");
+        console.log("######### import des themes deleted");
+        console.log("#########");
+        return models_import.theme.findAll({
+            order: [
+                ['identifiant', 'ASC'],
+                ['version', 'ASC'],
+            ],
+            where: {
+                etat: {
+                    $eq: 2
+                }
+            }
+        });
+    });
+    p = p.then(function(themes) {
+        var p2 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        themes.forEach(function(theme) {
+            var node_theme;
+            var node_theme_hist;
+            p2=p2.then(function() {
+                return models.node.findOne({
+                    where: {
+                        id: themes_identifiants[theme.dataValues.identifiant],
+
+                    }
+                });
+            });
+            p2=p2.then(function(_node_theme) {
+                node_theme=_node_theme;
+                return getLatestNodeHist({
+                    id_node: node_theme.dataValues.id,
+                })
+            });
+            p2=p2.then(function(_node_directory) {
+                return models.node_hist.findById(_node_directory.id);
+            });
+            p2=p2.then(function(_node_hist) {
+                if (_node_hist)
+                    return _node_hist.destroy();
+            });
+        });
+
+        return p2;
+    });
+
 
 
     // end
