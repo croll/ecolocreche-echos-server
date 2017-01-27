@@ -36,8 +36,6 @@ function getLatestNodeHist(params) {
             && params.id_node_parent !== "null") {
             query+=' and node.id_node_parent = ?';
             replacements.push(params.id_node_parent);
-        } else {
-            query+=' and node.id_node_parent is null';
         }
 
         if ('id_node' in params
@@ -346,6 +344,8 @@ models.sequelize.sync({
             var node_rubrique;
             var node_rubrique_hist;
             p2=p2.then(function() {
+                console.log("rubriques_identifiants", rubriques_identifiants);
+                console.log("rubrique.dataValues.identifiant", rubrique.dataValues.identifiant);
                 return models.node.findOne({
                     where: {
                         id: rubriques_identifiants[rubrique.dataValues.identifiant],
