@@ -59,7 +59,18 @@ module.exports = function(server, epilogue, models) {
      */
     server.get('/rest/hist/nodes/:id_node', function (req, res, next) {
         return dbtools.getLatestNodeHist(models, req.params).then(function(dir_hist) {
-            res.send(dir_hist);
+            if (dir_hist === undefined) {
+                throw new epilogue.Errors.NotFoundError("node does not exists");
+            } else {
+                if (dir_hist.type != 'directory') {
+                    return dbtools.getLatestChoiceHist(models, req.params).then(function(choices_hist) {
+                        dir_hist.choices = choices_hist;
+                        res.send(dir_hist);
+                    });
+                } else {
+                    res.send(dir_hist);
+                }
+            }
         }, function(err) {
             throw new epilogue.Errors.EpilogueError(500, err);
         });
