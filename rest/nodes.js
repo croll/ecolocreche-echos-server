@@ -175,9 +175,11 @@ module.exports = function(server, epilogue, models) {
                         });
                     }
 
+                    var id_choice;
                     p=p.then(function(choice) {
+                        id_choice = choice.get("id");
                         return dbtools.getLatestChoiceHist(models, {
-                            id_choice: choice.get("id"),
+                            id_choice: id_choice,
                         });
                     });
 
@@ -190,7 +192,7 @@ module.exports = function(server, epilogue, models) {
                             || param_choice.impact != fullchoice.impact
                         ) {
                             return models.choice_hist.create({
-                                id_choice: fullchoice.id_choice,
+                                id_choice: id_choice,
                                 title: param_choice.title,
                                 comment: param_choice.comment,
                                 position: param_choice.position,
