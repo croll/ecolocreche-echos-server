@@ -84,7 +84,7 @@ module.exports = function(server, epilogue, models) {
             id_node_parent: req.params.id_node_parent,
         }).then(function(node) {
             return models.node_hist.create({
-                id_node: req.params.id_node,
+                id_node: node.get('id'),
                 type: req.params.type,
                 title: req.params.title,
                 description: req.params.description,
