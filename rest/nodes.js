@@ -40,45 +40,11 @@ module.exports = function(server, epilogue, models) {
      *  - id_node_parent : null by default
      */
     server.get('/rest/hist/nodes', function (req, res, next) {
-
-        var date = '2222-12-22';
-
-        if ('date' in req.params) {
-            date = req.params.date;
+        if (!('id_node_parent' in req.params)) {
+            req.params.id_node_parent="null";
         }
-
-        var query = `
-            select
-             node.id_node_parent,
-             nh1.*
-            from node
-            left join node_hist nh1 ON nh1.id_node = node.id
-            where nh1.createdAt=(
-             select max(createdAt)
-             from node_hist nh2
-             where nh1.id_node = nh2.id_node
-             and createdAt <= ?
-            )
-            and deletedAt IS NULL`;
-
-        var replacements = [ date ];
-
-
-        if ('id_node_parent' in req.params
-            && req.params.id_node_parent !== null
-            && req.params.id_node_parent !== "null") {
-            query+=' and node.id_node_parent = ?';
-            replacements.push(req.params.id_node_parent);
-        } else {
-            query+=' and node.id_node_parent is null';
-        }
-
-        return models.sequelize.query(query, {
-                replacements: replacements,
-                type: models.sequelize.QueryTypes.SELECT
-            }
-        ).then(function(nodes) {
-            res.send(nodes);
+        return dbtools.getLatestNodeHist(models, req.params).then(function(dirs) {
+            res.send(dirs);
         });
     });
 
@@ -87,9 +53,9 @@ module.exports = function(server, epilogue, models) {
      *
      * optional params :
      *  - date: <date string> : return nodes has they where on this date, '2222-12-22' by default
-     *  - id_node_parent : null by default
+     *  - id_node_parent : not very usefull here
      */
-    server.get('/rest/hist/node/:id_node', function (req, res, next) {
+    server.get('/rest/hist/nodes/:id_node', function (req, res, next) {
         return dbtools.getLatestNodeHist(models, req.params).then(function(dir_hist) {
             res.send(dir_hist);
         });
