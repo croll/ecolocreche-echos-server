@@ -38,6 +38,8 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
   }, {
-    tableName: 'choice_hist'
+    tableName: 'choice_hist',
+    timestamps: true,
+    paranoid: true,
   });
 };

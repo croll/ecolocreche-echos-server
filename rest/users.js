@@ -72,4 +72,11 @@ module.exports = function(server, epilogue, models) {
         }
     });
 
+    /* exemple send.before
+    userResource.list.send.before(function(req, res, context) {
+        console.log(context.instance);
+        return context.continue;
+    });
+    */
+
 };

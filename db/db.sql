@@ -18,6 +18,8 @@ CREATE TABLE `audit` (
   `key` VARCHAR(64) NOT NULL,
   `active` TINYINT(1) NOT NULL,
   `synthesis` MEDIUMTEXT NOT NULL,
+  `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
   PRIMARY KEY (`id`)
 );
 
@@ -35,7 +37,9 @@ CREATE TABLE `choice_hist` (
   `comment` VARCHAR(255) NOT NULL,
   `position` INTEGER NOT NULL DEFAULT 0,
   `impact` INTEGER NULL DEFAULT NULL,
-  `state` ENUM('latest','modified','deleted') NOT NULL,
+  `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `deletedAt` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -56,6 +60,8 @@ CREATE TABLE `establishment` (
   `mail` VARCHAR(100) NOT NULL,
   `type` ENUM('creche','halte-garderie','micro-creche','multi-accueil','relais-d-assistante','autre') NOT NULL DEFAULT 'autre' COMMENT 'creche, halte-garderie, micro-crèche, etc.',
   `status` ENUM('association','association-parentale','entreprise','publique','indetermine','autre') NOT NULL DEFAULT 'autre' COMMENT 'association, association parental, publique, etc.',
+  `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
   PRIMARY KEY (`id`)
 );
 
@@ -71,6 +77,8 @@ CREATE TABLE `answer` (
   `id_node` INTEGER NOT NULL,
   `ignored` TINYINT(1) NOT NULL,
   `value` MEDIUMTEXT NOT NULL,
+  `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
   PRIMARY KEY (`id_audit`, `id_node`)
 );
 
@@ -89,7 +97,9 @@ CREATE TABLE `node_hist` (
   `description` VARCHAR(200) NOT NULL,
   `position` INTEGER NOT NULL DEFAULT 0,
   `color` VARCHAR(6) NULL DEFAULT NULL,
-  `state` ENUM('latest','modified','deleted') NOT NULL DEFAULT 'latest',
+  `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `deletedAt` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -107,12 +117,13 @@ CREATE TABLE `users` (
   `email` VARCHAR(64) NOT NULL,
   `account_type` ENUM('admin','agent') NOT NULL DEFAULT 'agent' COMMENT 'orig: agent=1, admin=2',
   `rememberme_token` VARCHAR(64) NOT NULL,
-  `creation_timestamp` BIGINT(20) NOT NULL,
   `last_login_timestamp` BIGINT(20) NULL DEFAULT NULL,
   `failed_logins` INTEGER NOT NULL DEFAULT 0,
   `last_failed_login` INTEGER(10) NULL DEFAULT NULL,
   `password_reset_hash` CHAR(40) NULL DEFAULT NULL,
   `password_reset_timestamp` BIGINT(20) NULL DEFAULT NULL,
+  `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
   PRIMARY KEY (`id`),
   UNIQUE KEY (`name`),
   UNIQUE KEY (`email`)
@@ -130,6 +141,8 @@ CREATE TABLE `inquiryform` (
   `title` VARCHAR(100) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
   `position` INTEGER NOT NULL DEFAULT 0,
+  `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
   PRIMARY KEY (`id`)
 );
 
@@ -142,7 +155,7 @@ DROP TABLE IF EXISTS `node`;
 
 CREATE TABLE `node` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
-  `id_directory_parent` INTEGER NULL DEFAULT NULL,
+  `id_node_parent` INTEGER NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -169,6 +182,8 @@ DROP TABLE IF EXISTS `inquiryform_node`;
 CREATE TABLE `inquiryform_node` (
   `id_inquiryform` INTEGER NOT NULL,
   `id_node` INTEGER NULL DEFAULT NULL,
+  `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
   PRIMARY KEY (`id_inquiryform`, `id_node`)
 );
 
@@ -181,7 +196,7 @@ ALTER TABLE `choice_hist` ADD FOREIGN KEY (id_choice) REFERENCES `choice` (`id`)
 ALTER TABLE `answer` ADD FOREIGN KEY (id_audit) REFERENCES `audit` (`id`);
 ALTER TABLE `answer` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 ALTER TABLE `node_hist` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
-ALTER TABLE `node` ADD FOREIGN KEY (id_directory_parent) REFERENCES `node` (`id`);
+ALTER TABLE `node` ADD FOREIGN KEY (id_node_parent) REFERENCES `node` (`id`);
 ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 ALTER TABLE `inquiryform_node` ADD FOREIGN KEY (id_inquiryform) REFERENCES `inquiryform` (`id`);
 ALTER TABLE `inquiryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
@@ -205,23 +220,23 @@ ALTER TABLE `inquiryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`
 -- Test Data
 -- ---
 
--- INSERT INTO `audit` (`id`,`id_establishment`,`key`,`active`,`synthesis`) VALUES
--- ('','','','','');
--- INSERT INTO `choice_hist` (`id`,`id_choice`,`title`,`comment`,`position`,`impact`,`state`) VALUES
+-- INSERT INTO `audit` (`id`,`id_establishment`,`key`,`active`,`synthesis`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','','');
--- INSERT INTO `establishment` (`id`,`name`,`address`,`postalcode`,`city`,`phone`,`mail`,`type`,`status`) VALUES
+-- INSERT INTO `choice_hist` (`id`,`id_choice`,`title`,`comment`,`position`,`impact`,`createdAt`,`updatedAt`,`deletedAt`) VALUES
 -- ('','','','','','','','','');
--- INSERT INTO `answer` (`id_audit`,`id_node`,`ignored`,`value`) VALUES
--- ('','','','');
--- INSERT INTO `node_hist` (`id`,`id_node`,`type`,`title`,`description`,`position`,`color`,`state`) VALUES
--- ('','','','','','','','');
--- INSERT INTO `users` (`id`,`name`,`password_hash`,`email`,`account_type`,`rememberme_token`,`creation_timestamp`,`last_login_timestamp`,`failed_logins`,`last_failed_login`,`password_reset_hash`,`password_reset_timestamp`) VALUES
--- ('','','','','','','','','','','','');
--- INSERT INTO `inquiryform` (`id`,`title`,`description`,`position`) VALUES
--- ('','','','');
--- INSERT INTO `node` (`id`,`id_directory_parent`) VALUES
+-- INSERT INTO `establishment` (`id`,`name`,`address`,`postalcode`,`city`,`phone`,`mail`,`type`,`status`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','','','','','','');
+-- INSERT INTO `answer` (`id_audit`,`id_node`,`ignored`,`value`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','');
+-- INSERT INTO `node_hist` (`id`,`id_node`,`type`,`title`,`description`,`position`,`color`,`createdAt`,`updatedAt`,`deletedAt`) VALUES
+-- ('','','','','','','','','','');
+-- INSERT INTO `users` (`id`,`name`,`password_hash`,`email`,`account_type`,`rememberme_token`,`last_login_timestamp`,`failed_logins`,`last_failed_login`,`password_reset_hash`,`password_reset_timestamp`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','','','','','','','','');
+-- INSERT INTO `inquiryform` (`id`,`title`,`description`,`position`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','');
+-- INSERT INTO `node` (`id`,`id_node_parent`) VALUES
 -- ('','');
 -- INSERT INTO `choice` (`id`,`id_node`) VALUES
 -- ('','');
--- INSERT INTO `inquiryform_node` (`id_inquiryform`,`id_node`) VALUES
--- ('','');
+-- INSERT INTO `inquiryform_node` (`id_inquiryform`,`id_node`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','');

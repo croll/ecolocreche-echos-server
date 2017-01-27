@@ -21,6 +21,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'inquiryform_node'
+    tableName: 'inquiryform_node',
+    timestamps: true,
   });
 };

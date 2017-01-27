@@ -43,6 +43,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: "autre"
     }
   }, {
-    tableName: 'establishment'
+    tableName: 'establishment',
+    timestamps: true,
   });
 };

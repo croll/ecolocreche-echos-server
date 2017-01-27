@@ -18,7 +18,7 @@ module.exports = function(server, epilogue, models) {
      */
     models.node.addScope('roots', {
         where: {
-            "id_directory_parent": null,
+            "id_node_parent": null,
         }
     });
 
@@ -35,7 +35,7 @@ module.exports = function(server, epilogue, models) {
      *
      * optional params :
      *  - date: <date string> : return directories has they where on this date, '2222-12-22' by default
-     *  - id_directory_parent : null by default
+     *  - id_node_parent : null by default
      */
     server.get('/rest/hist/directories', function (req, res, next) {
 
@@ -45,9 +45,9 @@ module.exports = function(server, epilogue, models) {
             date = req.params.date;
         }
 
-        var q = `
+        var query = `
             select
-             node.id_directory_parent,
+             node.id_node_parent,
              nh1.*
             from node
             left join node_hist nh1 ON nh1.id_node = node.id
@@ -62,22 +62,50 @@ module.exports = function(server, epilogue, models) {
         var replacements = [ date ];
 
 
-        if ('id_directory_parent' in req.params
-            && req.params.id_directory_parent !== null
-            && req.params.id_directory_parent !== "null") {
-            q+=' and node.id_directory_parent = ?';
-            replacements.push(req.params.id_directory_parent);
+        if ('id_node_parent' in req.params
+            && req.params.id_node_parent !== null
+            && req.params.id_node_parent !== "null") {
+            query+=' and node.id_node_parent = ?';
+            replacements.push(req.params.id_node_parent);
         } else {
-            q+=' and node.id_directory_parent is null';
+            query+=' and node.id_node_parent is null';
         }
 
-        return models.sequelize.query(q,{
+        return models.sequelize.query(query, {
                 replacements: replacements,
                 type: models.sequelize.QueryTypes.SELECT
             }
         ).then(function(directories) {
             res.send(directories);
         });
+    });
+
+    /*
+     * add a new directory
+     */
+    server.post('/rest/hist/directories/:id_node_parent', function (req, res, next) {
+        return models.node.create({
+            id_node_parent: req.params.id_node_parent,
+        }).then(function(node) {
+            return models.node_hist.create({
+                id_node: req.params.id_node,
+                type: req.params.type,
+                title: req.params.title,
+                description: req.params.description,
+                position: req.params.position,
+                color: req.params.color,
+                state: req.params.state,
+            });
+        }).then(function(node_hist) {
+            res.send(node_hist);
+        });
+    });
+
+    /*
+     * edit a directory
+     */
+    server.put('/rest/hist/directories/:id_node', function (req, res, next) {
+        //return models.node.get()
     });
 
 }

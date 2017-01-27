@@ -44,6 +44,8 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: "latest"
     }
   }, {
-    tableName: 'node_hist'
+    tableName: 'node_hist',
+    timestamps: true,
+    paranoid: true,
   });
 };

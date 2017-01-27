@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    id_directory_parent: {
+    id_node_parent: {
       type: DataTypes.INTEGER(11),
       allowNull: true,
       references: {
@@ -17,6 +17,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'node'
+    tableName: 'node',
+    timestamps: false,
   });
 };

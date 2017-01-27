@@ -22,6 +22,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: "0"
     }
   }, {
-    tableName: 'inquiryform'
+    tableName: 'inquiryform',
+    timestamps: true,
   });
 };
