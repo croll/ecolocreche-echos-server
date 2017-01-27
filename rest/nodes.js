@@ -1,4 +1,6 @@
 var dbtools = require(__dirname + '/../lib/dbtools.js');
+var restify = require('restify');
+var Promise = require("bluebird");
 
 module.exports = function(server, epilogue, models) {
 
@@ -46,7 +48,8 @@ module.exports = function(server, epilogue, models) {
         return dbtools.getLatestNodeHist(models, req.params).then(function(dirs) {
             res.send(dirs);
         }, function(err) {
-            throw new epilogue.Errors.EpilogueError(500, err);
+            console.error(err);
+            return next(new restify.InternalServerError(err));
         });
     });
 
@@ -60,7 +63,7 @@ module.exports = function(server, epilogue, models) {
     server.get('/rest/hist/nodes/:id_node', function (req, res, next) {
         return dbtools.getLatestNodeHist(models, req.params).then(function(dir_hist) {
             if (dir_hist === undefined) {
-                throw new epilogue.Errors.NotFoundError("node does not exists");
+                return next(new restify.NotFoundError("node does not exists"));
             } else {
                 if (dir_hist.type != 'directory') {
                     return dbtools.getLatestChoiceHist(models, req.params).then(function(choices_hist) {
@@ -72,7 +75,8 @@ module.exports = function(server, epilogue, models) {
                 }
             }
         }, function(err) {
-            throw new epilogue.Errors.EpilogueError(500, err);
+            console.error(err);
+            return next(new restify.InternalServerError(err));
         });
     });
 
@@ -92,9 +96,39 @@ module.exports = function(server, epilogue, models) {
                 color: req.params.color
             });
         }).then(function(node_hist) {
+            if (node_hist.get("type") == "directory") {
+                return node_hist;
+            } else {
+                // create choices
+                var p = new Promise(function (resolve, reject) {
+                    resolve();
+                });
+                req.params.choices.forEach(function(param_choice) {
+                    p=p.then(function() {
+                        return models.choice.create({
+                            id_node: node_hist.get("id_node"),
+                        });
+                    });
+                    p=p.then(function(choice) {
+                        return models.choice_hist.create({
+                            id_choice: choice.get('id'),
+                            title: param_choice.title,
+                            comment: param_choice.comment,
+                            position: param_choice.position,
+                            impact: param_choice.impact,
+                        });
+                    });
+                });
+                p.then(function() {
+                    return null;
+                });
+                return p;
+            }
+        }).then(function(node_hist) {
             res.send(node_hist);
         }, function(err) {
-            throw new epilogue.Errors.EpilogueError(500, err);
+            console.error(err);
+            return next(new restify.InternalServerError(err));
         });
     });
 
@@ -116,7 +150,8 @@ module.exports = function(server, epilogue, models) {
         }).then(function(node_hist) {
             res.send(node_hist);
         }, function(err) {
-            throw new epilogue.Errors.EpilogueError(500, err);
+            console.error(err);
+            return next(new restify.InternalServerError(err));
         });
     });
 
@@ -134,7 +169,8 @@ module.exports = function(server, epilogue, models) {
         }).then(function(node_hist) {
             res.send(node_hist);
         }, function(err) {
-            throw new epilogue.Errors.EpilogueError(500, err);
+            console.error(err);
+            return next(new restify.InternalServerError(err));
         });
     });
 }
