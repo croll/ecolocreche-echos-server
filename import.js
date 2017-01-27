@@ -160,6 +160,7 @@ models.sequelize.sync({
 
     // import des themes
     var themes_identifiants = {};
+    var rubriques_identifiants = {};
     p = p.then(function() {
         console.log("#########");
         console.log("######### import des themes");
@@ -236,6 +237,7 @@ models.sequelize.sync({
                     });
                     p3=p3.then(function(_node_rubrique) {
                         node_rubrique = _node_rubrique;
+                        rubriques_identifiants[rubrique.dataValues.identifiant] = node_rubrique.dataValues.id;
                         return models.node_hist.create({
                             id_node: node_rubrique.dataValues.id,
                             type: 'directory',
@@ -302,6 +304,59 @@ models.sequelize.sync({
                 node_theme=_node_theme;
                 return getLatestNodeHist({
                     id_node: node_theme.dataValues.id,
+                })
+            });
+            p2=p2.then(function(_node_directory) {
+                return models.node_hist.findById(_node_directory.id);
+            });
+            p2=p2.then(function(_node_hist) {
+                if (_node_hist)
+                    return _node_hist.destroy();
+            });
+        });
+
+        return p2;
+    });
+
+
+    //
+    // import des rubriques deleted
+    //
+    p = p.then(function() {
+        console.log("#########");
+        console.log("######### import des rubriques deleted");
+        console.log("#########");
+        return models_import.rubrique.findAll({
+            order: [
+                ['identifiant', 'ASC'],
+                ['version', 'ASC'],
+            ],
+            where: {
+                etat: {
+                    $eq: 2
+                }
+            }
+        });
+    });
+    p = p.then(function(rubriques) {
+        var p2 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        rubriques.forEach(function(rubrique) {
+            var node_rubrique;
+            var node_rubrique_hist;
+            p2=p2.then(function() {
+                return models.node.findOne({
+                    where: {
+                        id: rubriques_identifiants[rubrique.dataValues.identifiant],
+
+                    }
+                });
+            });
+            p2=p2.then(function(_node_rubrique) {
+                node_rubrique=_node_rubrique;
+                return getLatestNodeHist({
+                    id_node: node_rubrique.dataValues.id,
                 })
             });
             p2=p2.then(function(_node_directory) {
