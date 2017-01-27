@@ -83,6 +83,19 @@ module.exports = function(server, epilogue, models) {
     });
 
     /*
+     * get node at moment
+     *
+     * optional params :
+     *  - date: <date string> : return nodes has they where on this date, '2222-12-22' by default
+     *  - id_node_parent : null by default
+     */
+    server.get('/rest/hist/node/:id_node', function (req, res, next) {
+        return dbtools.getLatestNodeHist(models, req.params).then(function(dir_hist) {
+            res.send(dir_hist);
+        });
+    });
+
+    /*
      * add a new node
      */
     server.post('/rest/hist/nodes/:id_node_parent', function (req, res, next) {
