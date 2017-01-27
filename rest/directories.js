@@ -57,7 +57,7 @@ module.exports = function(server, epilogue, models) {
              where nh1.id_node = nh2.id_node
              and createdAt <= ?
             )
-            and state != 'deleted'`;
+            and deletedAt IS NOT NULL`;
 
         var replacements = [ date ];
 
