@@ -119,7 +119,7 @@ module.exports = function(server, epilogue, models) {
                         });
                     });
                 });
-                p.then(function() {
+                p=p.then(function() {
                     return node_hist;
                 });
                 return p;
@@ -199,7 +199,8 @@ module.exports = function(server, epilogue, models) {
                         }
                     });
                 });
-                p.then(function() {
+
+                p=p.then(function() {
                     return node_hist;
                 });
                 return p;
