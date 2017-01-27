@@ -95,8 +95,7 @@ module.exports = function(server, epilogue, models) {
                 title: req.params.title,
                 description: req.params.description,
                 position: req.params.position,
-                color: req.params.color,
-                state: req.params.state,
+                color: req.params.color
             });
         }).then(function(node_hist) {
             res.send(node_hist);
