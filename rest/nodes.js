@@ -82,10 +82,13 @@ module.exports = function(server, epilogue, models) {
 
     /*
      * add a new node
+     *
+     * optional params :
+     *  - id_node_parent : null by default
      */
-    server.post('/rest/hist/nodes/:id_node_parent', function (req, res, next) {
+    server.post('/rest/hist/nodes', function (req, res, next) {
         return models.node.create({
-            id_node_parent: req.params.id_node_parent,
+            id_node_parent: 'id_node_parent' in req.params.id_node_parent ? req.params.id_node_parent : null,
         }).then(function(node) {
             return models.node_hist.create({
                 id_node: node.get('id'),
