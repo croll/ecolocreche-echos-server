@@ -65,14 +65,21 @@ module.exports = function(server, epilogue, models) {
             if (dir_hist === undefined) {
                 return next(new restify.NotFoundError("node does not exists"));
             } else {
-                if (dir_hist.type != 'directory') {
-                    return dbtools.getLatestChoiceHist(models, req.params).then(function(choices_hist) {
-                        dir_hist.choices = choices_hist;
-                        res.send(dir_hist);
-                    });
-                } else {
+                return dir_hist;
+            }
+        }).then(function(dir_hist) {
+            return dbtools.getNodePath(models, dir_hist.id_node).then(function(path) {
+                dir_hist.nodepath = path;
+                return dir_hist;
+            });
+        }).then(function(dir_hist) {
+            if (dir_hist.type != 'directory') {
+                return dbtools.getLatestChoiceHist(models, req.params).then(function(choices_hist) {
+                    dir_hist.choices = choices_hist;
                     res.send(dir_hist);
-                }
+                });
+            } else {
+                res.send(dir_hist);
             }
         }, function(err) {
             console.error(err);
