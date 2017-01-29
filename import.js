@@ -469,6 +469,65 @@ function import_rubriques_deleted() {
     return p;
 }
 
+function import_questions_deleted() {
+    var p = new Promise(function (resolve, reject) {
+        console.log("#########");
+        console.log("######### import des questions deleted");
+        console.log("#########");
+        resolve();
+    });
+
+    p = p.then(function() {
+        return models_import.question.findAll({
+            order: [
+                ['identifiant', 'ASC'],
+                ['version', 'ASC'],
+            ],
+            where: {
+                etat: {
+                    $eq: 2
+                }
+            }
+        });
+    });
+    p = p.then(function(questions) {
+        var p2 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        questions.forEach(function(question) {
+            var node_question;
+            var node_question_hist;
+            p2=p2.then(function() {
+                return models.node.findOne({
+                    where: {
+                        id: questions_identifiants[question.dataValues.identifiant],
+
+                    }
+                });
+            });
+            p2=p2.then(function(_node_question) {
+                node_question=_node_question;
+                return getLatestNodeHist({
+                    id_node: node_question.dataValues.id,
+                })
+            });
+            p2=p2.then(function(_node_directory) {
+                return models.node_hist.findById(_node_directory.id);
+            });
+            p2=p2.then(function(_node_hist) {
+                if (_node_hist) {
+                    console.log("  delete "+_node_hist.title);
+                    return _node_hist.destroy();
+                }
+            });
+        });
+
+        return p2;
+    });
+
+    return p;
+}
+
 models.sequelize.sync({
     force: true,
 }).then(function() {
@@ -511,6 +570,11 @@ models.sequelize.sync({
     // import des rubriques deleted
     p = p.then(function() {
         return import_rubriques_deleted();
+    });
+
+    // import des questions deleted
+    p = p.then(function() {
+        return import_questions_deleted();
     });
 
 
