@@ -65,9 +65,8 @@ function getLatestNodeHist(params) {
     });
 }
 
-models.sequelize.sync({
-    force: true,
-}).then(function() {
+
+function import_users() {
     var p = new Promise(function (resolve, reject) {
         resolve();
     });
@@ -106,6 +105,13 @@ models.sequelize.sync({
         console.error("can't import users: ", err);
     });
 
+    return p;
+}
+
+function import_etablissements() {
+    var p = new Promise(function (resolve, reject) {
+        resolve();
+    });
 
     // import des etablissements
     p = p.then(function() {
@@ -143,22 +149,18 @@ models.sequelize.sync({
         console.error("can't import establishment: ", err);
     });
 
-    // création d'un premier questionnaire
-    p=p.then(function() {
-        return models.inquiryform.create({
-            title: "Questionnaire original",
-            description: "Le questionnaire tel qu'il existait dans l'ancienne version",
-        }).then(function() {
-            console.log("questionnaire created.");
-        }, function(err) {
-            console.log("questionnaire creation error: ", err);
-        });
+    return p;
+}
+
+
+var themes_identifiants = {};
+var rubriques_identifiants = {};
+function import_themes() {
+    // import des themes
+    var p = new Promise(function (resolve, reject) {
+        resolve();
     });
 
-
-    // import des themes
-    var themes_identifiants = {};
-    var rubriques_identifiants = {};
     p = p.then(function() {
         console.log("#########");
         console.log("######### import des themes");
@@ -263,10 +265,18 @@ models.sequelize.sync({
         console.error("@@@@@@@@ can't import themes: ", err);
     });
 
+    return p;
+}
 
+function import_themes_deleted() {
     //
     // import des themes deleted
     //
+
+    var p = new Promise(function (resolve, reject) {
+        resolve();
+    });
+
     p = p.then(function() {
         console.log("#########");
         console.log("######### import des themes deleted");
@@ -316,7 +326,10 @@ models.sequelize.sync({
         return p2;
     });
 
+    return p;
+}
 
+function import_rubriques_deleted() {
     //
     // import des rubriques deleted
     //
@@ -371,9 +384,58 @@ models.sequelize.sync({
         return p2;
     });
 
+    return p;
+}
+
+models.sequelize.sync({
+    force: true,
+}).then(function() {
+    var p = new Promise(function (resolve, reject) {
+        resolve();
+    });
+
+    // import des users
+    p = p.then(function() {
+        return import_users();
+    });
+
+    // import des etablissements
+    p = p.then(function() {
+        return import_etablissements();
+    });
+
+    // création d'un premier questionnaire
+    p=p.then(function() {
+        return models.inquiryform.create({
+            title: "Questionnaire original",
+            description: "Le questionnaire tel qu'il existait dans l'ancienne version",
+        }).then(function() {
+            console.log("questionnaire created.");
+        }, function(err) {
+            console.log("questionnaire creation error: ", err);
+        });
+    });
+
+    // import des themes
+    p = p.then(function() {
+        return import_themes();
+    });
+
+    // import des themes deleted
+    p = p.then(function() {
+        return import_themes_deleted();
+    });
+
+    // import des rubriques deleted
+    p = p.then(function() {
+        return import_themes_deleted();
+    });
 
 
     // end
+    p = p.then(function() {
+        console.log("THE END");
+    });
     return p;
 
 }, function(err) {
