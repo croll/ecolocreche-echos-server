@@ -9,6 +9,7 @@ var config    = require(__dirname + '/../config/config.json');
 var db        = {};
 
 var seqoptions = {
+    logging: false,
     define: {
         timestamps: true,
         paranoid: false,
