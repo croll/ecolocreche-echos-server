@@ -68,14 +68,14 @@ function getLatestNodeHist(params) {
 
 function import_users() {
     var p = new Promise(function (resolve, reject) {
+        console.log("#########");
+        console.log("######### import des users ...");
+        console.log("#########");
         resolve();
     });
 
     // import des users
     p = p.then(function() {
-        console.log("#########");
-        console.log("######### import des users");
-        console.log("#########");
         return models_import.users.findAll();
     });
     p = p.then(function(rows) {
@@ -110,14 +110,14 @@ function import_users() {
 
 function import_etablissements() {
     var p = new Promise(function (resolve, reject) {
+        console.log("#########");
+        console.log("######### import des etablissements ...");
+        console.log("#########");
         resolve();
     });
 
     // import des etablissements
     p = p.then(function() {
-        console.log("#########");
-        console.log("######### import des etablissements");
-        console.log("#########");
         return models_import.etablissement.findAll();
     });
     p = p.then(function(rows) {
@@ -158,13 +158,13 @@ var rubriques_identifiants = {};
 function import_themes() {
     // import des themes
     var p = new Promise(function (resolve, reject) {
+        console.log("#########");
+        console.log("######### import des themes ...");
+        console.log("#########");
         resolve();
     });
 
     p = p.then(function() {
-        console.log("#########");
-        console.log("######### import des themes");
-        console.log("#########");
         return models_import.theme.findAll({
             order: [
                 ['identifiant', 'ASC'],
@@ -204,59 +204,13 @@ function import_themes() {
                     node_theme_hist = _node_theme_hist;
                     console.log("theme "+theme.intitule+" imported.");
                 }, function(err) {
-                    console.log("theme "+theme.intitule+" error: ", err);
                 });
             });
 
-            // import des rubriques
-            p2 = p2.then(function() {
-                return models_import.rubrique.findAll({
-                    order: [
-                        ['identifiant', 'ASC'],
-                        ['version', 'ASC'],
-                    ],
-                    where: {
-                        theme: theme.identifiant,
-                        etat: {
-                            $ne: 2
-                        }
-                    }
-                });
+            p2=p2.then(function() {
+                return import_rubriques(theme, node_theme);
             });
-            p2=p2.then(function(rubriques) {
-                var p3 = new Promise(function (resolve, reject) {
-                    resolve();
-                });
-                rubriques.forEach(function(rubrique) {
-                    var node_rubrique;
-                    var node_rubrique_hist;
-                    p3=p3.then(function() {
-                        return models.node.create({
-                            id_node_parent: node_theme.dataValues.id,
-                        });
-                    });
-                    p3=p3.then(function(_node_rubrique) {
-                        node_rubrique = _node_rubrique;
-                        rubriques_identifiants[rubrique.dataValues.identifiant] = node_rubrique.dataValues.id;
-                        return models.node_hist.create({
-                            id_node: node_rubrique.dataValues.id,
-                            type: 'directory',
-                            title: rubrique.intitule ? rubrique.intitule : '',
-                            description: rubrique.description ? rubrique.description : '',
-                            position: rubrique.position ? rubrique.position : 0,
-                            color: "#000000", // no color in original rubrique
-                            createdAt: rubrique.horodatage,
-                            updatedAt: rubrique.horodatage,
-                        }).then(function(_node_rubrique_hist) {
-                            node_rubrique_hist = _node_rubrique_hist;
-                            console.log("rubrique "+rubrique.intitule+" imported.");
-                        }, function(err) {
-                            console.log("rubrique "+rubrique.intitule+" error: ", err);
-                        });
-                    });
-                });
-                return p3;
-            });
+
         }); // /import des rubriques
         return p2;
     }).then(function() {
@@ -268,19 +222,77 @@ function import_themes() {
     return p;
 }
 
-function import_themes_deleted() {
-    //
-    // import des themes deleted
-    //
+function import_rubriques(theme, node_theme) {
+    // import des rubriques
+    var p2 = new Promise(function (resolve, reject) {
+        //console.log("#########");
+        console.log("  ######### import des rubriques ...");
+        //console.log("#########");
+        resolve();
+    });
 
+    // import des rubriques
+    p2 = p2.then(function() {
+        return models_import.rubrique.findAll({
+            order: [
+                ['identifiant', 'ASC'],
+                ['version', 'ASC'],
+            ],
+            where: {
+                theme: theme.identifiant,
+                etat: {
+                    $ne: 2
+                }
+            }
+        });
+    });
+    p2=p2.then(function(rubriques) {
+        var p3 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        rubriques.forEach(function(rubrique) {
+            var node_rubrique;
+            var node_rubrique_hist;
+            p3=p3.then(function() {
+                return models.node.create({
+                    id_node_parent: node_theme.dataValues.id,
+                });
+            });
+            p3=p3.then(function(_node_rubrique) {
+                node_rubrique = _node_rubrique;
+                rubriques_identifiants[rubrique.dataValues.identifiant] = node_rubrique.dataValues.id;
+                return models.node_hist.create({
+                    id_node: node_rubrique.dataValues.id,
+                    type: 'directory',
+                    title: rubrique.intitule ? rubrique.intitule : '',
+                    description: rubrique.description ? rubrique.description : '',
+                    position: rubrique.position ? rubrique.position : 0,
+                    color: "#000000", // no color in original rubrique
+                    createdAt: rubrique.horodatage,
+                    updatedAt: rubrique.horodatage,
+                }).then(function(_node_rubrique_hist) {
+                    node_rubrique_hist = _node_rubrique_hist;
+                    console.log("  rubrique "+rubrique.intitule+" imported.");
+                }, function(err) {
+                    console.log("  rubrique "+rubrique.intitule+" error: ", err);
+                });
+            });
+        });
+        return p3;
+    });
+
+    return p2;
+}
+
+function import_themes_deleted() {
     var p = new Promise(function (resolve, reject) {
+        console.log("#########");
+        console.log("######### import des themes deleted ...");
+        console.log("#########");
         resolve();
     });
 
     p = p.then(function() {
-        console.log("#########");
-        console.log("######### import des themes deleted");
-        console.log("#########");
         return models_import.theme.findAll({
             order: [
                 ['identifiant', 'ASC'],
@@ -318,8 +330,10 @@ function import_themes_deleted() {
                 return models.node_hist.findById(_node_directory.id);
             });
             p2=p2.then(function(_node_hist) {
-                if (_node_hist)
+                if (_node_hist) {
+                    console.log("  delete "+_node_hist.title);
                     return _node_hist.destroy();
+                }
             });
         });
 
@@ -330,13 +344,14 @@ function import_themes_deleted() {
 }
 
 function import_rubriques_deleted() {
-    //
-    // import des rubriques deleted
-    //
-    p = p.then(function() {
+    var p = new Promise(function (resolve, reject) {
         console.log("#########");
         console.log("######### import des rubriques deleted");
         console.log("#########");
+        resolve();
+    });
+
+    p = p.then(function() {
         return models_import.rubrique.findAll({
             order: [
                 ['identifiant', 'ASC'],
@@ -357,8 +372,6 @@ function import_rubriques_deleted() {
             var node_rubrique;
             var node_rubrique_hist;
             p2=p2.then(function() {
-                console.log("rubriques_identifiants", rubriques_identifiants);
-                console.log("rubrique.dataValues.identifiant", rubrique.dataValues.identifiant);
                 return models.node.findOne({
                     where: {
                         id: rubriques_identifiants[rubrique.dataValues.identifiant],
@@ -376,8 +389,10 @@ function import_rubriques_deleted() {
                 return models.node_hist.findById(_node_directory.id);
             });
             p2=p2.then(function(_node_hist) {
-                if (_node_hist)
-                    return _node_hist.destroy();
+                if (_node_hist) {
+                    console.log("  delete "+_node_hist.title);
+                    return _node_hist.destroy();                    
+                }
             });
         });
 
@@ -405,7 +420,7 @@ models.sequelize.sync({
     });
 
     // création d'un premier questionnaire
-    p=p.then(function() {
+    p = p.then(function() {
         return models.inquiryform.create({
             title: "Questionnaire original",
             description: "Le questionnaire tel qu'il existait dans l'ancienne version",
@@ -428,7 +443,7 @@ models.sequelize.sync({
 
     // import des rubriques deleted
     p = p.then(function() {
-        return import_themes_deleted();
+        return import_rubriques_deleted();
     });
 
 
