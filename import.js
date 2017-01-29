@@ -155,6 +155,7 @@ function import_etablissements() {
 
 var themes_identifiants = {};
 var rubriques_identifiants = {};
+var questions_identifiants = {};
 function import_themes() {
     // import des themes
     var p = new Promise(function (resolve, reject) {
@@ -277,6 +278,72 @@ function import_rubriques(theme, node_theme) {
                     console.log("  rubrique "+rubrique.intitule+" error: ", err);
                 });
             });
+            p3=p3.then(function() {
+                return import_questions(rubrique, node_rubrique);
+            });
+        });
+        return p3;
+    });
+
+    return p2;
+}
+
+function import_questions(rubrique, node_rubrique) {
+    // import des questions
+    var p2 = new Promise(function (resolve, reject) {
+        //console.log("#########");
+        console.log("    ######### import des questions ...");
+        //console.log("#########");
+        resolve();
+    });
+
+    // import des questions
+    p2 = p2.then(function() {
+        return models_import.question.findAll({
+            order: [
+                ['identifiant', 'ASC'],
+                ['version', 'ASC'],
+            ],
+            where: {
+                rubrique: rubrique.identifiant,
+                etat: {
+                    $ne: 2
+                }
+            }
+        });
+    });
+    p2=p2.then(function(questions) {
+        var p3 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        questions.forEach(function(question) {
+            var node_question;
+            var node_question_hist;
+            p3=p3.then(function() {
+                return models.node.create({
+                    id_node_parent: node_rubrique.dataValues.id,
+                });
+            });
+            p3=p3.then(function(_node_question) {
+                node_question = _node_question;
+                questions_identifiants[question.dataValues.identifiant] = node_question.dataValues.id;
+                return models.node_hist.create({
+                    id_node: node_question.dataValues.id,
+                    type: 'directory',
+                    title: question.intitule ? question.intitule : '',
+                    type: ['q_radio','q_checkbox','q_percents','q_text','q_numeric'][question.type],
+                    description: question.commentaire ? question.commentaire : '',
+                    position: question.position ? question.position : 0,
+                    color: "#000000", // no color in original question
+                    createdAt: question.horodatage,
+                    updatedAt: question.horodatage,
+                }).then(function(_node_question_hist) {
+                    node_question_hist = _node_question_hist;
+                    console.log("    question "+question.intitule+" imported.");
+                }, function(err) {
+                    console.log("    question "+question.intitule+" error: ", err);
+                });
+            });
         });
         return p3;
     });
@@ -391,7 +458,7 @@ function import_rubriques_deleted() {
             p2=p2.then(function(_node_hist) {
                 if (_node_hist) {
                     console.log("  delete "+_node_hist.title);
-                    return _node_hist.destroy();                    
+                    return _node_hist.destroy();
                 }
             });
         });
