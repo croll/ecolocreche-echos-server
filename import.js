@@ -198,7 +198,7 @@ function import_themes() {
                     title: theme.intitule ? theme.intitule : '',
                     description: theme.description ? theme.description : '',
                     position: theme.position ? theme.position : 0,
-                    color: theme.couleur ? theme.couleur : "#000000",
+                    color: theme.couleur ? theme.couleur : "",
                     createdAt: theme.horodatage,
                     updatedAt: theme.horodatage,
                 }).then(function(_node_theme_hist) {
@@ -268,7 +268,7 @@ function import_rubriques(theme, node_theme) {
                     title: rubrique.intitule ? rubrique.intitule : '',
                     description: rubrique.description ? rubrique.description : '',
                     position: rubrique.position ? rubrique.position : 0,
-                    color: "#000000", // no color in original rubrique
+                    color: "", // no color in original rubrique
                     createdAt: rubrique.horodatage,
                     updatedAt: rubrique.horodatage,
                 }).then(function(_node_rubrique_hist) {
@@ -334,7 +334,7 @@ function import_questions(rubrique, node_rubrique) {
                     type: ['q_radio','q_checkbox','q_percents','q_text','q_numeric'][question.type],
                     description: question.commentaire ? question.commentaire : '',
                     position: question.position ? question.position : 0,
-                    color: "#000000", // no color in original question
+                    color: "", // no color in original question
                     createdAt: question.horodatage,
                     updatedAt: question.horodatage,
                 }).then(function(_node_question_hist) {
