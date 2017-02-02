@@ -38,12 +38,10 @@ module.exports = function(server, epilogue, models) {
         return models.inquiryform.create({
         }).then(function(inquiryform) {
             return models.inquiryform_hist.create({
-                id_inquiryform: req.params.id_inquiryform,
-                type: req.params.type,
                 title: req.params.title,
                 description: req.params.description,
+                nodeslist: req.params.nodeslist,
                 position: req.params.position,
-                color: req.params.color
             });
         }).then(function(inquiryform_hist) {
             res.send(inquiryform_hist);
@@ -67,7 +65,7 @@ module.exports = function(server, epilogue, models) {
         }).then(function(inquiryform_hist) {
             return inquiryform_hist.update(req.params, {
                 fields: [
-                    'type', 'title', 'description', 'position', 'color'
+                    'title', 'description', 'position', 'nodeslist'
                 ],
             })
         }).then(function(inquiryform_hist) {
