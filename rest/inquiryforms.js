@@ -60,7 +60,7 @@ module.exports = function(server, epilogue, models) {
         }).then(function(dir_hist) {
             return models.inquiryform_hist.findOne({
                 where: {
-                    id: dir_hist.dataValues.id,
+                    id: dir_hist.id,
                 }
             });
         }).then(function(inquiryform_hist) {
