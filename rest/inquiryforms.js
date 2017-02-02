@@ -10,7 +10,7 @@ module.exports = function(server, epilogue, models) {
      *  - date: <date string> : return inquiryforms has they where on this date, '2222-12-22' by default
      */
     server.get('/rest/hist/inquiryforms', function (req, res, next) {
-        return dbtools.getLatestChoiceHist(models, req.params).then(function(dirs) {
+        return dbtools.getLatestInquiryformHist(models, req.params).then(function(dirs) {
             res.send(dirs);
         }, function(err) {
             throw new epilogue.Errors.EpilogueError(500, err);
@@ -24,7 +24,7 @@ module.exports = function(server, epilogue, models) {
      *  - date: <date string> : return inquiryforms has they where on this date, '2222-12-22' by default
      */
     server.get('/rest/hist/inquiryforms/:id_inquiryform', function (req, res, next) {
-        return dbtools.getLatestChoiceHist(models, req.params).then(function(dir_hist) {
+        return dbtools.getLatestInquiryformHist(models, req.params).then(function(dir_hist) {
             res.send(dir_hist);
         }, function(err) {
             throw new epilogue.Errors.EpilogueError(500, err);
@@ -57,7 +57,7 @@ module.exports = function(server, epilogue, models) {
      * edit a inquiryform
      */
     server.put('/rest/hist/inquiryforms/:id_inquiryform', function (req, res, next) {
-        return dbtools.getLatestChoiceHist(models, {
+        return dbtools.getLatestInquiryformHist(models, {
             id_inquiryform: req.params.id_inquiryform,
         }).then(function(dir_hist) {
             return models.inquiryform_hist.findOne({
@@ -79,7 +79,7 @@ module.exports = function(server, epilogue, models) {
     });
 
     server.del('/rest/hist/inquiryforms/:id_inquiryform', function (req, res, next) {
-        return dbtools.getLatestChoiceHist(models, {
+        return dbtools.getLatestInquiryformHist(models, {
             id_inquiryform: req.params.id_inquiryform,
         }).then(function(dir_hist) {
             return models.inquiryform_hist.findOne({

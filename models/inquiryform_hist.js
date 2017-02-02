@@ -8,6 +8,14 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
+    id_inquiryform: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      references: {
+        model: 'inquiryform',
+        key: 'id'
+      }
+    },
     title: {
       type: DataTypes.STRING,
       allowNull: false,
