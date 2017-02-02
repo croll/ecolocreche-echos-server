@@ -34,9 +34,8 @@ module.exports = function(server, epilogue, models) {
     /*
      * add a new inquiryform
      */
-    server.post('/rest/hist/inquiryforms/:id_inquiryform_parent', function (req, res, next) {
+    server.post('/rest/hist/inquiryforms', function (req, res, next) {
         return models.inquiryform.create({
-            id_inquiryform_parent: req.params.id_inquiryform_parent,
         }).then(function(inquiryform) {
             return models.inquiryform_hist.create({
                 id_inquiryform: req.params.id_inquiryform,
