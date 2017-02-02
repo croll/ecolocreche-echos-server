@@ -250,7 +250,7 @@
 <part>email</part>
 </key>
 </table>
-<table x="285" y="128" name="inquiryform">
+<table x="329" y="88" name="inquiryform">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -259,6 +259,9 @@
 </row>
 <row name="description" null="0" autoincrement="0">
 <datatype>VARCHAR(200)</datatype>
+</row>
+<row name="nodeslist" null="0" autoincrement="0">
+<datatype>MEDIUMTEXT</datatype>
 </row>
 <row name="position" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
@@ -269,11 +272,14 @@
 <row name="updatedAt" null="0" autoincrement="0">
 <datatype>DATETIME</datatype>
 <default>'NULL'</default></row>
+<row name="deletedAt" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
+</row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
 </table>
-<table x="375" y="438" name="node">
+<table x="382" y="412" name="node">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -295,26 +301,6 @@
 </row>
 <key type="PRIMARY" name="">
 <part>id</part>
-</key>
-</table>
-<table x="361" y="311" name="inquiryform_node">
-<row name="id_inquiryform" null="0" autoincrement="0">
-<datatype>INTEGER</datatype>
-<relation table="inquiryform" row="id" />
-</row>
-<row name="id_node" null="1" autoincrement="0">
-<datatype>INTEGER</datatype>
-<default>NULL</default><relation table="node" row="id" />
-</row>
-<row name="createdAt" null="0" autoincrement="0">
-<datatype>DATETIME</datatype>
-<default>'NULL'</default></row>
-<row name="updatedAt" null="0" autoincrement="0">
-<datatype>DATETIME</datatype>
-<default>'NULL'</default></row>
-<key type="PRIMARY" name="">
-<part>id_inquiryform</part>
-<part>id_node</part>
 </key>
 </table>
 </sql>

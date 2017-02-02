@@ -77,11 +77,6 @@ var inqueryformResource = epilogue.resource({
   endpoints: ['/rest/inquiryforms', '/rest/inquiryforms/:id']
 });
 
-var inqueryform_nodeResource = epilogue.resource({
-  model: models.inquiryform_node,
-  endpoints: ['/rest/inquiryforms_nodes', '/rest/inquiryforms_nodes/:id_inquiryform']
-});
-
 var nodeResource = epilogue.resource({
   model: models.node,
   endpoints: ['/rest/nodes', '/rest/nodes/:id']

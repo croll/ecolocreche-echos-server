@@ -140,9 +140,11 @@ CREATE TABLE `inquiryform` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(100) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
+  `nodeslist` MEDIUMTEXT NOT NULL,
   `position` INTEGER NOT NULL DEFAULT 0,
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
   `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
+  `deletedAt` DATETIME NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -173,21 +175,6 @@ CREATE TABLE `choice` (
 );
 
 -- ---
--- Table 'inquiryform_node'
---
--- ---
-
-DROP TABLE IF EXISTS `inquiryform_node`;
-
-CREATE TABLE `inquiryform_node` (
-  `id_inquiryform` INTEGER NOT NULL,
-  `id_node` INTEGER NULL DEFAULT NULL,
-  `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
-  `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
-  PRIMARY KEY (`id_inquiryform`, `id_node`)
-);
-
--- ---
 -- Foreign Keys
 -- ---
 
@@ -198,8 +185,6 @@ ALTER TABLE `answer` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 ALTER TABLE `node_hist` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 ALTER TABLE `node` ADD FOREIGN KEY (id_node_parent) REFERENCES `node` (`id`);
 ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
-ALTER TABLE `inquiryform_node` ADD FOREIGN KEY (id_inquiryform) REFERENCES `inquiryform` (`id`);
-ALTER TABLE `inquiryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 
 -- ---
 -- Table Properties
@@ -214,7 +199,6 @@ ALTER TABLE `inquiryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`
 -- ALTER TABLE `inquiryform` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `choice` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `inquiryform_node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ---
 -- Test Data
@@ -232,11 +216,9 @@ ALTER TABLE `inquiryform_node` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`
 -- ('','','','','','','','','','');
 -- INSERT INTO `users` (`id`,`name`,`password_hash`,`email`,`account_type`,`rememberme_token`,`last_login_timestamp`,`failed_logins`,`last_failed_login`,`password_reset_hash`,`password_reset_timestamp`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','','','','','','','','');
--- INSERT INTO `inquiryform` (`id`,`title`,`description`,`position`,`createdAt`,`updatedAt`) VALUES
--- ('','','','','','');
+-- INSERT INTO `inquiryform` (`id`,`title`,`description`,`nodeslist`,`position`,`createdAt`,`updatedAt`,`deletedAt`) VALUES
+-- ('','','','','','','','');
 -- INSERT INTO `node` (`id`,`id_node_parent`) VALUES
 -- ('','');
 -- INSERT INTO `choice` (`id`,`id_node`) VALUES
 -- ('','');
--- INSERT INTO `inquiryform_node` (`id_inquiryform`,`id_node`,`createdAt`,`updatedAt`) VALUES
--- ('','','','');
