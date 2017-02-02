@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     nodeslist: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
     },
     position: {
       type: DataTypes.INTEGER(11),
@@ -28,5 +28,6 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     tableName: 'inquiryform',
     timestamps: true,
+    paranoid: true,
   });
 };
