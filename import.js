@@ -156,6 +156,7 @@ function import_etablissements() {
 var themes_identifiants = {};
 var rubriques_identifiants = {};
 var questions_identifiants = {};
+var choices_identifiants = {};
 function import_themes() {
     // import des themes
     var p = new Promise(function (resolve, reject) {
@@ -342,6 +343,71 @@ function import_questions(rubrique, node_rubrique) {
                     console.log("    question "+question.intitule+" imported.");
                 }, function(err) {
                     console.log("    question "+question.intitule+" error: ", err);
+                });
+            });
+            p3=p3.then(function() {
+                return import_choices(question, node_question);
+            });
+        });
+        return p3;
+    });
+
+    return p2;
+}
+
+function import_choices(question, node_question) {
+    // import des choices
+    var p2 = new Promise(function (resolve, reject) {
+        //console.log("#########");
+        console.log("    ######### import des choix ...");
+        //console.log("#########");
+        resolve();
+    });
+
+    // import des choices
+    p2 = p2.then(function() {
+        return models_import.choix.findAll({
+            order: [
+                ['identifiant', 'ASC'],
+                ['version', 'ASC'],
+            ],
+            where: {
+                question: question.identifiant,
+                etat: {
+                    $ne: 2
+                }
+            }
+        });
+    });
+    p2=p2.then(function(choix) {
+        var p3 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        choix.forEach(function(choi) {
+            var node_choice;
+            var node_choice_hist;
+            p3=p3.then(function() {
+                return models.choice.create({
+                    id_node: node_question.dataValues.id,
+                });
+            });
+            p3=p3.then(function(_node_choice) {
+                node_choice = _node_choice;
+                choices_identifiants[choi.dataValues.identifiant] = node_choice.dataValues.id;
+                return models.choice_hist.create({
+                    id_choice: node_choice.dataValues.id,
+                    type: 'directory',
+                    title: choi.intitule ? choi.intitule : '',
+                    comment: choi.commentaire ? choi.commentaire : '',
+                    position: choi.position ? choi.position : 0,
+                    impact: choi.impact ? choi.impact : 0,
+                    createdAt: choi.horodatage,
+                    updatedAt: choi.horodatage,
+                }).then(function(_node_choice_hist) {
+                    node_choice_hist = _node_choice_hist;
+                    console.log("    choice "+choi.intitule+" imported.");
+                }, function(err) {
+                    console.log("    choice "+choi.intitule+" error: ", err);
                 });
             });
         });
