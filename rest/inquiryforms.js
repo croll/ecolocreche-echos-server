@@ -38,6 +38,7 @@ module.exports = function(server, epilogue, models) {
         return models.inquiryform.create({
         }).then(function(inquiryform) {
             return models.inquiryform_hist.create({
+                id_inquiryform: inquiryform.get('id'),
                 title: req.params.title,
                 description: req.params.description,
                 nodeslist: req.params.nodeslist,
