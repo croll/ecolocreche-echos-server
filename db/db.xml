@@ -64,7 +64,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="808" y="461" name="choice_hist">
+<table x="854" y="536" name="choice_hist">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -95,6 +95,9 @@
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
+</key>
+<key type="INDEX" name="">
+<part>id_choice</part>
 </key>
 </table>
 <table x="85" y="17" name="establishment">
@@ -163,7 +166,7 @@
 <part>id_node</part>
 </key>
 </table>
-<table x="378" y="521" name="node_hist">
+<table x="622" y="509" name="node_hist">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -197,6 +200,9 @@
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
+</key>
+<key type="INDEX" name="">
+<part>id_node</part>
 </key>
 </table>
 <table x="59" y="351" name="users">
@@ -250,9 +256,13 @@
 <part>email</part>
 </key>
 </table>
-<table x="329" y="88" name="inquiryform">
+<table x="342" y="507" name="inquiryform_hist">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
+</row>
+<row name="id_inquiryform" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="inquiryform" row="id" />
 </row>
 <row name="title" null="0" autoincrement="0">
 <datatype>VARCHAR(100)</datatype>
@@ -274,12 +284,15 @@
 <default>'NULL'</default></row>
 <row name="deletedAt" null="1" autoincrement="0">
 <datatype>DATETIME</datatype>
-</row>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
+<key type="INDEX" name="">
+<part>id_inquiryform</part>
+</key>
 </table>
-<table x="382" y="412" name="node">
+<table x="625" y="404" name="node">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -290,8 +303,11 @@
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
+<key type="INDEX" name="">
+<part>id_node_parent</part>
+</key>
 </table>
-<table x="656" y="445" name="choice">
+<table x="861" y="404" name="choice">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -299,6 +315,17 @@
 <datatype>INTEGER</datatype>
 <relation table="node" row="id" />
 </row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+<key type="INDEX" name="">
+<part>id_node</part>
+</key>
+</table>
+<table x="359" y="403" name="inquiryform">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>

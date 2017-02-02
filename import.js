@@ -724,14 +724,17 @@ models.sequelize.sync({
 
     // création d'un premier questionnaire
     p = p.then(function() {
-        return models.inquiryform.create({
-            title: "Questionnaire original",
-            description: "Le questionnaire tel qu'il existait dans l'ancienne version",
+        return models.inquiryform.create({}).then(function(inquiryform) {
+            return models.inquiryform_hist.create({
+                id_inquiryform: inquiryform.dataValues.id,
+                title: "Questionnaire original",
+                description: "Le questionnaire tel qu'il existait dans l'ancienne version",
+            });
         }).then(function() {
             console.log("questionnaire created.");
         }, function(err) {
             console.log("questionnaire creation error: ", err);
-        });
+        })
     });
 
     // import des themes

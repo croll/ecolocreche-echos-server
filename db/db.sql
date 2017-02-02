@@ -40,7 +40,8 @@ CREATE TABLE `choice_hist` (
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
   `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
   `deletedAt` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+KEY (`id_choice`)
 );
 
 -- ---
@@ -100,7 +101,8 @@ CREATE TABLE `node_hist` (
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
   `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
   `deletedAt` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+KEY (`id_node`)
 );
 
 -- ---
@@ -130,22 +132,24 @@ CREATE TABLE `users` (
 );
 
 -- ---
--- Table 'inquiryform'
+-- Table 'inquiryform_hist'
 --
 -- ---
 
-DROP TABLE IF EXISTS `inquiryform`;
+DROP TABLE IF EXISTS `inquiryform_hist`;
 
-CREATE TABLE `inquiryform` (
+CREATE TABLE `inquiryform_hist` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
+  `id_inquiryform` INTEGER NULL DEFAULT NULL,
   `title` VARCHAR(100) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
   `nodeslist` MEDIUMTEXT NOT NULL,
   `position` INTEGER NOT NULL DEFAULT 0,
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
   `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
-  `deletedAt` DATETIME NULL,
-  PRIMARY KEY (`id`)
+  `deletedAt` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+KEY (`id_inquiryform`)
 );
 
 -- ---
@@ -158,7 +162,8 @@ DROP TABLE IF EXISTS `node`;
 CREATE TABLE `node` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
   `id_node_parent` INTEGER NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+KEY (`id_node_parent`)
 );
 
 -- ---
@@ -171,6 +176,19 @@ DROP TABLE IF EXISTS `choice`;
 CREATE TABLE `choice` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
   `id_node` INTEGER NOT NULL,
+  PRIMARY KEY (`id`),
+KEY (`id_node`)
+);
+
+-- ---
+-- Table 'inquiryform'
+--
+-- ---
+
+DROP TABLE IF EXISTS `inquiryform`;
+
+CREATE TABLE `inquiryform` (
+  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -183,6 +201,7 @@ ALTER TABLE `choice_hist` ADD FOREIGN KEY (id_choice) REFERENCES `choice` (`id`)
 ALTER TABLE `answer` ADD FOREIGN KEY (id_audit) REFERENCES `audit` (`id`);
 ALTER TABLE `answer` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 ALTER TABLE `node_hist` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
+ALTER TABLE `inquiryform_hist` ADD FOREIGN KEY (id_inquiryform) REFERENCES `inquiryform` (`id`);
 ALTER TABLE `node` ADD FOREIGN KEY (id_node_parent) REFERENCES `node` (`id`);
 ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 
@@ -196,9 +215,10 @@ ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 -- ALTER TABLE `answer` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `node_hist` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
--- ALTER TABLE `inquiryform` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `inquiryform_hist` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `node` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ALTER TABLE `choice` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- ALTER TABLE `inquiryform` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ---
 -- Test Data
@@ -216,9 +236,11 @@ ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 -- ('','','','','','','','','','');
 -- INSERT INTO `users` (`id`,`name`,`password_hash`,`email`,`account_type`,`rememberme_token`,`last_login_timestamp`,`failed_logins`,`last_failed_login`,`password_reset_hash`,`password_reset_timestamp`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','','','','','','','','');
--- INSERT INTO `inquiryform` (`id`,`title`,`description`,`nodeslist`,`position`,`createdAt`,`updatedAt`,`deletedAt`) VALUES
--- ('','','','','','','','');
+-- INSERT INTO `inquiryform_hist` (`id`,`id_inquiryform`,`title`,`description`,`nodeslist`,`position`,`createdAt`,`updatedAt`,`deletedAt`) VALUES
+-- ('','','','','','','','','');
 -- INSERT INTO `node` (`id`,`id_node_parent`) VALUES
 -- ('','');
 -- INSERT INTO `choice` (`id`,`id_node`) VALUES
 -- ('','');
+-- INSERT INTO `inquiryform` (`id`) VALUES
+-- ('');
