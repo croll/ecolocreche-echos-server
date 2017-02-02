@@ -6,6 +6,8 @@ var config    = require(__dirname + '/config/config.json');
 var models = require(__dirname + '/models');
 var models_import = require(__dirname + '/models_import');
 
+var dbtools = require(__dirname + '/lib/dbtools.js');
+
 function getLatestNodeHist(params) {
     return new Promise(function(resolve, reject) {
         var date = '2222-12-22';
@@ -449,7 +451,6 @@ function import_themes_deleted() {
                 return models.node.findOne({
                     where: {
                         id: themes_identifiants[theme.dataValues.identifiant],
-
                     }
                 });
             });
@@ -508,7 +509,6 @@ function import_rubriques_deleted() {
                 return models.node.findOne({
                     where: {
                         id: rubriques_identifiants[rubrique.dataValues.identifiant],
-
                     }
                 });
             });
@@ -567,7 +567,6 @@ function import_questions_deleted() {
                 return models.node.findOne({
                     where: {
                         id: questions_identifiants[question.dataValues.identifiant],
-
                     }
                 });
             });
@@ -584,6 +583,69 @@ function import_questions_deleted() {
                 if (_node_hist) {
                     console.log("  delete "+_node_hist.title);
                     return _node_hist.destroy();
+                }
+            });
+        });
+
+        return p2;
+    });
+
+    return p;
+}
+
+function import_choices_deleted() {
+    var p = new Promise(function (resolve, reject) {
+        console.log("#########");
+        console.log("######### import des choices deleted");
+        console.log("#########");
+        resolve();
+    });
+
+    p = p.then(function() {
+        return models_import.choix.findAll({
+            order: [
+                ['identifiant', 'ASC'],
+                ['version', 'ASC'],
+            ],
+            where: {
+                etat: {
+                    $eq: 2
+                }
+            }
+        });
+    });
+    p = p.then(function(choix) {
+        var p2 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        choix.forEach(function(choi) {
+            var node_choice;
+            var node_choice_hist;
+            p2=p2.then(function() {
+                //console.log("search choice id : ", choi.dataValues.identifiant, choices_identifiants[choi.dataValues.identifiant]);
+                return models.choice.findOne({
+                    where: {
+                        id: choices_identifiants[choi.dataValues.identifiant],
+                    }
+                });
+            });
+            p2=p2.then(function(_node_choice) {
+                node_choice=_node_choice;
+                if (!node_choice) return;
+                return dbtools.getLatestChoiceHist(models, {
+                    id_choice: node_choice.dataValues.id,
+                });
+            });
+            p2=p2.then(function(_node_directory) {
+                if (!_node_directory) return;
+                return models.choice_hist.findById(_node_directory.id);
+            });
+            p2=p2.then(function(_node_hist) {
+                if (_node_hist) {
+                    console.log("  delete "+_node_hist.title);
+                    return _node_hist.destroy();
+                } else {
+                    console.log("  ignore delete of "+choi.intitule);
                 }
             });
         });
@@ -641,6 +703,11 @@ models.sequelize.sync({
     // import des questions deleted
     p = p.then(function() {
         return import_questions_deleted();
+    });
+
+    // import des choices deleted
+    p = p.then(function() {
+        return import_choices_deleted();
     });
 
 
