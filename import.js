@@ -60,7 +60,7 @@ function getLatestNodeHist(params) {
                 if (directories.length == 1) {
                     resolve(directories[0]);
                 } else {
-                    reject("latest node_hist not found !");
+                    resolve(null);
                 }
             } else {
                 resolve(directories);
@@ -193,12 +193,19 @@ function import_themes() {
             var node_theme;
             var node_theme_hist;
             p2=p2.then(function() {
-                return models.node.create({
-                });
+                if (theme.dataValues.identifiant in themes_identifiants) {
+                    return models.node.findOne({
+                        where: {
+                            id: themes_identifiants[theme.dataValues.identifiant],
+                        }
+                    });
+                } else {
+                    return models.node.create({
+                    });
+                }
             });
             p2=p2.then(function(_node_theme) {
                 node_theme=_node_theme;
-                themes_identifiants[theme.dataValues.identifiant] = node_theme.dataValues.id;
                 return models.node_hist.create({
                     id_node: node_theme.dataValues.id,
                     type: 'directory',
@@ -216,7 +223,12 @@ function import_themes() {
             });
 
             p2=p2.then(function() {
-                return import_rubriques(theme, node_theme);
+                if (!(theme.dataValues.identifiant in themes_identifiants))
+                    return import_rubriques(theme, node_theme);
+            });
+
+            p2=p2.then(function() {
+                themes_identifiants[theme.dataValues.identifiant] = node_theme.dataValues.id;
             });
 
         }); // /import des rubriques
@@ -262,13 +274,20 @@ function import_rubriques(theme, node_theme) {
             var node_rubrique;
             var node_rubrique_hist;
             p3=p3.then(function() {
-                return models.node.create({
-                    id_node_parent: node_theme.dataValues.id,
-                });
+                if (rubrique.dataValues.identifiant in rubriques_identifiants) {
+                    return models.node.findOne({
+                        where: {
+                            id: rubriques_identifiants[rubrique.dataValues.identifiant],
+                        }
+                    });
+                } else {
+                    return models.node.create({
+                        id_node_parent: node_theme.dataValues.id,
+                    });
+                }
             });
             p3=p3.then(function(_node_rubrique) {
                 node_rubrique = _node_rubrique;
-                rubriques_identifiants[rubrique.dataValues.identifiant] = node_rubrique.dataValues.id;
                 return models.node_hist.create({
                     id_node: node_rubrique.dataValues.id,
                     type: 'directory',
@@ -280,13 +299,17 @@ function import_rubriques(theme, node_theme) {
                     updatedAt: rubrique.horodatage,
                 }).then(function(_node_rubrique_hist) {
                     node_rubrique_hist = _node_rubrique_hist;
-                    console.log("  rubrique "+rubrique.intitule+" imported.");
+                    console.log("  rubrique "+rubrique.intitule+" imported identifiant:", rubrique.identifiant);
                 }, function(err) {
                     console.log("  rubrique "+rubrique.intitule+" error: ", err);
                 });
             });
             p3=p3.then(function() {
-                return import_questions(rubrique, node_rubrique);
+                if (!(rubrique.dataValues.identifiant in rubriques_identifiants))
+                    return import_questions(rubrique, node_rubrique);
+            });
+            p3=p3.then(function() {
+                rubriques_identifiants[rubrique.dataValues.identifiant] = node_rubrique.dataValues.id;
             });
         });
         return p3;
@@ -327,13 +350,20 @@ function import_questions(rubrique, node_rubrique) {
             var node_question;
             var node_question_hist;
             p3=p3.then(function() {
-                return models.node.create({
-                    id_node_parent: node_rubrique.dataValues.id,
-                });
+                if (question.dataValues.identifiant in questions_identifiants) {
+                    return models.node.findOne({
+                        where: {
+                            id: questions_identifiants[question.dataValues.identifiant],
+                        }
+                    });
+                } else {
+                    return models.node.create({
+                        id_node_parent: node_rubrique.dataValues.id,
+                    });
+                }
             });
             p3=p3.then(function(_node_question) {
                 node_question = _node_question;
-                questions_identifiants[question.dataValues.identifiant] = node_question.dataValues.id;
                 return models.node_hist.create({
                     id_node: node_question.dataValues.id,
                     type: 'directory',
@@ -352,7 +382,11 @@ function import_questions(rubrique, node_rubrique) {
                 });
             });
             p3=p3.then(function() {
-                return import_choices(question, node_question);
+                if (!(question.dataValues.identifiant in questions_identifiants))
+                    return import_choices(question, node_question);
+            });
+            p3=p3.then(function() {
+                questions_identifiants[question.dataValues.identifiant] = node_question.dataValues.id;
             });
         });
         return p3;
@@ -393,9 +427,17 @@ function import_choices(question, node_question) {
             var node_choice;
             var node_choice_hist;
             p3=p3.then(function() {
-                return models.choice.create({
-                    id_node: node_question.dataValues.id,
-                });
+                if (choi.dataValues.identifiant in choices_identifiants) {
+                    return models.choice.findOne({
+                        where: {
+                            id: choices_identifiants[choi.dataValues.identifiant],
+                        }
+                    });
+                } else {
+                    return models.choice.create({
+                        id_node: node_question.dataValues.id,
+                    });
+                }
             });
             p3=p3.then(function(_node_choice) {
                 node_choice = _node_choice;
@@ -581,12 +623,15 @@ function import_questions_deleted() {
                 })
             });
             p2=p2.then(function(_node_directory) {
-                return models.node_hist.findById(_node_directory.id);
+                if (_node_directory)
+                    return models.node_hist.findById(_node_directory.id);
             });
             p2=p2.then(function(_node_hist) {
                 if (_node_hist) {
                     console.log("  delete "+_node_hist.title);
                     return _node_hist.destroy();
+                } else {
+                    console.log("  delete "+question.intitule+" ignored");
                 }
             });
         });
