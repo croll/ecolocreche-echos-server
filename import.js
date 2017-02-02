@@ -8,6 +8,10 @@ var models_import = require(__dirname + '/models_import');
 
 var dbtools = require(__dirname + '/lib/dbtools.js');
 
+const ETAT_DELETED  = 0;
+const ETAT_LATEST   = 1;
+const ETAT_MODIFIED = 2;
+
 function getLatestNodeHist(params) {
     return new Promise(function(resolve, reject) {
         var date = '2222-12-22';
@@ -176,7 +180,7 @@ function import_themes() {
             ],
             where: {
                 etat: {
-                    $ne: 2
+                    $ne: ETAT_DELETED,
                 }
             }
         });
@@ -245,7 +249,7 @@ function import_rubriques(theme, node_theme) {
             where: {
                 theme: theme.identifiant,
                 etat: {
-                    $ne: 2
+                    $ne: ETAT_DELETED,
                 }
             }
         });
@@ -310,7 +314,7 @@ function import_questions(rubrique, node_rubrique) {
             where: {
                 rubrique: rubrique.identifiant,
                 etat: {
-                    $ne: 2
+                    $ne: ETAT_DELETED,
                 }
             }
         });
@@ -376,7 +380,7 @@ function import_choices(question, node_question) {
             where: {
                 question: question.identifiant,
                 etat: {
-                    $ne: 2
+                    $ne: ETAT_DELETED,
                 }
             }
         });
@@ -435,7 +439,7 @@ function import_themes_deleted() {
             ],
             where: {
                 etat: {
-                    $eq: 2
+                    $eq: ETAT_DELETED,
                 }
             }
         });
@@ -493,7 +497,7 @@ function import_rubriques_deleted() {
             ],
             where: {
                 etat: {
-                    $eq: 2
+                    $eq: ETAT_DELETED,
                 }
             }
         });
@@ -551,7 +555,7 @@ function import_questions_deleted() {
             ],
             where: {
                 etat: {
-                    $eq: 2
+                    $eq: ETAT_DELETED,
                 }
             }
         });
@@ -609,7 +613,7 @@ function import_choices_deleted() {
             ],
             where: {
                 etat: {
-                    $eq: 2
+                    $eq: ETAT_DELETED,
                 }
             }
         });
