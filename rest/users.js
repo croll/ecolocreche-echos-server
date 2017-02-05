@@ -3,7 +3,7 @@ var bcrypt = require('bcryptjs');
 module.exports = function(server, epilogue, models) {
     // login
     server.post('/rest/login', function (req, res, next) {
-        console.log("params: ", req.params);
+        //console.log("params: ", req.params);
         models.users.findOne({
             where: {
                 $or: [
