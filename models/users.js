@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     account_type: {
-      type: DataTypes.ENUM('admin','agent'),
+      type: DataTypes.ENUM('admin','superagent','agent'),
       allowNull: false,
       defaultValue: "agent"
     },

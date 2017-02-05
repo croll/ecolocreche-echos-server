@@ -94,7 +94,7 @@ function import_users() {
                     name: row.user_name,
                     password_hash: row.user_password_hash,
                     email: row.user_email,
-                    account_type: row.user_account_type ? 'agent' : 'admin',
+                    account_type: row.user_account_type ? 'admin' : 'agent',
                     rememberme_token: row.user_rememberme_token ? row.user_rememberme_token : '',
                     creation_timestamp: row.user_creation_timestamp ? row.user_creation_timestamp : "1975-02-06",
                 }).then(function() {

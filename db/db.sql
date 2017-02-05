@@ -117,7 +117,7 @@ CREATE TABLE `users` (
   `name` VARCHAR(64) NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
   `email` VARCHAR(64) NOT NULL,
-  `account_type` ENUM('admin','agent') NOT NULL DEFAULT 'agent' COMMENT 'orig: agent=1, admin=2',
+  `account_type` ENUM('admin','superagent','agent') NOT NULL DEFAULT 'agent' COMMENT 'orig: agent=1, admin=2',
   `rememberme_token` VARCHAR(64) NOT NULL,
   `last_login_timestamp` BIGINT(20) NULL DEFAULT NULL,
   `failed_logins` INTEGER NOT NULL DEFAULT 0,

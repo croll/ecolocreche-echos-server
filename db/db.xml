@@ -219,7 +219,7 @@
 <datatype>VARCHAR(64)</datatype>
 </row>
 <row name="account_type" null="0" autoincrement="0">
-<datatype>ENUM('admin','agent')</datatype>
+<datatype>ENUM('admin','superagent','agent')</datatype>
 <default>'agent'</default><comment>orig: agent=1, admin=2</comment>
 </row>
 <row name="rememberme_token" null="0" autoincrement="0">
