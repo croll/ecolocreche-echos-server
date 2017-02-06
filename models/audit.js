@@ -16,6 +16,14 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
+    id_inquiryform: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      references: {
+        model: 'inquiryform',
+        key: 'id'
+      }
+    },
     key: {
       type: DataTypes.STRING,
       allowNull: false

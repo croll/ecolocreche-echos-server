@@ -45,6 +45,10 @@
 <datatype>INTEGER</datatype>
 <relation table="establishment" row="id" />
 </row>
+<row name="id_inquiryform" null="1" autoincrement="0">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="inquiryform" row="id" />
+</row>
 <row name="key" null="0" autoincrement="0">
 <datatype>VARCHAR(64)</datatype>
 </row>

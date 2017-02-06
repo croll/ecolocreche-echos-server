@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS `audit`;
 CREATE TABLE `audit` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
   `id_establishment` INTEGER NOT NULL,
+  `id_inquiryform` INTEGER NULL DEFAULT NULL,
   `key` VARCHAR(64) NOT NULL,
   `active` TINYINT(1) NOT NULL,
   `synthesis` MEDIUMTEXT NOT NULL,
@@ -197,6 +198,7 @@ CREATE TABLE `inquiryform` (
 -- ---
 
 ALTER TABLE `audit` ADD FOREIGN KEY (id_establishment) REFERENCES `establishment` (`id`);
+ALTER TABLE `audit` ADD FOREIGN KEY (id_inquiryform) REFERENCES `inquiryform` (`id`);
 ALTER TABLE `choice_hist` ADD FOREIGN KEY (id_choice) REFERENCES `choice` (`id`);
 ALTER TABLE `answer` ADD FOREIGN KEY (id_audit) REFERENCES `audit` (`id`);
 ALTER TABLE `answer` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
@@ -224,8 +226,8 @@ ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 -- Test Data
 -- ---
 
--- INSERT INTO `audit` (`id`,`id_establishment`,`key`,`active`,`synthesis`,`createdAt`,`updatedAt`) VALUES
--- ('','','','','','','');
+-- INSERT INTO `audit` (`id`,`id_establishment`,`id_inquiryform`,`key`,`active`,`synthesis`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','','','');
 -- INSERT INTO `choice_hist` (`id`,`id_choice`,`title`,`comment`,`position`,`impact`,`createdAt`,`updatedAt`,`deletedAt`) VALUES
 -- ('','','','','','','','','');
 -- INSERT INTO `establishment` (`id`,`name`,`address`,`postalcode`,`city`,`phone`,`mail`,`type`,`status`,`createdAt`,`updatedAt`) VALUES
