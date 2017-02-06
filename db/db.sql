@@ -19,6 +19,7 @@ CREATE TABLE `audit` (
   `key` VARCHAR(64) NOT NULL,
   `active` TINYINT(1) NOT NULL,
   `synthesis` MEDIUMTEXT NOT NULL,
+  `cached_percent_complete` DOUBLE NOT NULL DEFAULT 0,
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
   `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
   PRIMARY KEY (`id`)
@@ -226,8 +227,8 @@ ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 -- Test Data
 -- ---
 
--- INSERT INTO `audit` (`id`,`id_establishment`,`id_inquiryform`,`key`,`active`,`synthesis`,`createdAt`,`updatedAt`) VALUES
--- ('','','','','','','','');
+-- INSERT INTO `audit` (`id`,`id_establishment`,`id_inquiryform`,`key`,`active`,`synthesis`,`cached_percent_complete`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','','','','');
 -- INSERT INTO `choice_hist` (`id`,`id_choice`,`title`,`comment`,`position`,`impact`,`createdAt`,`updatedAt`,`deletedAt`) VALUES
 -- ('','','','','','','','','');
 -- INSERT INTO `establishment` (`id`,`name`,`address`,`postalcode`,`city`,`phone`,`mail`,`type`,`status`,`createdAt`,`updatedAt`) VALUES

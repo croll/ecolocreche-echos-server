@@ -35,6 +35,11 @@ module.exports = function(sequelize, DataTypes) {
     synthesis: {
       type: DataTypes.TEXT,
       allowNull: false
+    },
+    cached_percent_complete: {
+        type: DataTypes.DOUBLE,
+        allowNull: false,
+        defaultValue: 0,
     }
   }, {
     tableName: 'audit',
