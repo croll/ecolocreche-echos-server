@@ -76,7 +76,7 @@ module.exports = function(server, epilogue, models) {
             if (dir_hist.type != 'directory') { // this is a question, so also take the choices of it
                 return dbtools.getLatestChoiceHist(models, req.params).then(function(choices_hist) {
                     dir_hist.choices = choices_hist;
-                    if (params.id_audit) { // this is an audit, so also take the answer of the question
+                    if (req.params.id_audit) { // this is an audit, so also take the answer of the question
                         models.answer.findOne({
                             where: {
                                 id_audit: params.id_audit,
