@@ -73,10 +73,22 @@ module.exports = function(server, epilogue, models) {
                 return dir_hist;
             });
         }).then(function(dir_hist) {
-            if (dir_hist.type != 'directory') {
+            if (dir_hist.type != 'directory') { // this is a question, so also take the choices of it
                 return dbtools.getLatestChoiceHist(models, req.params).then(function(choices_hist) {
                     dir_hist.choices = choices_hist;
-                    res.send(dir_hist);
+                    if (params.id_audit) { // this is an audit, so also take the answer of the question
+                        models.answer.findOne({
+                            where: {
+                                id_audit: params.id_audit,
+                                id_node: dir_hist.id_node,
+                            },
+                        }).then(function(answer) {
+                            dir_hist.answer = answer;
+                            res.send(dir_hist);
+                        })
+                    } else {
+                        res.send(dir_hist);
+                    }
                 });
             } else {
                 res.send(dir_hist);
