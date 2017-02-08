@@ -74,16 +74,21 @@ module.exports = function(server, epilogue, models) {
         }
     });
 
-    userResource.create.write.before(function(req, res, context) {
-        return new Promise(function(resolve, reject) {
-            bcrypt.genSalt(10, function(err, salt) {
-                bcrypt.hash(req.params.password, salt, function(err, hash) {
-                    context.attributes.password_hash = hash;
-                    resolve(context.continue);
+    function user_save_write_before(req, res, context) {
+        if (req.params.password && req.params.password.length > 0) {
+            return new Promise(function(resolve, reject) {
+                bcrypt.genSalt(10, function(err, salt) {
+                    bcrypt.hash(req.params.password, salt, function(err, hash) {
+                        context.attributes.password_hash = hash;
+                        resolve(context.continue);
+                    });
                 });
             });
-        });
-    });
+        } else return context.contonue;
+    }
+
+    userResource.create.write.before(user_save_write_before);
+    userResource.update.write.before(user_save_write_before);
 
     /* exemple send.before
     userResource.list.send.before(function(req, res, context) {
