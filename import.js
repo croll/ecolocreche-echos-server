@@ -96,7 +96,7 @@ function import_users() {
                     email: row.user_email,
                     account_type: row.user_account_type ? 'admin' : 'agent',
                     rememberme_token: row.user_rememberme_token ? row.user_rememberme_token : '',
-                    creation_timestamp: row.user_creation_timestamp ? row.user_creation_timestamp : "1975-02-06",
+                    createdAt: row.user_creation_timestamp ? row.user_creation_timestamp : "1975-02-06",
                 }).then(function() {
                     console.log("user "+row.user_name+" imported.");
                 }, function(err) {

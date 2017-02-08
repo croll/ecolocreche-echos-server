@@ -27,11 +27,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     rememberme_token: {
       type: DataTypes.STRING,
-      allowNull: false
-    },
-    creation_timestamp: {
-      type: DataTypes.BIGINT,
-      allowNull: false
+      allowNull: false,
+      defaultValue: ""
     },
     last_login_timestamp: {
       type: DataTypes.BIGINT,
