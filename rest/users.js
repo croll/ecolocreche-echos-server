@@ -1,4 +1,6 @@
-var bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
+const Promise = require("bluebird");
+
 
 module.exports = function(server, epilogue, models) {
     // login
@@ -70,6 +72,17 @@ module.exports = function(server, epilogue, models) {
             // not ok
             throw new epilogue.Errors.ForbiddenError("you are not authized to list users !");
         }
+    });
+
+    userResource.create.write.before(function(req, res, context) {
+        return new Promise(function(resolve, reject) {
+            bcrypt.genSalt(10, function(err, salt) {
+                bcrypt.hash(req.params.password, salt, function(err, hash) {
+                    context.attributes.password_hash = hash;
+                    resolve(context.continue);
+                });
+            });
+        });
     });
 
     /* exemple send.before
