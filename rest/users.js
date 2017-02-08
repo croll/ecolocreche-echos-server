@@ -99,13 +99,9 @@ module.exports = function(server, epilogue, models) {
      */
     userResource.create.complete(function(req, res, context) {
         console.log("sending email...");
-        var transporter = nodemailer.createTransport({
-            sendmail: true,
-            newline: 'unix',
-            path: '/usr/sbin/sendmail'
-        });
+        var transporter = nodemailer.createTransport(config.email.transport);
         transporter.sendMail({
-            from: config.mail.from,
+            from: config.email.from,
             to: context.instance.get('email'),
             subject: 'Votre compte sur echos',
             text: 'Je suis heureux de vous apprendre que votre compte echos à été créé.'
