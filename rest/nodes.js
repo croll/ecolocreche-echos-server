@@ -79,7 +79,7 @@ module.exports = function(server, epilogue, models) {
                     if (req.params.id_audit) { // this is an audit, so also take the answer of the question
                         models.answer.findOne({
                             where: {
-                                id_audit: params.id_audit,
+                                id_audit: req.params.id_audit,
                                 id_node: dir_hist.id_node,
                             },
                         }).then(function(answer) {
