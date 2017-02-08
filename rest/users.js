@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs');
 const Promise = require("bluebird");
+const nodemailer = require('nodemailer');
+var config    = require(__dirname + '/../config/config.json');
 
 
 module.exports = function(server, epilogue, models) {
@@ -74,6 +76,9 @@ module.exports = function(server, epilogue, models) {
         }
     });
 
+    /*
+     * password hash generating on user create/update
+     */
     function user_save_write_before(req, res, context) {
         if (req.params.password && req.params.password.length > 0) {
             return new Promise(function(resolve, reject) {
@@ -86,9 +91,31 @@ module.exports = function(server, epilogue, models) {
             });
         } else return context.contonue;
     }
-
     userResource.create.write.before(user_save_write_before);
     userResource.update.write.before(user_save_write_before);
+
+    /*
+     * send mail to user on user create
+     */
+    userResource.create.complete(function(req, res, context) {
+        console.log("sending email...");
+        var transporter = nodemailer.createTransport({
+            sendmail: true,
+            newline: 'unix',
+            path: '/usr/sbin/sendmail'
+        });
+        transporter.sendMail({
+            from: config.mail.from,
+            to: context.instance.get('email'),
+            subject: 'Votre compte sur echos',
+            text: 'Je suis heureux de vous apprendre que votre compte echos à été créé.'
+        }, (err, info) => {
+            console.log(info.envelope);
+            console.log(info.messageId);
+        });
+
+        return context.continue;
+    });
 
     /* exemple send.before
     userResource.list.send.before(function(req, res, context) {
