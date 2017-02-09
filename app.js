@@ -68,7 +68,10 @@ permchecks.haveAdmin = function(req, res, context) {
     if ('user' in req.session && req.session.user
         && req.session.user.account_type == 'admin') {
         // ok
-        return context.continue;
+        if (context instanceof Function) // context is next()
+            context();
+        else // context is really context of epilogue
+            return context.continue;
     } else {
         // not ok
         throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
@@ -80,7 +83,10 @@ permchecks.haveSuperAgent = function(req, res, context) {
         && (req.session.user.account_type == 'superagent'
             || req.session.user.account_type == 'admin')) {
         // ok
-        return context.continue;
+        if (context instanceof Function) // context is next()
+            context();
+        else // context is really context of epilogue
+            return context.continue;
     } else {
         // not ok
         throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
@@ -93,7 +99,10 @@ permchecks.haveAgent = function(req, res, context) {
             || req.session.user.account_type == 'superagent'
             || req.session.user.account_type == 'admin')) {
         // ok
-        return context.continue;
+        if (context instanceof Function) // context is next()
+            context();
+        else // context is really context of epilogue
+            return context.continue;
     } else {
         // not ok
         throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
