@@ -132,14 +132,9 @@ require(__dirname+'/rest/users')(server, epilogue, models, permchecks);
 require(__dirname+'/rest/nodes')(server, epilogue, models, permchecks);
 require(__dirname+'/rest/choices')(server, epilogue, models, permchecks);
 require(__dirname+'/rest/inquiryforms')(server, epilogue, models, permchecks);
+require(__dirname+'/rest/audits')(server, epilogue, models, permchecks);
 
 // Create REST resource
-var auditResource = epilogue.resource({
-  model: models.audit,
-  endpoints: ['/rest/audits', '/rest/audits/:id']
-});
-auditResource.use(permchecks.default_permissions);
-
 var inqueryformResource = epilogue.resource({
   model: models.inquiryform,
   endpoints: ['/rest/inquiryforms', '/rest/inquiryforms/:id']
