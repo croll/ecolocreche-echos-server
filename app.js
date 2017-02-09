@@ -62,6 +62,64 @@ epilogue.initialize({
   sequelize: models.sequelize
 });
 
+permchecks = {};
+
+permchecks.haveAdmin = function(req, res, context) {
+    if ('user' in req.session && req.session.user
+        && req.session.user.account_type == 'admin') {
+        // ok
+        return context.continue;
+    } else {
+        // not ok
+        throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
+    }
+}
+
+permchecks.haveSuperAgent = function(req, res, context) {
+    if ('user' in req.session && req.session.user
+        && (req.session.user.account_type == 'superagent'
+            || req.session.user.account_type == 'admin')) {
+        // ok
+        return context.continue;
+    } else {
+        // not ok
+        throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
+    }
+}
+
+permchecks.haveAgent = function(req, res, context) {
+    if ('user' in req.session && req.session.user
+        && (req.session.user.account_type == 'agent'
+            || req.session.user.account_type == 'superagent'
+            || req.session.user.account_type == 'admin')) {
+        // ok
+        return context.continue;
+    } else {
+        // not ok
+        throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
+    }
+}
+
+// default permissions
+var default_permissions = {
+    create: {
+      auth: permchecks.haveAdmin,
+    },
+    list: {
+      auth: permchecks.haveAdmin,
+    },
+    read: {
+      auth: permchecks.haveAdmin,
+    },
+    update: {
+      auth: permchecks.haveAdmin,
+    },
+    delete: {
+      auth: permchecks.haveAdmin,
+    },
+};
+
+
 require(__dirname+'/rest/users')(server, epilogue, models);
 require(__dirname+'/rest/nodes')(server, epilogue, models);
 require(__dirname+'/rest/choices')(server, epilogue, models);
@@ -72,41 +130,49 @@ var auditResource = epilogue.resource({
   model: models.audit,
   endpoints: ['/rest/audits', '/rest/audits/:id']
 });
+auditResource.use(default_permissions);
 
 var inqueryformResource = epilogue.resource({
   model: models.inquiryform,
   endpoints: ['/rest/inquiryforms', '/rest/inquiryforms/:id']
 });
+inqueryformResource.use(default_permissions);
 
 var nodeResource = epilogue.resource({
   model: models.node,
   endpoints: ['/rest/nodes', '/rest/nodes/:id']
 });
+nodeResource.use(default_permissions);
 
 var node_histResource = epilogue.resource({
   model: models.node_hist,
   endpoints: ['/rest/nodes_hists', '/rest/nodes_hists/:id']
 });
+node_histResource.use(default_permissions);
 
 var choiceResource = epilogue.resource({
   model: models.choice,
   endpoints: ['/rest/choices', '/rest/choices/:id']
 });
+choiceResource.use(default_permissions);
 
 var choice_histResource = epilogue.resource({
   model: models.choice_hist,
   endpoints: ['/rest/choices_hists', '/rest/choices_hists/:id']
 });
+choice_histResource.use(default_permissions);
 
 var answerResource = epilogue.resource({
   model: models.answer,
   endpoints: ['/rest/answers', '/rest/answers/:id_audit/:id_node']
 });
+answerResource.use(default_permissions);
 
 var establishmentResource = epilogue.resource({
   model: models.establishment,
   endpoints: ['/rest/establishments', '/rest/establishments/:id']
 });
+establishmentResource.use(default_permissions);
 
 
 
