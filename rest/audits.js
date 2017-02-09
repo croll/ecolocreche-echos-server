@@ -14,4 +14,12 @@ module.exports = function(server, epilogue, models, permchecks) {
     auditResource.update.auth.before(permchecks.haveAdmin);
     auditResource.delete.auth.before(permchecks.haveAdmin);
 
+    // toutefois, on autorise pas un agent de créer un audit avec un status que 'en cours'
+    auditResource.create.write.before(function(req, res, context) {
+        if (req.session.user.account_type != 'admin') {
+            req.body.active = true;
+        }
+        return context.continue;
+    });
+
 }
