@@ -97,10 +97,6 @@ module.exports = function(server, epilogue, models, permchecks) {
         return context.continue;
     });
 
-    // here, read have same permissions than update
-    //userResource.read.auth = userResource.update.auth;
-
-
 
     /*
      * password hash generating on user create/update
