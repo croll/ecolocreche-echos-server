@@ -67,6 +67,40 @@ module.exports = function(server, epilogue, models, permchecks) {
     });
     userResource.use(permchecks.default_permissions);
 
+    /*
+     * custom permision for self user edit
+     */
+    function auth_selfuseredit(req, res, context) {
+        if (('user' in req.session) && req.session.user) {
+            switch(req.session.user.account_type) {
+                // superagent & agent can only view/update there own account
+                case 'superagent':
+                case 'agent':
+                    if (req.params.id == req.session.user.id) {
+                        return context.skip; // skip les check suivant, donc authorize
+                    }
+                break;
+            }
+        }
+
+        return context.continue; // passe aux checks suivants (haveAdmin)
+    }
+
+    userResource.read.auth.before(auth_selfuseredit);
+    userResource.update.auth.before(auth_selfuseredit);
+
+    userResource.update.write.before(function(req, res, context) {
+        if (req.session.user.account_type != 'admin') {
+            // ok pour self edit, mais pas ces champs :
+            delete req.body.account_type;
+        }
+        return context.continue;
+    });
+
+    // here, read have same permissions than update
+    //userResource.read.auth = userResource.update.auth;
+
+
 
     /*
      * password hash generating on user create/update
