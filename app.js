@@ -134,6 +134,7 @@ require(__dirname+'/rest/choices')(server, epilogue, models, permchecks);
 require(__dirname+'/rest/inquiryforms')(server, epilogue, models, permchecks);
 require(__dirname+'/rest/audits')(server, epilogue, models, permchecks);
 require(__dirname+'/rest/establishments')(server, epilogue, models, permchecks);
+require(__dirname+'/rest/answers')(server, epilogue, models, permchecks);
 
 // Create REST resource
 var inqueryformResource = epilogue.resource({
@@ -165,13 +166,6 @@ var choice_histResource = epilogue.resource({
   endpoints: ['/rest/choices_hists', '/rest/choices_hists/:id']
 });
 choice_histResource.use(permchecks.default_permissions);
-
-var answerResource = epilogue.resource({
-  model: models.answer,
-  endpoints: ['/rest/answers', '/rest/answers/:id_audit/:id_node']
-});
-answerResource.use(permchecks.default_permissions);
-
 
 
 // Create database and listen
