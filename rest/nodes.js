@@ -2,7 +2,7 @@ var dbtools = require(__dirname + '/../lib/dbtools.js');
 var restify = require('restify');
 var Promise = require("bluebird");
 
-module.exports = function(server, epilogue, models) {
+module.exports = function(server, epilogue, models, permchecks) {
 
 
     /*
@@ -15,24 +15,7 @@ module.exports = function(server, epilogue, models) {
             model: models.node_hist
         }],
     });
-
-
-    /*
-     * list root directories
-     */
-    models.node.addScope('roots', {
-        where: {
-            "id_node_parent": null,
-        }
-    });
-
-    var nodeResource = epilogue.resource({
-        endpoints: ['/rest/directories/roots', '/rest/directories/roots/:id'],
-        model: models.node.scope('roots'),
-        include: [{
-            model: models.node_hist
-        }],
-    });
+    nodeResource.use(permchecks.default_permissions);
 
     /*
      * list nodes at moment

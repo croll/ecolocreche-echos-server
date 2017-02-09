@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 var config    = require(__dirname + '/../config/config.json');
 
 
-module.exports = function(server, epilogue, models) {
+module.exports = function(server, epilogue, models, permchecks) {
     // login
     server.post('/rest/login', function (req, res, next) {
         //console.log("params: ", req.params);
@@ -65,16 +65,8 @@ module.exports = function(server, epilogue, models) {
       model: models.users,
       endpoints: ['/rest/users', '/rest/users/:id']
     });
+    userResource.use(permchecks.default_permissions);
 
-    userResource.list.auth(function(req, res, context) {
-        if ('user' in req.session && req.session.user) {
-            // ok
-            return context.continue;
-        } else {
-            // not ok
-            throw new epilogue.Errors.ForbiddenError("you are not authized to list users !");
-        }
-    });
 
     /*
      * password hash generating on user create/update

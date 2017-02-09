@@ -101,7 +101,7 @@ permchecks.haveAgent = function(req, res, context) {
 }
 
 // default permissions
-var default_permissions = {
+permchecks.default_permissions = {
     create: {
       auth: permchecks.haveAdmin,
     },
@@ -119,60 +119,59 @@ var default_permissions = {
     },
 };
 
-
-require(__dirname+'/rest/users')(server, epilogue, models);
-require(__dirname+'/rest/nodes')(server, epilogue, models);
-require(__dirname+'/rest/choices')(server, epilogue, models);
-require(__dirname+'/rest/inquiryforms')(server, epilogue, models);
+require(__dirname+'/rest/users')(server, epilogue, models, permchecks);
+require(__dirname+'/rest/nodes')(server, epilogue, models, permchecks);
+require(__dirname+'/rest/choices')(server, epilogue, models, permchecks);
+require(__dirname+'/rest/inquiryforms')(server, epilogue, models, permchecks);
 
 // Create REST resource
 var auditResource = epilogue.resource({
   model: models.audit,
   endpoints: ['/rest/audits', '/rest/audits/:id']
 });
-auditResource.use(default_permissions);
+auditResource.use(permchecks.default_permissions);
 
 var inqueryformResource = epilogue.resource({
   model: models.inquiryform,
   endpoints: ['/rest/inquiryforms', '/rest/inquiryforms/:id']
 });
-inqueryformResource.use(default_permissions);
+inqueryformResource.use(permchecks.default_permissions);
 
 var nodeResource = epilogue.resource({
   model: models.node,
   endpoints: ['/rest/nodes', '/rest/nodes/:id']
 });
-nodeResource.use(default_permissions);
+nodeResource.use(permchecks.default_permissions);
 
 var node_histResource = epilogue.resource({
   model: models.node_hist,
   endpoints: ['/rest/nodes_hists', '/rest/nodes_hists/:id']
 });
-node_histResource.use(default_permissions);
+node_histResource.use(permchecks.default_permissions);
 
 var choiceResource = epilogue.resource({
   model: models.choice,
   endpoints: ['/rest/choices', '/rest/choices/:id']
 });
-choiceResource.use(default_permissions);
+choiceResource.use(permchecks.default_permissions);
 
 var choice_histResource = epilogue.resource({
   model: models.choice_hist,
   endpoints: ['/rest/choices_hists', '/rest/choices_hists/:id']
 });
-choice_histResource.use(default_permissions);
+choice_histResource.use(permchecks.default_permissions);
 
 var answerResource = epilogue.resource({
   model: models.answer,
   endpoints: ['/rest/answers', '/rest/answers/:id_audit/:id_node']
 });
-answerResource.use(default_permissions);
+answerResource.use(permchecks.default_permissions);
 
 var establishmentResource = epilogue.resource({
   model: models.establishment,
   endpoints: ['/rest/establishments', '/rest/establishments/:id']
 });
-establishmentResource.use(default_permissions);
+establishmentResource.use(permchecks.default_permissions);
 
 
 

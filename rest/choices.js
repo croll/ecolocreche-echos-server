@@ -1,6 +1,6 @@
 var dbtools = require(__dirname + '/../lib/dbtools.js');
 
-module.exports = function(server, epilogue, models) {
+module.exports = function(server, epilogue, models, permchecks) {
 
 
     /*
