@@ -98,17 +98,18 @@ function import_users() {
                     rememberme_token: row.user_rememberme_token ? row.user_rememberme_token : '',
                     createdAt: row.user_creation_timestamp ? row.user_creation_timestamp : "1975-02-06",
                 }).then(function() {
-                    console.log("user "+row.user_name+" imported.");
+                    process.stdout.write('.');
+                    //console.log("user "+row.user_name+" imported.");
                 }, function(err) {
-                    console.log("user "+row.user_name+" error: ", err);
+                    console.log("\nuser "+row.user_name+" error: ", err);
                 });
             });
         });
         return p2;
     }).then(function() {
-        console.log("users imported ok");
+        console.log("\nusers imported ok");
     }, function(err) {
-        console.error("can't import users: ", err);
+        console.error("\ncan't import users: ", err);
     });
 
     return p;
@@ -149,17 +150,18 @@ function import_etablissements() {
                     status: ['association','association-parentale','entreprise','publique','indetermine','autre'][row.statut],
                 }).then(function(establishment) {
                     etablissements_ids[row.dataValues.id]=establishment.dataValues.id;
-                    console.log("establishment "+row.nom+" imported.");
+                    process.stdout.write('.');
+                    //console.log("establishment "+row.nom+" imported.");
                 }, function(err) {
-                    console.log("establishment "+row.nom+" error: ", err);
+                    console.log("\nestablishment "+row.nom+" error: ", err);
                 });
             });
         });
         return p2;
     }).then(function() {
-        console.log("establishment imported ok");
+        console.log("\nestablishment imported ok");
     }, function(err) {
-        console.error("can't import establishment: ", err);
+        console.error("\ncan't import establishment: ", err);
     });
 
     return p;
@@ -220,7 +222,8 @@ function import_themes() {
                     updatedAt: theme.horodatage,
                 }).then(function(_node_theme_hist) {
                     node_theme_hist = _node_theme_hist;
-                    console.log("theme "+theme.intitule+" imported.");
+                    process.stdout.write('.');
+                    //console.log("theme "+theme.intitule+" imported.");
                 }, function(err) {
                 });
             });
@@ -237,9 +240,9 @@ function import_themes() {
         }); // /import des rubriques
         return p2;
     }).then(function() {
-        console.log("themes imported ok");
+        console.log("\nthemes imported ok");
     }, function(err) {
-        console.error("@@@@@@@@ can't import themes: ", err);
+        console.error("\n@@@@@@@@ can't import themes: ", err);
     });
 
     return p;
@@ -302,9 +305,10 @@ function import_rubriques(theme, node_theme) {
                     updatedAt: rubrique.horodatage,
                 }).then(function(_node_rubrique_hist) {
                     node_rubrique_hist = _node_rubrique_hist;
-                    console.log("  rubrique "+rubrique.intitule+" imported identifiant:", rubrique.identifiant);
+                    process.stdout.write('.');
+                    //console.log("  rubrique "+rubrique.intitule+" imported identifiant:", rubrique.identifiant);
                 }, function(err) {
-                    console.log("  rubrique "+rubrique.intitule+" error: ", err);
+                    console.log("\n  rubrique "+rubrique.intitule+" error: ", err);
                 });
             });
             p3=p3.then(function() {
@@ -379,9 +383,10 @@ function import_questions(rubrique, node_rubrique) {
                     updatedAt: question.horodatage,
                 }).then(function(_node_question_hist) {
                     node_question_hist = _node_question_hist;
-                    console.log("    question "+question.intitule+" imported.");
+                    process.stdout.write('.');
+                    //console.log("    question "+question.intitule+" imported.");
                 }, function(err) {
-                    console.log("    question "+question.intitule+" error: ", err);
+                    console.log("\n    question "+question.intitule+" error: ", err);
                 });
             });
             p3=p3.then(function() {
@@ -456,9 +461,10 @@ function import_choices(question, node_question) {
                     updatedAt: choi.horodatage,
                 }).then(function(_node_choice_hist) {
                     node_choice_hist = _node_choice_hist;
-                    console.log("    choice "+choi.intitule+" imported.");
+                    process.stdout.write('.');
+                    //console.log("    choice "+choi.intitule+" imported.");
                 }, function(err) {
-                    console.log("    choice "+choi.intitule+" error: ", err);
+                    console.log("\n    choice "+choi.intitule+" error: ", err);
                 });
             });
         });
@@ -514,7 +520,8 @@ function import_themes_deleted() {
             });
             p2=p2.then(function(_node_hist) {
                 if (_node_hist) {
-                    console.log("  delete "+_node_hist.title);
+                    process.stdout.write('.');
+                    //console.log("  delete "+_node_hist.title);
                     return _node_hist.destroy();
                 }
             });
@@ -572,7 +579,8 @@ function import_rubriques_deleted() {
             });
             p2=p2.then(function(_node_hist) {
                 if (_node_hist) {
-                    console.log("  delete "+_node_hist.title);
+                    process.stdout.write('.');
+                    //console.log("  delete "+_node_hist.title);
                     return _node_hist.destroy();
                 }
             });
@@ -631,10 +639,11 @@ function import_questions_deleted() {
             });
             p2=p2.then(function(_node_hist) {
                 if (_node_hist) {
-                    console.log("  delete "+_node_hist.title);
+                    process.stdout.write('.');
+                    //console.log("  delete "+_node_hist.title);
                     return _node_hist.destroy();
                 } else {
-                    console.log("  delete "+question.intitule+" ignored");
+                    console.log("\n  delete "+question.intitule+" ignored");
                 }
             });
         });
@@ -694,10 +703,11 @@ function import_choices_deleted() {
             });
             p2=p2.then(function(_node_hist) {
                 if (_node_hist) {
-                    console.log("  delete "+_node_hist.title);
+                    process.stdout.write('.');
+                    //console.log("  delete "+_node_hist.title);
                     return _node_hist.destroy();
                 } else {
-                    console.log("  ignore delete of "+choi.intitule);
+                    console.log("\n  ignore delete of "+choi.intitule);
                 }
             });
         });
@@ -736,17 +746,65 @@ function import_audits() {
                     updatedAt: row.horodatage,
                 }).then(function(audit) {
                     audits_identifiants[row.dataValues.identifiant]=audit.dataValues.id;
-                    console.log("audit "+row.identifiant+" imported.");
+                    process.stdout.write('.');
+                    //console.log("audit "+row.identifiant+" imported.");
                 }, function(err) {
-                    console.log("audit "+row.identifiant+" error: ", err);
+                    console.log("\naudit "+row.identifiant+" error: ", err);
                 });
             });
         });
         return p2;
     }).then(function() {
-        console.log("audit imported ok");
+        console.log("\naudit imported ok");
     }, function(err) {
-        console.error("can't import audit: ", err);
+        console.error("\ncan't import audit: ", err);
+    });
+
+    return p;
+}
+
+function import_reponses() {
+    var p = new Promise(function (resolve, reject) {
+        console.log("#########");
+        console.log("######### import des reponses ...");
+        console.log("#########");
+        resolve();
+    });
+
+    // import des reponses
+    p = p.then(function() {
+        return models_import.reponse.findAll();
+    });
+
+    p = p.then(function(rows) {
+        var p2 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        rows.forEach(function(row) {
+
+            p2=p2.then(function() {
+
+                return models.answer.create({
+                    id_audit: audits_identifiants[row.audit],
+                    id_node: questions_identifiants[row.question],
+                    ignored: row.reponseIgnoree ? true : false,
+                    value: row.valeur != null ? row.valeur : "",
+                    createdAt: row.horodatage,
+                    updatedAt: row.horodatage,
+                }).then(function(answer) {
+                    //answers_identifiants[row.dataValues.identifiant]=reponse.dataValues.id;
+                    process.stdout.write('.');
+                    //console.log("reponse "+row.identifiant+" imported.");
+                }, function(err) {
+                    console.log("\nreponse "+row.identifiant+" error: ", err);
+                });
+            });
+        });
+        return p2;
+    }).then(function() {
+        console.log("\nreponses imported ok");
+    }, function(err) {
+        console.error("\ncan't import reponse: ", err);
     });
 
     return p;
@@ -815,6 +873,12 @@ models.sequelize.sync({
         return import_audits();
     });
 
+    // import des reponses
+    /*
+    p = p.then(function() {
+        return import_reponses();
+    });
+*/
 
     // end
     p = p.then(function() {
