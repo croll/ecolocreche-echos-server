@@ -114,6 +114,12 @@ function import_users() {
     return p;
 }
 
+var themes_identifiants = {};
+var rubriques_identifiants = {};
+var questions_identifiants = {};
+var choices_identifiants = {};
+var etablissements_ids = {};
+var audits_identifiants = {};
 function import_etablissements() {
     var p = new Promise(function (resolve, reject) {
         console.log("#########");
@@ -141,7 +147,8 @@ function import_etablissements() {
                     mail: row.mail ? row.mail : '',
                     type: ['creche', 'halte-garderie', 'micro-creche', 'multi-accueil', 'relais-d-assistante', 'autre'][row.type],
                     status: ['association','association-parentale','entreprise','publique','indetermine','autre'][row.statut],
-                }).then(function() {
+                }).then(function(establishment) {
+                    etablissements_ids[row.dataValues.id]=establishment.dataValues.id;
                     console.log("establishment "+row.nom+" imported.");
                 }, function(err) {
                     console.log("establishment "+row.nom+" error: ", err);
@@ -159,10 +166,6 @@ function import_etablissements() {
 }
 
 
-var themes_identifiants = {};
-var rubriques_identifiants = {};
-var questions_identifiants = {};
-var choices_identifiants = {};
 function import_themes() {
     // import des themes
     var p = new Promise(function (resolve, reject) {
@@ -705,6 +708,51 @@ function import_choices_deleted() {
     return p;
 }
 
+function import_audits() {
+    var p = new Promise(function (resolve, reject) {
+        console.log("#########");
+        console.log("######### import des audits ...");
+        console.log("#########");
+        resolve();
+    });
+
+    // import des audits
+    p = p.then(function() {
+        return models_import.audit.findAll();
+    });
+    p = p.then(function(rows) {
+        var p2 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        rows.forEach(function(row) {
+            p2=p2.then(function() {
+                return models.audit.create({
+                    id_establishment: etablissements_ids[row.get('etablissement')],
+                    id_inquiryform: 1,
+                    key: row.cle,
+                    active: row.en_cours ? true : false,
+                    synthesis: row.synthese,
+                    createdAt: row.horodatage,
+                    updatedAt: row.horodatage,
+                }).then(function(audit) {
+                    audits_identifiants[row.dataValues.identifiant]=audit.dataValues.id;
+                    console.log("audit "+row.identifiant+" imported.");
+                }, function(err) {
+                    console.log("audit "+row.identifiant+" error: ", err);
+                });
+            });
+        });
+        return p2;
+    }).then(function() {
+        console.log("audit imported ok");
+    }, function(err) {
+        console.error("can't import audit: ", err);
+    });
+
+    return p;
+}
+
+
 models.sequelize.sync({
     force: true,
 }).then(function() {
@@ -760,6 +808,11 @@ models.sequelize.sync({
     // import des choices deleted
     p = p.then(function() {
         return import_choices_deleted();
+    });
+
+    // import des audits
+    p = p.then(function() {
+        return import_audits();
     });
 
 
