@@ -36,6 +36,6 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     tableName: 'choice_hist',
     timestamps: true,
-    paranoid: true,
+    paranoid: false,
   });
 };

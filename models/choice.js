@@ -18,6 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     tableName: 'choice',
-    timestamps: false,
+    timestamps: true, // sequelize want timestamps ON if we want paranoid, so, timestamps is ON here
+    paranoid: true,
   });
 };

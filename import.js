@@ -184,9 +184,11 @@ function import_themes() {
                 ['version', 'ASC'],
             ],
             where: {
+                /*
                 etat: {
                     $ne: ETAT_DELETED,
                 }
+                */
             }
         });
     });
@@ -194,7 +196,8 @@ function import_themes() {
         var p2 = new Promise(function (resolve, reject) {
             resolve();
         });
-        themes.forEach(function(theme) {
+        themes.forEach(function(theme, theme_i) {
+            var theme_next = themes[theme_i+1];
             var node_theme;
             var node_theme_hist;
             p2=p2.then(function() {
@@ -211,21 +214,27 @@ function import_themes() {
             });
             p2=p2.then(function(_node_theme) {
                 node_theme=_node_theme;
-                return models.node_hist.create({
-                    id_node: node_theme.dataValues.id,
-                    type: 'directory',
-                    title: theme.intitule ? theme.intitule : '',
-                    description: theme.description ? theme.description : '',
-                    position: theme.position ? theme.position : 0,
-                    color: theme.couleur ? theme.couleur : "",
-                    createdAt: theme.horodatage,
-                    updatedAt: theme.horodatage,
-                }).then(function(_node_theme_hist) {
-                    node_theme_hist = _node_theme_hist;
-                    process.stdout.write('.');
-                    //console.log("theme "+theme.intitule+" imported.");
-                }, function(err) {
-                });
+                if (theme.etat == ETAT_DELETED && (!theme_next || theme_next.identifiant != theme.identifiant)) {
+                    process.stdout.write('d');
+                    return _node_theme.destroy();
+                } else {
+                    return models.node_hist.create({
+                        id_node: node_theme.dataValues.id,
+                        type: 'directory',
+                        title: theme.intitule ? theme.intitule : '',
+                        description: theme.description ? theme.description : '',
+                        position: theme.position ? theme.position : 0,
+                        color: theme.couleur ? theme.couleur : "",
+                        createdAt: theme.horodatage,
+                        updatedAt: theme.horodatage,
+                    }).then(function(_node_theme_hist) {
+                        node_theme_hist = _node_theme_hist;
+                        process.stdout.write('.');
+                        //console.log("theme "+theme.intitule+" imported.");
+                    }, function(err) {
+                        console.error("error create theme : ", err);
+                    });
+                }
             });
 
             p2=p2.then(function() {
@@ -266,9 +275,11 @@ function import_rubriques(theme, node_theme) {
             ],
             where: {
                 theme: theme.identifiant,
+                /*
                 etat: {
                     $ne: ETAT_DELETED,
                 }
+                */
             }
         });
     });
@@ -276,7 +287,8 @@ function import_rubriques(theme, node_theme) {
         var p3 = new Promise(function (resolve, reject) {
             resolve();
         });
-        rubriques.forEach(function(rubrique) {
+        rubriques.forEach(function(rubrique, rubrique_i) {
+            var rubrique_next = rubriques[rubrique_i+1];
             var node_rubrique;
             var node_rubrique_hist;
             p3=p3.then(function() {
@@ -294,22 +306,29 @@ function import_rubriques(theme, node_theme) {
             });
             p3=p3.then(function(_node_rubrique) {
                 node_rubrique = _node_rubrique;
-                return models.node_hist.create({
-                    id_node: node_rubrique.dataValues.id,
-                    type: 'directory',
-                    title: rubrique.intitule ? rubrique.intitule : '',
-                    description: rubrique.description ? rubrique.description : '',
-                    position: rubrique.position ? rubrique.position : 0,
-                    color: "", // no color in original rubrique
-                    createdAt: rubrique.horodatage,
-                    updatedAt: rubrique.horodatage,
-                }).then(function(_node_rubrique_hist) {
-                    node_rubrique_hist = _node_rubrique_hist;
-                    process.stdout.write('.');
-                    //console.log("  rubrique "+rubrique.intitule+" imported identifiant:", rubrique.identifiant);
-                }, function(err) {
-                    console.log("\n  rubrique "+rubrique.intitule+" error: ", err);
-                });
+                if (rubrique.etat == ETAT_DELETED && (!rubrique_next || rubrique_next.identifiant != rubrique.identifiant)) {
+                    // delete
+                    //console.log("delete rubrique identifiant: ", rubrique.identifiant, " id_node: ", _node_rubrique.get('id'));
+                    process.stdout.write('d');
+                    return _node_rubrique.destroy();
+                } else {
+                    return models.node_hist.create({
+                        id_node: node_rubrique.dataValues.id,
+                        type: 'directory',
+                        title: rubrique.intitule ? rubrique.intitule : '',
+                        description: rubrique.description ? rubrique.description : '',
+                        position: rubrique.position ? rubrique.position : 0,
+                        color: "", // no color in original rubrique
+                        createdAt: rubrique.horodatage,
+                        updatedAt: rubrique.horodatage,
+                    }).then(function(_node_rubrique_hist) {
+                        node_rubrique_hist = _node_rubrique_hist;
+                        process.stdout.write('.');
+                        //console.log("  rubrique "+rubrique.intitule+" imported identifiant:", rubrique.identifiant);
+                    }, function(err) {
+                        console.log("\n  rubrique "+rubrique.intitule+" error: ", err);
+                    });
+                }
             });
             p3=p3.then(function() {
                 if (!(rubrique.dataValues.identifiant in rubriques_identifiants))
@@ -343,9 +362,11 @@ function import_questions(rubrique, node_rubrique) {
             ],
             where: {
                 rubrique: rubrique.identifiant,
+                /*
                 etat: {
                     $ne: ETAT_DELETED,
                 }
+                */
             }
         });
     });
@@ -353,7 +374,8 @@ function import_questions(rubrique, node_rubrique) {
         var p3 = new Promise(function (resolve, reject) {
             resolve();
         });
-        questions.forEach(function(question) {
+        questions.forEach(function(question, question_i) {
+            var question_next = questions[question_i+1];
             var node_question;
             var node_question_hist;
             p3=p3.then(function() {
@@ -371,23 +393,31 @@ function import_questions(rubrique, node_rubrique) {
             });
             p3=p3.then(function(_node_question) {
                 node_question = _node_question;
-                return models.node_hist.create({
-                    id_node: node_question.dataValues.id,
-                    type: 'directory',
-                    title: question.intitule ? question.intitule : '',
-                    type: ['q_radio','q_checkbox','q_percents','q_text','q_numeric'][question.type],
-                    description: question.commentaire ? question.commentaire : '',
-                    position: question.position ? question.position : 0,
-                    color: "", // no color in original question
-                    createdAt: question.horodatage,
-                    updatedAt: question.horodatage,
-                }).then(function(_node_question_hist) {
-                    node_question_hist = _node_question_hist;
-                    process.stdout.write('.');
-                    //console.log("    question "+question.intitule+" imported.");
-                }, function(err) {
-                    console.log("\n    question "+question.intitule+" error: ", err);
-                });
+                if (question.etat == ETAT_DELETED && (!question_next || question_next.identifiant != question.identifiant)) {
+                    // delete
+                    //console.log("delete question identifiant: ", question.identifiant, " id_node: ", _node_question.get('id'));
+                    process.stdout.write('d');
+                    return _node_question.destroy();
+                } else {
+                    return models.node_hist.create({
+                        id_node: node_question.dataValues.id,
+                        type: 'directory',
+                        title: question.intitule ? question.intitule : '',
+                        type: ['q_radio','q_checkbox','q_percents','q_text','q_numeric'][question.type],
+                        description: question.commentaire ? question.commentaire : '',
+                        position: question.position ? question.position : 0,
+                        color: "", // no color in original question
+                        createdAt: question.horodatage,
+                        updatedAt: question.horodatage,
+                    }).then(function(_node_question_hist) {
+                        node_question_hist = _node_question_hist;
+                        process.stdout.write('.');
+                        //console.log("    question "+question.intitule+" imported.");
+                    }, function(err) {
+                        console.log("\n    question "+question.intitule+" error: ", err);
+                    });
+
+                }
             });
             p3=p3.then(function() {
                 if (!(question.dataValues.identifiant in questions_identifiants))
@@ -421,9 +451,11 @@ function import_choices(question, node_question) {
             ],
             where: {
                 question: question.identifiant,
+                /*
                 etat: {
                     $ne: ETAT_DELETED,
                 }
+                */
             }
         });
     });
@@ -431,7 +463,8 @@ function import_choices(question, node_question) {
         var p3 = new Promise(function (resolve, reject) {
             resolve();
         });
-        choix.forEach(function(choi) {
+        choix.forEach(function(choi, choi_i) {
+            var choi_next = choix[choi_i+1];
             var node_choice;
             var node_choice_hist;
             p3=p3.then(function() {
@@ -450,22 +483,29 @@ function import_choices(question, node_question) {
             p3=p3.then(function(_node_choice) {
                 node_choice = _node_choice;
                 choices_identifiants[choi.dataValues.identifiant] = node_choice.dataValues.id;
-                return models.choice_hist.create({
-                    id_choice: node_choice.dataValues.id,
-                    type: 'directory',
-                    title: choi.intitule ? choi.intitule : '',
-                    comment: choi.commentaire ? choi.commentaire : '',
-                    position: choi.position ? choi.position : 0,
-                    impact: choi.impact ? choi.impact : 0,
-                    createdAt: choi.horodatage,
-                    updatedAt: choi.horodatage,
-                }).then(function(_node_choice_hist) {
-                    node_choice_hist = _node_choice_hist;
-                    process.stdout.write('.');
-                    //console.log("    choice "+choi.intitule+" imported.");
-                }, function(err) {
-                    console.log("\n    choice "+choi.intitule+" error: ", err);
-                });
+                if (choi.etat == ETAT_DELETED && (!choi_next || choi_next.identifiant != choi.identifiant)) {
+                    // delete
+                    //console.log("delete choi identifiant: ", choi.identifiant, " id_node: ", _node_choi.get('id'));
+                    process.stdout.write('d');
+                    return _node_choice.destroy();
+                } else {
+                    return models.choice_hist.create({
+                        id_choice: node_choice.dataValues.id,
+                        type: 'directory',
+                        title: choi.intitule ? choi.intitule : '',
+                        comment: choi.commentaire ? choi.commentaire : '',
+                        position: choi.position ? choi.position : 0,
+                        impact: choi.impact ? choi.impact : 0,
+                        createdAt: choi.horodatage,
+                        updatedAt: choi.horodatage,
+                    }).then(function(_node_choice_hist) {
+                        node_choice_hist = _node_choice_hist;
+                        process.stdout.write('.');
+                        //console.log("    choice "+choi.intitule+" imported.");
+                    }, function(err) {
+                        console.log("\n    choice "+choi.intitule+" error: ", err);
+                    });
+                }
             });
         });
         return p3;
@@ -783,6 +823,60 @@ function import_reponses() {
         rows.forEach(function(row) {
 
             p2=p2.then(function() {
+                return models_import.audit.findOne({
+                    where: {
+                        identifiant: row.audit,
+                    }
+                });
+            });
+
+            var import_audit;
+            p2=p2.then(function(_import_audit) {
+                import_audit = _import_audit;
+                /*
+                console.log("identifiant: ",
+                    row.question, "node: ",
+                    questions_identifiants[row.question],
+                    "date: ", import_audit.horodatage
+                    );
+*/
+                return dbtools.getLatestNodeHist(models, {
+                    id_node: questions_identifiants[row.question],
+                    date: import_audit.horodatage,
+                    with_deleteds: true,
+                });
+            });
+
+            p2=p2.then(function(node_question_hist) {
+
+                /*
+                console.log("identifiant: ",
+                    row.question, "node: ",
+                    questions_identifiants[row.question],
+                    "date: ", import_audit.horodatage,
+                    "audit: ", row.audit,
+                    "found ? ", node_question_hist ? true : false
+                    );
+                */
+
+                var json_value="";
+                try {
+                    json_value=JSON.parse(row.valeur);
+                } catch (err) {
+                    console.log("### import de reponse ", row.identifiant, "json foireux. ###");
+                }
+                switch(node_question_hist.type) {
+                    case 'q_radio': // exemple valeur: "1626"
+                    break;
+                    case 'q_checkbox': // exemple valeur: {"1612":"100","1613":"100","1614":"100"}
+                    break;
+                    case 'q_percents': // exemple valeur: {"1208":"50","1209":"50"}
+                    break;
+                    case 'q_text': // exemple valeur: "FL44\/ manger bio\/ aria 85"
+                    break;
+                    case 'q_numeric': // exemple valeur: "273"
+                    break;
+                }
 
                 return models.answer.create({
                     id_audit: audits_identifiants[row.audit],
@@ -848,6 +942,7 @@ models.sequelize.sync({
         return import_themes();
     });
 
+    /*
     // import des themes deleted
     p = p.then(function() {
         return import_themes_deleted();
@@ -867,6 +962,7 @@ models.sequelize.sync({
     p = p.then(function() {
         return import_choices_deleted();
     });
+    */
 
     // import des audits
     p = p.then(function() {
@@ -874,11 +970,9 @@ models.sequelize.sync({
     });
 
     // import des reponses
-    /*
     p = p.then(function() {
         return import_reponses();
     });
-*/
 
     // end
     p = p.then(function() {
