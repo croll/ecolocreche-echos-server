@@ -860,29 +860,48 @@ function import_reponses() {
                 */
 
                 var json_value="";
-                try {
-                    json_value=JSON.parse(row.valeur);
-                } catch (err) {
-                    console.log("### import de reponse ", row.identifiant, "json foireux. ###");
+                var json_res="";
+                if (row.valeur != null) {
+                    try {
+                        json_value=JSON.parse(row.valeur);
+                    } catch (err) {
+                        console.log("### import de reponse ", row.identifiant, "json foireux. ###");
+                    }
                 }
                 switch(node_question_hist.type) {
                     case 'q_radio': // exemple valeur: "1626"
+                        json_res = choices_identifiants[parseInt(json_value)];
                     break;
                     case 'q_checkbox': // exemple valeur: {"1612":"100","1613":"100","1614":"100"}
+                    json_res = {};
+                    for (id_choi in json_value) {
+                        json_res[choices_identifiants[parseInt(id_choi)]]=parseInt(json_value[id_choi]);
+                    }
                     break;
                     case 'q_percents': // exemple valeur: {"1208":"50","1209":"50"}
+                    json_res = {};
+                    for (id_choi in json_value) {
+                        json_res[choices_identifiants[parseInt(id_choi)]]=parseInt(json_value[id_choi]);
+                    }
                     break;
                     case 'q_text': // exemple valeur: "FL44\/ manger bio\/ aria 85"
+                    json_res=""+json_value;
                     break;
                     case 'q_numeric': // exemple valeur: "273"
+                    json_res=parseFloat(json_value);
                     break;
+                }
+
+                var r = JSON.stringify(json_res);
+                if (r == undefined) {
+                    r="";
                 }
 
                 return models.answer.create({
                     id_audit: audits_identifiants[row.audit],
                     id_node: questions_identifiants[row.question],
                     ignored: row.reponseIgnoree ? true : false,
-                    value: row.valeur != null ? row.valeur : "",
+                    value: r,
                     createdAt: row.horodatage,
                     updatedAt: row.horodatage,
                 }).then(function(answer) {
@@ -899,6 +918,53 @@ function import_reponses() {
         console.log("\nreponses imported ok");
     }, function(err) {
         console.error("\ncan't import reponse: ", err);
+    });
+
+    return p;
+}
+
+function update_audit_cached_complete() {
+    var p = new Promise(function (resolve, reject) {
+        console.log("#########");
+        console.log("######### update_audit_cached_complete ...");
+        console.log("#########");
+        resolve();
+    });
+
+    // import des audits
+    p = p.then(function() {
+        return models.audit.findAll();
+    });
+    p = p.then(function(audits) {
+        var p2 = new Promise(function (resolve, reject) {
+            resolve();
+        });
+        audits.forEach(function(audit) {
+            p2=p2.then(function() {
+                return models.sequelize.query("select count(*) as count from answer where answer.id_audit = ?", {
+                    replacements: [ audit.id ],
+                });
+            });
+            var answer_count;
+            p2=p2.then(function(answer_counts) {
+                answer_count=answer_counts[0][0]['count'];
+                return models.sequelize.query("select count(*) as count from (select node.id from node left join node_hist ON node_hist.id_node = node.id where type like 'q_%' and (deletedAt IS NULL or deletedAt < ?) group by node.id) as plop", {
+                    replacements: [ audit.createdAt ],
+                });
+            });
+            var question_count;
+            p2=p2.then(function(question_counts) {
+                question_count = question_counts[0][0]['count'];
+                var percent = answer_count / question_count;
+                audit.cached_percent_complete = percent;
+                return audit.save();
+            });
+        });
+        return p2;
+    }).then(function() {
+        console.log("\naudit update_audit_cached_complete ok");
+    }, function(err) {
+        console.error("\ncan't update_audit_cached_complete audit: ", err);
     });
 
     return p;
@@ -942,28 +1008,6 @@ models.sequelize.sync({
         return import_themes();
     });
 
-    /*
-    // import des themes deleted
-    p = p.then(function() {
-        return import_themes_deleted();
-    });
-
-    // import des rubriques deleted
-    p = p.then(function() {
-        return import_rubriques_deleted();
-    });
-
-    // import des questions deleted
-    p = p.then(function() {
-        return import_questions_deleted();
-    });
-
-    // import des choices deleted
-    p = p.then(function() {
-        return import_choices_deleted();
-    });
-    */
-
     // import des audits
     p = p.then(function() {
         return import_audits();
@@ -972,6 +1016,11 @@ models.sequelize.sync({
     // import des reponses
     p = p.then(function() {
         return import_reponses();
+    });
+
+    // cache des % complete d'audits
+    p = p.then(function() {
+        return update_audit_cached_complete();
     });
 
     // end
