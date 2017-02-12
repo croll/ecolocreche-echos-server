@@ -39,6 +39,5 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     tableName: 'inquiryform_hist',
     timestamps: true,
-    paranoid: true,
   });
 };

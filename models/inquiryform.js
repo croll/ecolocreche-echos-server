@@ -10,6 +10,7 @@ module.exports = function(sequelize, DataTypes) {
     },
   }, {
     tableName: 'inquiryform',
-    timestamps: false,
+    timestamps: true,
+    paranoid: true,
   });
 };

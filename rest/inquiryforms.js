@@ -91,20 +91,25 @@ module.exports = function(server, epilogue, models, permchecks) {
     server.del('/rest/hist/inquiryforms/:id_inquiryform',
         permchecks.haveAdmin,
         function (req, res, next) {
-            return dbtools.getLatestInquiryformHist(models, {
-                id_inquiryform: req.params.id_inquiryform,
-            }).then(function(dir_hist) {
-                return models.inquiryform_hist.findOne({
-                    where: {
-                        id: dir_hist.dataValues.id,
-                    }
+            return models.inquiryform.findOne({
+                where: {
+                    id: req.params.id_inquiryform,
+                }
+            }).then(function(inquiryform) {
+                if (inquiryform) {
+                    return inquiryform.destroy();
+                } else {
+                    return false;
+                }
+            }).then(function(res) {
+                return dbtools.getLatestNodeHist(models, {
+                    id_inquiryform: req.params.id_inquiryform,
                 });
-            }).then(function(inquiryform_hist) {
-                return inquiryform_hist.destroy();
-            }).then(function(inquiryform_hist) {
-                res.send(inquiryform_hist);
+            }).then(function(dir_hist) {
+                res.send(dir_hist);
             }, function(err) {
-                throw new epilogue.Errors.EpilogueError(500, err);
+                console.error(err);
+                return next(new restify.InternalServerError(err));
             });
         }
     );
