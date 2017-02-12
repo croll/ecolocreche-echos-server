@@ -167,11 +167,11 @@ module.exports = function(server, epilogue, models, permchecks) {
                 if (node_hist.get("type") == "directory") {
                     return node_hist;
                 } else {
-                    console.log("TODO: delete removed choices !!")
                     // update choices
                     var p = new Promise(function (resolve, reject) {
                         resolve();
                     });
+                    var ids_choice=[];
                     req.params.choices.forEach(function(param_choice) {
 
                         if ('id_choice' in param_choice) {
@@ -194,6 +194,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                         var id_choice;
                         p=p.then(function(choice) {
                             id_choice = choice.get("id");
+                            ids_choice.push(id_choice);
                             return dbtools.getLatestChoiceHist(models, {
                                 id_choice: id_choice,
                             });
@@ -214,6 +215,18 @@ module.exports = function(server, epilogue, models, permchecks) {
                                     position: param_choice.position,
                                     impact: param_choice.impact,
                                 });
+                            }
+                        });
+                    });
+
+                    // delete unused anymore choice
+                    p=p.then(function() {
+                        return models.choice.destroy({
+                            where: {
+                                id: {
+                                    $notIn: ids_choice,
+                                },
+                                id_node: node_hist.id_node,
                             }
                         });
                     });
