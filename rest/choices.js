@@ -99,21 +99,27 @@ module.exports = function(server, epilogue, models, permchecks) {
     server.del('/rest/hist/choices/:id_choice',
         permchecks.haveAdmin,
         function (req, res, next) {
-            return dbtools.getLatestChoiceHist(models, {
-                id_choice: req.params.id_choice,
-            }).then(function(dir_hist) {
-                return models.choice_hist.findOne({
-                    where: {
-                        id: dir_hist.dataValues.id,
-                    }
+            return models.choice.findOne({
+                where: {
+                    id: req.params.id_choice,
+                }
+            }).then(function(choice) {
+                if (choice) {
+                    return choice.destroy();
+                } else {
+                    return false;
+                }
+            }).then(function(res) {
+                return dbtools.getLatestNodeHist(models, {
+                    id_choice: req.params.id_choice,
                 });
-            }).then(function(choice_hist) {
-                return choice_hist.destroy();
-            }).then(function(choice_hist) {
-                res.send(choice_hist);
+            }).then(function(dir_hist) {
+                res.send(dir_hist);
             }, function(err) {
-                throw new epilogue.Errors.EpilogueError(500, err);
+                console.error(err);
+                return next(new restify.InternalServerError(err));
             });
         }
     );
+
 }
