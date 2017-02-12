@@ -82,7 +82,6 @@ module.exports = function(server, epilogue, models, permchecks) {
                 break;
             }
         }
-
         return context.continue; // passe aux checks suivants (haveAdmin)
     }
 
@@ -93,6 +92,7 @@ module.exports = function(server, epilogue, models, permchecks) {
         if (req.session.user.account_type != 'admin') {
             // ok pour self edit, mais pas ces champs :
             delete req.body.account_type;
+            delete req.params.account_type;
         }
         return context.continue;
     });
@@ -105,13 +105,21 @@ module.exports = function(server, epilogue, models, permchecks) {
         if (req.params.password && req.params.password.length > 0) {
             return new Promise(function(resolve, reject) {
                 bcrypt.genSalt(10, function(err, salt) {
+                    if (err) {
+                        reject(err);
+                        return err;
+                    }
                     bcrypt.hash(req.params.password, salt, function(err, hash) {
+                        if (err) {
+                            reject(err);
+                            return err;
+                        }
                         context.attributes.password_hash = hash;
                         resolve(context.continue);
                     });
                 });
             });
-        } else return context.contonue;
+        } else return context.continue;
     }
     userResource.create.write.before(user_save_write_before);
     userResource.update.write.before(user_save_write_before);
