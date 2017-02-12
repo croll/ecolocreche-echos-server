@@ -248,18 +248,22 @@ module.exports = function(server, epilogue, models, permchecks) {
     server.del('/rest/hist/nodes/:id_node',
         permchecks.haveAdmin,
         function (req, res, next) {
-            return dbtools.getLatestNodeHist(models, {
-                id_node: req.params.id_node,
-            }).then(function(dir_hist) {
-                return models.node_hist.findOne({
-                    where: {
-                        id: dir_hist.id,
-                    }
+            return models.node.findOne({
+                where: {
+                    id: req.params.id_node,
+                }
+            }).then(function(node) {
+                if (node) {
+                    return node.destroy();
+                } else {
+                    return false;
+                }
+            }).then(function(res) {
+                return dbtools.getLatestNodeHist(models, {
+                    id_node: req.params.id_node,
                 });
-            }).then(function(node_hist) {
-                return node_hist.destroy();
-            }).then(function(node_hist) {
-                res.send(node_hist);
+            }).then(function(dir_hist) {
+                res.send(dir_hist);
             }, function(err) {
                 console.error(err);
                 return next(new restify.InternalServerError(err));
