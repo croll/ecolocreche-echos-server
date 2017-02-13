@@ -51,35 +51,39 @@ module.exports = function(server, epilogue, models, permchecks) {
         function (req, res, next) {
             return dbtools.getLatestNodeHist(models, req.params).then(function(dir_hist) {
                 if (dir_hist === undefined) {
-                    return next(new restify.NotFoundError("node does not exists"));
+                    next(new restify.NotFoundError("node does not exists"));
                 } else {
                     return dir_hist;
                 }
             }).then(function(dir_hist) {
-                return dbtools.getNodePath(models, dir_hist.id_node).then(function(path) {
-                    dir_hist.nodepath = path;
-                    return dir_hist;
-                });
-            }).then(function(dir_hist) {
-                if (dir_hist.type != 'directory') { // this is a question, so also take the choices of it
-                    return dbtools.getLatestChoiceHist(models, req.params).then(function(choices_hist) {
-                        dir_hist.choices = choices_hist;
-                        if (req.params.id_audit) { // this is an audit, so also take the answer of the question
-                            models.answer.findOne({
-                                where: {
-                                    id_audit: req.params.id_audit,
-                                    id_node: dir_hist.id_node,
-                                },
-                            }).then(function(answer) {
-                                dir_hist.answer = answer;
-                                res.send(dir_hist);
-                            })
-                        } else {
-                            res.send(dir_hist);
-                        }
+                if (dir_hist) {
+                    return dbtools.getNodePath(models, dir_hist.id_node).then(function(path) {
+                        dir_hist.nodepath = path;
+                        return dir_hist;
                     });
-                } else {
-                    res.send(dir_hist);
+                }
+            }).then(function(dir_hist) {
+                if (dir_hist) {
+                    if (dir_hist.type != 'directory') { // this is a question, so also take the choices of it
+                        return dbtools.getLatestChoiceHist(models, req.params).then(function(choices_hist) {
+                            dir_hist.choices = choices_hist;
+                            if (req.params.id_audit) { // this is an audit, so also take the answer of the question
+                                models.answer.findOne({
+                                    where: {
+                                        id_audit: req.params.id_audit,
+                                        id_node: dir_hist.id_node,
+                                    },
+                                }).then(function(answer) {
+                                    dir_hist.answer = answer;
+                                    res.send(dir_hist);
+                                })
+                            } else {
+                                res.send(dir_hist);
+                            }
+                        });
+                    } else {
+                        res.send(dir_hist);
+                    }
                 }
             }, function(err) {
                 console.error(err);
