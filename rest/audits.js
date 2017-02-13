@@ -6,6 +6,7 @@ module.exports = function(server, epilogue, models, permchecks) {
       include: [{
           model: models.establishment
       }],
+      pagination: false
     });
 
     //auditResource.use(permchecks.default_permissions);

@@ -63,7 +63,8 @@ module.exports = function(server, epilogue, models, permchecks) {
 
     var userResource = epilogue.resource({
       model: models.users,
-      endpoints: ['/rest/users', '/rest/users/:id']
+      endpoints: ['/rest/users', '/rest/users/:id'],
+      pagination: false
     });
     userResource.use(permchecks.default_permissions);
 
