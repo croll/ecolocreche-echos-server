@@ -956,15 +956,24 @@ function update_audit_cached_complete() {
             var answer_count;
             p2=p2.then(function(answer_counts) {
                 answer_count=answer_counts[0][0]['count'];
-                return models.sequelize.query("select count(*) as count from (select node.id from node left join node_hist ON node_hist.id_node = node.id where type like 'q_%' and (deletedAt IS NULL or deletedAt < ?) group by node.id) as plop", {
-                    replacements: [ audit.createdAt ],
-                });
+
+                return dbtools.getLatestNodeHist(models, {
+                    date: audit.createdAt,
+                    id_audit: audit.id,
+                }).then(function(tout) {
+                    var question_count=0;
+                    tout.forEach(function(row) {
+                        if (row.type.startsWith('q_'))
+                            question_count++;
+                    });
+                    return question_count;
+                })
             });
-            var question_count;
-            p2=p2.then(function(question_counts) {
-                question_count = question_counts[0][0]['count'];
+            p2=p2.then(function(question_count) {
+                //var question_count = question_counts[0][0]['count'];
                 var percent = answer_count / question_count;
                 audit.cached_percent_complete = percent;
+                process.stdout.write('.');
                 return audit.save();
             });
         });
