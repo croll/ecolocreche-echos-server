@@ -72,6 +72,14 @@ function getLatestNodeHist(params) {
 }
 
 
+function myDestroy(instance, date) {
+    instance.deletedAt=date;
+    instance.setDataValue('deletedAt', date);
+    return instance.save({
+        paranoid: false,
+    });
+}
+
 function import_users() {
     var p = new Promise(function (resolve, reject) {
         console.log("#########");
@@ -216,7 +224,7 @@ function import_themes() {
                 node_theme=_node_theme;
                 if (theme.etat == ETAT_DELETED && (!theme_next || theme_next.identifiant != theme.identifiant)) {
                     process.stdout.write('d');
-                    return _node_theme.destroy();
+                    return myDestroy(_node_theme, theme.horodatage);
                 } else {
                     return models.node_hist.create({
                         id_node: node_theme.dataValues.id,
@@ -310,7 +318,7 @@ function import_rubriques(theme, node_theme) {
                     // delete
                     //console.log("delete rubrique identifiant: ", rubrique.identifiant, " id_node: ", _node_rubrique.get('id'));
                     process.stdout.write('d');
-                    return _node_rubrique.destroy();
+                    return myDestroy(_node_rubrique, rubrique.horodatage);
                 } else {
                     return models.node_hist.create({
                         id_node: node_rubrique.dataValues.id,
@@ -397,7 +405,7 @@ function import_questions(rubrique, node_rubrique) {
                     // delete
                     //console.log("delete question identifiant: ", question.identifiant, " id_node: ", _node_question.get('id'));
                     process.stdout.write('d');
-                    return _node_question.destroy();
+                    return myDestroy(_node_question, question.horodatage);
                 } else {
                     return models.node_hist.create({
                         id_node: node_question.dataValues.id,
@@ -487,7 +495,7 @@ function import_choices(question, node_question) {
                     // delete
                     //console.log("delete choi identifiant: ", choi.identifiant, " id_node: ", _node_choi.get('id'));
                     process.stdout.write('d');
-                    return _node_choice.destroy();
+                    return myDestroy(_node_choice, choi.horodatage);
                 } else {
                     return models.choice_hist.create({
                         id_choice: node_choice.dataValues.id,
