@@ -857,6 +857,12 @@ function import_reponses() {
 
             p2=p2.then(function(node_question_hist) {
 
+                if (row.valeur == null && row.reponseIgnoree == 0) {
+                    // on integre pas les non-reponses.
+                    process.stdout.write('x');
+                    return;
+                }
+
                 /*
                 console.log("identifiant: ",
                     row.question, "node: ",
