@@ -72,6 +72,14 @@ function getLatestNodeHist(params) {
 }
 
 
+function myDestroy(instance, date) {
+    instance.deletedAt=date;
+    instance.setDataValue('deletedAt', date);
+    return instance.save({
+        paranoid: false,
+    });
+}
+
 function import_users() {
     var p = new Promise(function (resolve, reject) {
         console.log("#########");
@@ -94,7 +102,7 @@ function import_users() {
                     name: row.user_name,
                     password_hash: row.user_password_hash,
                     email: row.user_email,
-                    account_type: row.user_account_type ? 'admin' : 'agent',
+                    account_type: row.user_account_type == 2 ? 'admin' : 'agent',
                     rememberme_token: row.user_rememberme_token ? row.user_rememberme_token : '',
                     createdAt: row.user_creation_timestamp ? row.user_creation_timestamp : "1975-02-06",
                 }).then(function() {
@@ -216,7 +224,7 @@ function import_themes() {
                 node_theme=_node_theme;
                 if (theme.etat == ETAT_DELETED && (!theme_next || theme_next.identifiant != theme.identifiant)) {
                     process.stdout.write('d');
-                    return _node_theme.destroy();
+                    return myDestroy(_node_theme, theme.horodatage);
                 } else {
                     return models.node_hist.create({
                         id_node: node_theme.dataValues.id,
@@ -310,7 +318,7 @@ function import_rubriques(theme, node_theme) {
                     // delete
                     //console.log("delete rubrique identifiant: ", rubrique.identifiant, " id_node: ", _node_rubrique.get('id'));
                     process.stdout.write('d');
-                    return _node_rubrique.destroy();
+                    return myDestroy(_node_rubrique, rubrique.horodatage);
                 } else {
                     return models.node_hist.create({
                         id_node: node_rubrique.dataValues.id,
@@ -397,7 +405,7 @@ function import_questions(rubrique, node_rubrique) {
                     // delete
                     //console.log("delete question identifiant: ", question.identifiant, " id_node: ", _node_question.get('id'));
                     process.stdout.write('d');
-                    return _node_question.destroy();
+                    return myDestroy(_node_question, question.horodatage);
                 } else {
                     return models.node_hist.create({
                         id_node: node_question.dataValues.id,
@@ -487,7 +495,7 @@ function import_choices(question, node_question) {
                     // delete
                     //console.log("delete choi identifiant: ", choi.identifiant, " id_node: ", _node_choi.get('id'));
                     process.stdout.write('d');
-                    return _node_choice.destroy();
+                    return myDestroy(_node_choice, choi.horodatage);
                 } else {
                     return models.choice_hist.create({
                         id_choice: node_choice.dataValues.id,
@@ -849,6 +857,12 @@ function import_reponses() {
 
             p2=p2.then(function(node_question_hist) {
 
+                if (row.valeur == null && row.reponseIgnoree == 0) {
+                    // on integre pas les non-reponses.
+                    process.stdout.write('x');
+                    return;
+                }
+
                 /*
                 console.log("identifiant: ",
                     row.question, "node: ",
@@ -948,15 +962,24 @@ function update_audit_cached_complete() {
             var answer_count;
             p2=p2.then(function(answer_counts) {
                 answer_count=answer_counts[0][0]['count'];
-                return models.sequelize.query("select count(*) as count from (select node.id from node left join node_hist ON node_hist.id_node = node.id where type like 'q_%' and (deletedAt IS NULL or deletedAt < ?) group by node.id) as plop", {
-                    replacements: [ audit.createdAt ],
-                });
+
+                return dbtools.getLatestNodeHist(models, {
+                    date: audit.createdAt,
+                    id_audit: audit.id,
+                }).then(function(tout) {
+                    var question_count=0;
+                    tout.forEach(function(row) {
+                        if (row.type.startsWith('q_'))
+                            question_count++;
+                    });
+                    return question_count;
+                })
             });
-            var question_count;
-            p2=p2.then(function(question_counts) {
-                question_count = question_counts[0][0]['count'];
+            p2=p2.then(function(question_count) {
+                //var question_count = question_counts[0][0]['count'];
                 var percent = answer_count / question_count;
                 audit.cached_percent_complete = percent;
+                process.stdout.write('.');
                 return audit.save();
             });
         });
