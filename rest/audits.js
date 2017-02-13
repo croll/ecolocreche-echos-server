@@ -2,7 +2,10 @@ module.exports = function(server, epilogue, models, permchecks) {
 
     var auditResource = epilogue.resource({
       model: models.audit,
-      endpoints: ['/rest/audits', '/rest/audits/:id']
+      endpoints: ['/rest/audits', '/rest/audits/:id'],
+      include: [{
+          model: models.establishment
+      }],
     });
 
     //auditResource.use(permchecks.default_permissions);
@@ -19,6 +22,23 @@ module.exports = function(server, epilogue, models, permchecks) {
         if (req.session.user.account_type != 'admin') {
             req.body.active = true;
         }
+        return context.continue;
+    });
+
+    auditResource.create.complete(function(req, res, context) {
+        console.log("sending email...");
+        console.log(req);
+        var transporter = nodemailer.createTransport(config.email.transport);
+        transporter.sendMail({
+            from: config.email.from,
+            to: context.instance.get('email'),
+            subject: 'Un audit a été initié',
+            text: 'Un audit a été initié, vous pouvez le consulter.'
+        }, (err, info) => {
+            console.log(info.envelope);
+            console.log(info.messageId);
+        });
+
         return context.continue;
     });
 

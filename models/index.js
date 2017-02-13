@@ -47,3 +47,4 @@ module.exports = db;
 
 // associations
 db.node.hasMany(db.node_hist, { foreignKey: "id_node"});
+db.audit.belongsTo(db.establishment, { foreignKey: "id_establishment"});
