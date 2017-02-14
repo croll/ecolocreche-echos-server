@@ -217,6 +217,8 @@ function import_themes() {
                     });
                 } else {
                     return models.node.create({
+                        createdAt: theme.horodatage,
+                        updatedAt: theme.horodatage,
                     });
                 }
             });
@@ -309,6 +311,8 @@ function import_rubriques(theme, node_theme) {
                 } else {
                     return models.node.create({
                         id_node_parent: node_theme.dataValues.id,
+                        createdAt: rubrique.horodatage,
+                        updatedAt: rubrique.horodatage,
                     });
                 }
             });
@@ -396,6 +400,8 @@ function import_questions(rubrique, node_rubrique) {
                 } else {
                     return models.node.create({
                         id_node_parent: node_rubrique.dataValues.id,
+                        createdAt: question.horodatage,
+                        updatedAt: question.horodatage,
                     });
                 }
             });
@@ -485,6 +491,8 @@ function import_choices(question, node_question) {
                 } else {
                     return models.choice.create({
                         id_node: node_question.dataValues.id,
+                        createdAt: choi.horodatage,
+                        updatedAt: choi.horodatage,
                     });
                 }
             });
@@ -937,6 +945,18 @@ function import_reponses() {
     return p;
 }
 
+function count_questions(dir) {
+    var question_count=0;
+    dir.forEach(function(row) {
+        if (row.type.startsWith('q_'))
+            question_count++;
+        else if (row.type == 'directory') {
+            question_count+=count_questions(row.childs);
+        }
+    });
+    return question_count;
+}
+
 function update_audit_cached_complete() {
     var p = new Promise(function (resolve, reject) {
         console.log("#########");
@@ -964,14 +984,12 @@ function update_audit_cached_complete() {
                 answer_count=answer_counts[0][0]['count'];
 
                 return dbtools.getLatestNodeHist(models, {
+                    id_node_parent: null,
                     date: audit.createdAt,
                     id_audit: audit.id,
+                    recurse: 1,
                 }).then(function(tout) {
-                    var question_count=0;
-                    tout.forEach(function(row) {
-                        if (row.type.startsWith('q_'))
-                            question_count++;
-                    });
+                    var question_count=count_questions(tout);
                     return question_count;
                 })
             });
