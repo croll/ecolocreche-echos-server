@@ -18,6 +18,7 @@ if (USE_RESTIFY) {
 
   app = server = restify.createServer()
   app.use(restify.queryParser());
+  app.use(restify.gzipResponse());
   app.use(restify.bodyParser());
 
   // sessions
