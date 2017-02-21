@@ -511,7 +511,7 @@ function import_choices(question, node_question) {
                         title: choi.intitule ? choi.intitule : '',
                         comment: choi.commentaire ? choi.commentaire : '',
                         position: choi.position ? choi.position : 0,
-                        impact: choi.impact ? choi.impact : 0,
+                        impact: [1, 2, 3, 4, 5, 0][choi.impact == null ? 5 : choi.impact],
                         createdAt: choi.horodatage,
                         updatedAt: choi.horodatage,
                     }).then(function(_node_choice_hist) {
