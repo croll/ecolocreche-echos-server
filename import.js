@@ -946,15 +946,24 @@ function import_reponses() {
 }
 
 function count_questions(dir) {
-    var question_count=0;
+    var r = {
+        question_count: 0,
+        answer_count: 0,
+    };
     dir.forEach(function(row) {
-        if (row.type.startsWith('q_'))
-            question_count++;
+        if (row.type.startsWith('q_')) {
+            r.question_count++;
+            if (row.answer) {
+                r.answer_count++;
+            }
+        }
         else if (row.type == 'directory') {
-            question_count+=count_questions(row.childs);
+            var _r=count_questions(row.childs);
+            r.question_count += _r.question_count;
+            r.answer_count += _r.answer_count;
         }
     });
-    return question_count;
+    return r;
 }
 
 function update_audit_cached_complete() {
@@ -974,28 +983,19 @@ function update_audit_cached_complete() {
             resolve();
         });
         audits.forEach(function(audit) {
-            p2=p2.then(function() {
-                return models.sequelize.query("select count(*) as count from answer where answer.id_audit = ?", {
-                    replacements: [ audit.id ],
-                });
-            });
-            var answer_count;
             p2=p2.then(function(answer_counts) {
-                answer_count=answer_counts[0][0]['count'];
-
                 return dbtools.getLatestNodeHist(models, {
                     id_node_parent: null,
                     date: audit.createdAt,
                     id_audit: audit.id,
                     recurse: 1,
                 }).then(function(tout) {
-                    var question_count=count_questions(tout);
-                    return question_count;
+                    var r=count_questions(tout);
+                    return r;
                 })
             });
-            p2=p2.then(function(question_count) {
-                //var question_count = question_counts[0][0]['count'];
-                var percent = answer_count / question_count;
+            p2=p2.then(function(r) {
+                var percent = r.answer_count / r.question_count;
                 audit.cached_percent_complete = percent;
                 process.stdout.write('.');
                 return audit.save();
