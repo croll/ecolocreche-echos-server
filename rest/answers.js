@@ -1,3 +1,4 @@
+var dbtools = require(__dirname + '/../lib/dbtools.js');
 var restify = require('restify');
 var Promise = require("bluebird");
 
@@ -21,6 +22,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                 });
             }).then(function(answer) {
                 res.send(answer);
+                return dbtools.update_audit_cached_complete(models, req.params.id_audit);
             }, function(err) {
                 console.error(err);
                 return next(new restify.InternalServerError(err));
