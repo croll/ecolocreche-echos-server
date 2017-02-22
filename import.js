@@ -945,27 +945,6 @@ function import_reponses() {
     return p;
 }
 
-function count_questions(dir) {
-    var r = {
-        question_count: 0,
-        answer_count: 0,
-    };
-    dir.forEach(function(row) {
-        if (row.type.startsWith('q_')) {
-            r.question_count++;
-            if (row.answer) {
-                r.answer_count++;
-            }
-        }
-        else if (row.type == 'directory') {
-            var _r=count_questions(row.childs);
-            r.question_count += _r.question_count;
-            r.answer_count += _r.answer_count;
-        }
-    });
-    return r;
-}
-
 function update_audit_cached_complete() {
     var p = new Promise(function (resolve, reject) {
         console.log("#########");
@@ -984,21 +963,8 @@ function update_audit_cached_complete() {
         });
         audits.forEach(function(audit) {
             p2=p2.then(function(answer_counts) {
-                return dbtools.getLatestNodeHist(models, {
-                    id_node_parent: null,
-                    date: audit.createdAt,
-                    id_audit: audit.id,
-                    recurse: 1,
-                }).then(function(tout) {
-                    var r=count_questions(tout);
-                    return r;
-                })
-            });
-            p2=p2.then(function(r) {
-                var percent = r.answer_count / r.question_count;
-                audit.cached_percent_complete = percent;
                 process.stdout.write('.');
-                return audit.save();
+                return dbtools.update_audit_cached_complete(models, audit.id);
             });
         });
         return p2;
