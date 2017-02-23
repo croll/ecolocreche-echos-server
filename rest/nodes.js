@@ -109,6 +109,8 @@ module.exports = function(server, epilogue, models, permchecks) {
                     type: req.params.type,
                     title: req.params.title,
                     description: req.params.description,
+                    family: req.params.family,
+                    privcomment: req.params.privcomment,
                     position: req.params.position,
                     color: req.params.color
                 });
@@ -164,6 +166,8 @@ module.exports = function(server, epilogue, models, permchecks) {
                     type: req.params.type,
                     title: req.params.title,
                     description: req.params.description,
+                    family: req.params.family,
+                    privcomment: req.params.privcomment,
                     position: req.params.position,
                     color: req.params.color,
                 });
