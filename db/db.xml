@@ -170,7 +170,7 @@
 <part>id_node</part>
 </key>
 </table>
-<table x="622" y="509" name="node_hist">
+<table x="622" y="508" name="node_hist">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -186,6 +186,9 @@
 </row>
 <row name="description" null="0" autoincrement="0">
 <datatype>VARCHAR(200)</datatype>
+</row>
+<row name="family" null="0" autoincrement="0">
+<datatype>VARCHAR</datatype>
 </row>
 <row name="position" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
@@ -270,6 +273,9 @@
 </row>
 <row name="description" null="0" autoincrement="0">
 <datatype>VARCHAR(200)</datatype>
+</row>
+<row name="family" null="0" autoincrement="0">
+<datatype>VARCHAR</datatype>
 </row>
 <row name="nodeslist" null="0" autoincrement="0">
 <datatype>MEDIUMTEXT</datatype>

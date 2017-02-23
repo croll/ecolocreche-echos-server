@@ -97,6 +97,7 @@ CREATE TABLE `node_hist` (
   `type` ENUM('directory','q_radio','q_checkbox','q_percents','q_text','q_numeric') NOT NULL DEFAULT 'directory',
   `title` VARCHAR(255) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
+  `family` VARCHAR NOT NULL,
   `position` INTEGER NOT NULL DEFAULT 0,
   `color` VARCHAR(6) NULL DEFAULT NULL,
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
@@ -143,6 +144,7 @@ CREATE TABLE `inquiryform_hist` (
   `id_inquiryform` INTEGER NULL DEFAULT NULL,
   `title` VARCHAR(100) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
+  `family` VARCHAR NOT NULL,
   `nodeslist` MEDIUMTEXT NOT NULL,
   `position` INTEGER NOT NULL DEFAULT 0,
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
@@ -235,12 +237,12 @@ ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 -- ('','','','','','','','','','','');
 -- INSERT INTO `answer` (`id_audit`,`id_node`,`ignored`,`value`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','');
--- INSERT INTO `node_hist` (`id`,`id_node`,`type`,`title`,`description`,`position`,`color`,`createdAt`,`updatedAt`) VALUES
--- ('','','','','','','','','');
+-- INSERT INTO `node_hist` (`id`,`id_node`,`type`,`title`,`description`,`family`,`position`,`color`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','','','','','');
 -- INSERT INTO `users` (`id`,`name`,`password_hash`,`email`,`account_type`,`rememberme_token`,`last_login_timestamp`,`failed_logins`,`last_failed_login`,`password_reset_hash`,`password_reset_timestamp`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','','','','','','','','');
--- INSERT INTO `inquiryform_hist` (`id`,`id_inquiryform`,`title`,`description`,`nodeslist`,`position`,`createdAt`,`updatedAt`) VALUES
--- ('','','','','','','','');
+-- INSERT INTO `inquiryform_hist` (`id`,`id_inquiryform`,`title`,`description`,`family`,`nodeslist`,`position`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','','','','');
 -- INSERT INTO `node` (`id`,`id_node_parent`,`deletedAt`) VALUES
 -- ('','','');
 -- INSERT INTO `choice` (`id`,`id_node`,`deletedAt`) VALUES
