@@ -23,15 +23,23 @@ module.exports = function(sequelize, DataTypes) {
     },
     title: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      defaultValue: '',
     },
     description: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      defaultValue: '',
+    },
+    privcomment: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
     },
     family: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      defaultValue: '',
     },
     position: {
       type: DataTypes.INTEGER(11),
