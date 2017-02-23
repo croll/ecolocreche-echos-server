@@ -49,6 +49,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                     id_inquiryform: inquiryform.get('id'),
                     title: req.params.title,
                     description: req.params.description,
+                    comment: req.params.comment,
                     nodeslist: req.params.nodeslist,
                     position: req.params.position,
                 });
@@ -73,6 +74,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                     id_inquiryform: dir_hist.id_inquiryform,
                     title: req.params.title,
                     description: req.params.description,
+                    comment: req.params.comment,
                     nodeslist: req.params.nodeslist,
                     position: req.params.position,
                 });
