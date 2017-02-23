@@ -41,7 +41,6 @@ CREATE TABLE `choice_hist` (
   `impact` INTEGER NULL DEFAULT NULL,
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
   `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
-  `deletedAt` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
 KEY (`id_choice`)
 );
@@ -102,7 +101,6 @@ CREATE TABLE `node_hist` (
   `color` VARCHAR(6) NULL DEFAULT NULL,
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
   `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
-  `deletedAt` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
 KEY (`id_node`)
 );
@@ -149,7 +147,6 @@ CREATE TABLE `inquiryform_hist` (
   `position` INTEGER NOT NULL DEFAULT 0,
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
   `updatedAt` DATETIME NOT NULL DEFAULT 'NULL',
-  `deletedAt` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
 KEY (`id_inquiryform`)
 );
@@ -164,6 +161,7 @@ DROP TABLE IF EXISTS `node`;
 CREATE TABLE `node` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
   `id_node_parent` INTEGER NULL DEFAULT NULL,
+  `deletedAt` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
 KEY (`id_node_parent`)
 );
@@ -178,6 +176,7 @@ DROP TABLE IF EXISTS `choice`;
 CREATE TABLE `choice` (
   `id` INTEGER NOT NULL AUTO_INCREMENT,
   `id_node` INTEGER NOT NULL,
+  `deletedAt` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
 KEY (`id_node`)
 );
@@ -191,6 +190,7 @@ DROP TABLE IF EXISTS `inquiryform`;
 
 CREATE TABLE `inquiryform` (
   `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `deletedAt` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -229,21 +229,21 @@ ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 
 -- INSERT INTO `audit` (`id`,`id_establishment`,`id_inquiryform`,`key`,`active`,`synthesis`,`cached_percent_complete`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','','','','');
--- INSERT INTO `choice_hist` (`id`,`id_choice`,`title`,`comment`,`position`,`impact`,`createdAt`,`updatedAt`,`deletedAt`) VALUES
--- ('','','','','','','','','');
+-- INSERT INTO `choice_hist` (`id`,`id_choice`,`title`,`comment`,`position`,`impact`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','','','');
 -- INSERT INTO `establishment` (`id`,`name`,`address`,`postalcode`,`city`,`phone`,`mail`,`type`,`status`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','','','','','','');
 -- INSERT INTO `answer` (`id_audit`,`id_node`,`ignored`,`value`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','');
--- INSERT INTO `node_hist` (`id`,`id_node`,`type`,`title`,`description`,`position`,`color`,`createdAt`,`updatedAt`,`deletedAt`) VALUES
--- ('','','','','','','','','','');
+-- INSERT INTO `node_hist` (`id`,`id_node`,`type`,`title`,`description`,`position`,`color`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','','','','');
 -- INSERT INTO `users` (`id`,`name`,`password_hash`,`email`,`account_type`,`rememberme_token`,`last_login_timestamp`,`failed_logins`,`last_failed_login`,`password_reset_hash`,`password_reset_timestamp`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','','','','','','','','');
--- INSERT INTO `inquiryform_hist` (`id`,`id_inquiryform`,`title`,`description`,`nodeslist`,`position`,`createdAt`,`updatedAt`,`deletedAt`) VALUES
--- ('','','','','','','','','');
--- INSERT INTO `node` (`id`,`id_node_parent`) VALUES
+-- INSERT INTO `inquiryform_hist` (`id`,`id_inquiryform`,`title`,`description`,`nodeslist`,`position`,`createdAt`,`updatedAt`) VALUES
+-- ('','','','','','','','');
+-- INSERT INTO `node` (`id`,`id_node_parent`,`deletedAt`) VALUES
+-- ('','','');
+-- INSERT INTO `choice` (`id`,`id_node`,`deletedAt`) VALUES
+-- ('','','');
+-- INSERT INTO `inquiryform` (`id`,`deletedAt`) VALUES
 -- ('','');
--- INSERT INTO `choice` (`id`,`id_node`) VALUES
--- ('','');
--- INSERT INTO `inquiryform` (`id`) VALUES
--- ('');

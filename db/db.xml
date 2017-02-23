@@ -97,9 +97,6 @@
 <row name="updatedAt" null="0" autoincrement="0">
 <datatype>DATETIME</datatype>
 <default>'NULL'</default></row>
-<row name="deletedAt" null="1" autoincrement="0">
-<datatype>DATETIME</datatype>
-<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -202,9 +199,6 @@
 <row name="updatedAt" null="0" autoincrement="0">
 <datatype>DATETIME</datatype>
 <default>'NULL'</default></row>
-<row name="deletedAt" null="1" autoincrement="0">
-<datatype>DATETIME</datatype>
-<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -289,9 +283,6 @@
 <row name="updatedAt" null="0" autoincrement="0">
 <datatype>DATETIME</datatype>
 <default>'NULL'</default></row>
-<row name="deletedAt" null="1" autoincrement="0">
-<datatype>DATETIME</datatype>
-<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -299,7 +290,7 @@
 <part>id_inquiryform</part>
 </key>
 </table>
-<table x="625" y="404" name="node">
+<table x="624" y="372" name="node">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -307,6 +298,9 @@
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="node" row="id" />
 </row>
+<row name="deletedAt" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -314,7 +308,7 @@
 <part>id_node_parent</part>
 </key>
 </table>
-<table x="861" y="404" name="choice">
+<table x="862" y="374" name="choice">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 </row>
@@ -322,6 +316,9 @@
 <datatype>INTEGER</datatype>
 <relation table="node" row="id" />
 </row>
+<row name="deletedAt" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -329,9 +326,12 @@
 <part>id_node</part>
 </key>
 </table>
-<table x="359" y="403" name="inquiryform">
+<table x="347" y="374" name="inquiryform">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<row name="deletedAt" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
