@@ -69,17 +69,13 @@ module.exports = function(server, epilogue, models, permchecks) {
             return dbtools.getLatestInquiryformHist(models, {
                 id_inquiryform: req.params.id_inquiryform,
             }).then(function(dir_hist) {
-                return models.inquiryform_hist.findOne({
-                    where: {
-                        id: dir_hist.id,
-                    }
+                return models.inquiryform_hist.create({
+                    id_inquiryform: dir_hist.id_inquiryform,
+                    title: req.params.title,
+                    description: req.params.description,
+                    nodeslist: req.params.nodeslist,
+                    position: req.params.position,
                 });
-            }).then(function(inquiryform_hist) {
-                return inquiryform_hist.update(req.params, {
-                    fields: [
-                        'title', 'description', 'position', 'nodeslist'
-                    ],
-                })
             }).then(function(inquiryform_hist) {
                     res.send(inquiryform_hist);
             }, function(err) {
