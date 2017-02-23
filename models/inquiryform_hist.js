@@ -26,6 +26,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: '',
     },
+    family: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
     nodeslist: {
       type: DataTypes.TEXT,
       allowNull: false,

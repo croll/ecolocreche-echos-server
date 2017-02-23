@@ -29,6 +29,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     },
+    family: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     position: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
