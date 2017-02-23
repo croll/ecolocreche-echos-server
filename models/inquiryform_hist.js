@@ -26,12 +26,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: '',
     },
-    family: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: '',
-    },
-    privcomment: {
+    comment: {
       type: DataTypes.STRING,
       allowNull: false,
       defaultValue: '',

@@ -145,7 +145,7 @@ CREATE TABLE `inquiryform_hist` (
   `id_inquiryform` INTEGER NULL DEFAULT NULL,
   `title` VARCHAR(100) NOT NULL,
   `description` VARCHAR(200) NOT NULL,
-  `family` VARCHAR NOT NULL,
+  `comment` VARCHAR NOT NULL,
   `nodeslist` MEDIUMTEXT NOT NULL,
   `position` INTEGER NOT NULL DEFAULT 0,
   `createdAt` DATETIME NOT NULL DEFAULT 'NULL',
@@ -242,7 +242,7 @@ ALTER TABLE `choice` ADD FOREIGN KEY (id_node) REFERENCES `node` (`id`);
 -- ('','','','','','','','','','','');
 -- INSERT INTO `users` (`id`,`name`,`password_hash`,`email`,`account_type`,`rememberme_token`,`last_login_timestamp`,`failed_logins`,`last_failed_login`,`password_reset_hash`,`password_reset_timestamp`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','','','','','','','','');
--- INSERT INTO `inquiryform_hist` (`id`,`id_inquiryform`,`title`,`description`,`family`,`nodeslist`,`position`,`createdAt`,`updatedAt`) VALUES
+-- INSERT INTO `inquiryform_hist` (`id`,`id_inquiryform`,`title`,`description`,`comment`,`nodeslist`,`position`,`createdAt`,`updatedAt`) VALUES
 -- ('','','','','','','','','');
 -- INSERT INTO `node` (`id`,`id_node_parent`,`deletedAt`) VALUES
 -- ('','','');

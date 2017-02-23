@@ -277,7 +277,7 @@
 <row name="description" null="0" autoincrement="0">
 <datatype>VARCHAR(200)</datatype>
 </row>
-<row name="family" null="0" autoincrement="0">
+<row name="comment" null="0" autoincrement="0">
 <datatype>VARCHAR</datatype>
 </row>
 <row name="nodeslist" null="0" autoincrement="0">
