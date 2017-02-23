@@ -190,6 +190,9 @@
 <row name="family" null="0" autoincrement="0">
 <datatype>VARCHAR</datatype>
 </row>
+<row name="privcomment" null="0" autoincrement="0">
+<datatype>VARCHAR</datatype>
+</row>
 <row name="position" null="0" autoincrement="0">
 <datatype>INTEGER</datatype>
 <default>0</default></row>

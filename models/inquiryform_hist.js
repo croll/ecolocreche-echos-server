@@ -31,6 +31,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: '',
     },
+    privcomment: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
     nodeslist: {
       type: DataTypes.TEXT,
       allowNull: false,
