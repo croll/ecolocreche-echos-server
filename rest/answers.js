@@ -6,7 +6,26 @@ module.exports = function(server, epilogue, models, permchecks) {
 
 
     server.post('/rest/answers/:id_audit/:id_node',
-        permchecks.haveAgent,
+        function(req, res, next) {
+            if (permchecks._haveAgent(req, res, next)) {
+                return permchecks._ret(false, req, res, next);
+            }
+            if (req.params.id_audit && req.params.audit_key) {
+                models.audit.findOne({
+                    where: {
+                        id: req.params.id_audit,
+                        key: req.params.audit_key,
+                    }
+                }).then(function(audit) {
+                    if (audit) {
+                        req.audit = audit;
+                        next();
+                    } else {
+                        permchecks._ret(true);
+                    }
+                });
+            }
+        },
         function (req, res, next) {
             return models.answer.upsert(
                 req.params,
