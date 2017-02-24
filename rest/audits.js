@@ -13,7 +13,13 @@ module.exports = function(server, epilogue, models, permchecks) {
 
     // if we don't use the default permissions above, we must set it for all possible rest call (create, list, read, update and delete)
     auditResource.create.auth.before(permchecks.haveSuperAgent);
-    auditResource.list.auth.before(permchecks.haveAgent);
+    auditResource.list.auth.before(function(req, res, context) {
+        if (permchecks._haveSuperAgent(req, res, context))
+            return permchecks._ret(false);
+        if ('key' in req.params && req.params.key)
+            return permchecks._ret(false);
+        return permchecks._ret(true);
+    });
     auditResource.read.auth.before(permchecks.haveAgent);
     auditResource.update.auth.before(permchecks.haveAdmin);
     auditResource.delete.auth.before(permchecks.haveAdmin);
