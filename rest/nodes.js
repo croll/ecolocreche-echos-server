@@ -25,8 +25,30 @@ module.exports = function(server, epilogue, models, permchecks) {
      *  - id_node_parent : null by default
      */
     server.get('/rest/hist/nodes',
-        permchecks.haveSuperAgent,
+        function(req, res, next) {
+            if (permchecks._haveSuperAgent(req, res, next)) {
+                return permchecks._ret(false, req, res, next);
+            }
+            if (req.params.id_audit && req.params.audit_key) {
+                models.audit.findOne({
+                    where: {
+                        id: req.params.id_audit,
+                        key: req.params.audit_key,
+                    }
+                }).then(function(audit) {
+                    if (audit) {
+                        req.audit = audit;
+                        next();
+                    } else {
+                        permchecks._ret(true);
+                    }
+                });
+            }
+        },
         function (req, res, next) {
+            if (req.audit) {
+                req.params.date = req.audit.createdAt;
+            }
             if (!('id_node_parent' in req.params)) {
                 req.params.id_node_parent="null";
             }
