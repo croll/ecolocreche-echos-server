@@ -10,7 +10,7 @@ module.exports = function(server, epilogue, models, permchecks) {
      *  - date: <date string> : return inquiryforms has they where on this date, '2222-12-22' by default
      */
     server.get('/rest/hist/inquiryforms',
-        permchecks.haveAgent,
+        //permchecks.haveAgent,
         function (req, res, next) {
             return dbtools.getLatestInquiryformHist(models, req.params).then(function(dirs) {
                 res.send(dirs);
@@ -27,7 +27,7 @@ module.exports = function(server, epilogue, models, permchecks) {
      *  - date: <date string> : return inquiryforms has they where on this date, '2222-12-22' by default
      */
     server.get('/rest/hist/inquiryforms/:id_inquiryform',
-        permchecks.haveAgent,
+        //permchecks.haveAgent,
         function (req, res, next) {
             return dbtools.getLatestInquiryformHist(models, req.params).then(function(dir_hist) {
                 res.send(dir_hist);
