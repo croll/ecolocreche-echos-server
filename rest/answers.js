@@ -26,8 +26,9 @@ module.exports = function(server, epilogue, models, permchecks) {
                         return permchecks._ret(true, req, res, next); // return perm denied
                     }
                 });
+            } else {
+                return permchecks._ret(true, req, res, next); // return perm denied
             }
-            return permchecks._ret(true, req, res, next); // return perm denied
         },
 
         // do the job

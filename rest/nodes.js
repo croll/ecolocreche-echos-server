@@ -43,8 +43,9 @@ module.exports = function(server, epilogue, models, permchecks) {
                         return permchecks._ret(true, req, res, next);
                     }
                 });
+            } else {
+                return permchecks._ret(true, req, res, next); // return perm denied
             }
-            return permchecks._ret(true, req, res, next); // return perm denied
         },
         function (req, res, next) {
             if (req.audit) {
