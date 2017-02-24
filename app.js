@@ -103,7 +103,10 @@ permchecks._haveAgent = function(req) {
 permchecks._ret = function(err, req, res, context) {
     if (err) {
         // not ok
-        throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
+        if (context instanceof Function) // context is next()
+            res.send(403, "you are not allowed to do this");
+        else // context is really context of epilogue
+            throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
     } else {
         if (context instanceof Function) // context is next()
             context();
