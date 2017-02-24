@@ -101,8 +101,35 @@ module.exports = function(server, epilogue, models, permchecks) {
     server.post('/rest/hist/nodes',
         permchecks.haveAdmin,
         function (req, res, next) {
-            return models.node.create({
-                id_node_parent: 'id_node_parent' in req.params && req.params.id_node_parent ? req.params.id_node_parent : null,
+
+            // calculate end position
+            var position=0;
+            var query = `
+                select
+                 max(position)+1 as pos
+                from node
+                left join node_hist
+                 on node_hist.id_node=node.id `;
+            var options = {
+                type: models.sequelize.QueryTypes.SELECT,
+            };
+            if (req.params.id_node_parent) {
+                query+="where id_node_parent = :id_node_parent";
+                options.replacements = {
+                    id_node_parent: req.params.id_node_parent,
+                };
+            } else {
+                query+="where id_node_parent is null";
+            }
+            return models.sequelize.query(query, options).then(function(_position) {
+                if (_position && _position[0] && _position[0].pos)
+                    position=_position[0].pos;
+
+                // end of calculate end position ...
+
+                return models.node.create({
+                    id_node_parent: 'id_node_parent' in req.params && req.params.id_node_parent ? req.params.id_node_parent : null,
+                });
             }).then(function(node) {
                 return models.node_hist.create({
                     id_node: node.get('id'),
@@ -111,7 +138,8 @@ module.exports = function(server, epilogue, models, permchecks) {
                     description: req.params.description,
                     family: req.params.family,
                     privcomment: req.params.privcomment,
-                    position: req.params.position,
+                    //position: req.params.position,
+                    position: position,
                     color: req.params.color
                 });
             }).then(function(node_hist) {
