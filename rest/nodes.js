@@ -25,7 +25,7 @@ module.exports = function(server, epilogue, models, permchecks) {
      *  - id_node_parent : null by default
      */
     server.get('/rest/hist/nodes',
-        permchecks.haveAdmin,
+        permchecks.haveSuperAgent,
         function (req, res, next) {
             if (!('id_node_parent' in req.params)) {
                 req.params.id_node_parent="null";
@@ -47,7 +47,7 @@ module.exports = function(server, epilogue, models, permchecks) {
      *  - id_node_parent : not very usefull here
      */
     server.get('/rest/hist/nodes/:id_node',
-        permchecks.haveAdmin,
+        permchecks.haveSuperAgent,
         function (req, res, next) {
             return dbtools.getLatestNodeHist(models, req.params).then(function(dir_hist) {
                 if (dir_hist === undefined) {
