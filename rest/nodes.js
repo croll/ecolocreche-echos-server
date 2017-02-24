@@ -38,12 +38,13 @@ module.exports = function(server, epilogue, models, permchecks) {
                 }).then(function(audit) {
                     if (audit) {
                         req.audit = audit;
-                        next();
+                        return next();
                     } else {
-                        permchecks._ret(true);
+                        return permchecks._ret(true, req, res, next);
                     }
                 });
             }
+            return permchecks._ret(true, req, res, next); // return perm denied
         },
         function (req, res, next) {
             if (req.audit) {

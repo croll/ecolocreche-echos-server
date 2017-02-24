@@ -6,6 +6,8 @@ module.exports = function(server, epilogue, models, permchecks) {
 
 
     server.post('/rest/answers/:id_audit/:id_node',
+
+        // check perms
         function(req, res, next) {
             if (permchecks._haveAgent(req, res, next)) {
                 return permchecks._ret(false, req, res, next);
@@ -19,13 +21,16 @@ module.exports = function(server, epilogue, models, permchecks) {
                 }).then(function(audit) {
                     if (audit) {
                         req.audit = audit;
-                        next();
+                        return next();
                     } else {
-                        permchecks._ret(true);
+                        return permchecks._ret(true, req, res, next); // return perm denied
                     }
                 });
             }
+            return permchecks._ret(true, req, res, next); // return perm denied
         },
+
+        // do the job
         function (req, res, next) {
             return models.answer.upsert(
                 req.params,
