@@ -24,11 +24,18 @@ module.exports = function(server, epilogue, models, permchecks) {
             if (user) { // user found, check password
                 var ok = bcrypt.compareSync(req.params.password, user.dataValues.password_hash);
                 console.log("user found: ", user.dataValues.name, "ok ?", ok);
-                delete user.dataValues.password_hash;
-                req.session.user = user.dataValues;
-                res.send({
-                    user: user.dataValues
-                });
+                if (ok) {
+                    delete user.dataValues.password_hash;
+                    req.session.user = user.dataValues;
+                    res.send({
+                        user: user.dataValues
+                    });
+                } else {
+                    req.session.user = null;
+                    res.send({
+                        user: null
+                    });
+                }
             } else {
                 req.session.user = null;
                 res.send({
