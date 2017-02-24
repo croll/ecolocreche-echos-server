@@ -65,49 +65,63 @@ epilogue.initialize({
 
 permchecks = {};
 
-permchecks.haveAdmin = function(req, res, context) {
-    if ('user' in req.session && req.session.user
-        && req.session.user.account_type == 'admin') {
-        // ok
+/*
+ * Check if user have admin permission
+ * Return a boolean, true if it have, false if not
+ */
+permchecks._haveAdmin = function(req) {
+    return ('user' in req.session && req.session.user
+            && req.session.user.account_type == 'admin');
+}
+
+/*
+ * Check if user have Super agent (or higher) permission
+ * Return a boolean, true if it have, false if not
+ */
+permchecks._haveSuperAgent = function(req) {
+    return ('user' in req.session && req.session.user
+            && (req.session.user.account_type == 'superagent'
+            || req.session.user.account_type == 'admin'));
+}
+
+/*
+ * Check if user have agent (or higher) permission
+ * Return a boolean, true if it have, false if not
+ */
+permchecks._haveAgent = function(req) {
+    return ('user' in req.session && req.session.user
+            && (req.session.user.account_type == 'agent'
+            || req.session.user.account_type == 'superagent'
+            || req.session.user.account_type == 'admin'));
+}
+
+/*
+ * make a auth result that is compatible with restify or epilogue
+ * parameters:
+ * err: set it to false/null/undefined when user have permission
+ */
+permchecks._ret = function(err, req, res, context) {
+    if (err) {
+        // not ok
+        throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
+    } else {
         if (context instanceof Function) // context is next()
             context();
         else // context is really context of epilogue
             return context.continue;
-    } else {
-        // not ok
-        throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
     }
+}
+
+permchecks.haveAdmin = function(req, res, context) {
+    return permchecks._ret(!permchecks._haveAdmin(req), req, res, context);
 }
 
 permchecks.haveSuperAgent = function(req, res, context) {
-    if ('user' in req.session && req.session.user
-        && (req.session.user.account_type == 'superagent'
-            || req.session.user.account_type == 'admin')) {
-        // ok
-        if (context instanceof Function) // context is next()
-            context();
-        else // context is really context of epilogue
-            return context.continue;
-    } else {
-        // not ok
-        throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
-    }
+    return permchecks._ret(!permchecks._haveSuperAgent(req), req, res, context);
 }
 
 permchecks.haveAgent = function(req, res, context) {
-    if ('user' in req.session && req.session.user
-        && (req.session.user.account_type == 'agent'
-            || req.session.user.account_type == 'superagent'
-            || req.session.user.account_type == 'admin')) {
-        // ok
-        if (context instanceof Function) // context is next()
-            context();
-        else // context is really context of epilogue
-            return context.continue;
-    } else {
-        // not ok
-        throw new epilogue.Errors.ForbiddenError("you are not allowed to do this");
-    }
+    return permchecks._ret(!permchecks._haveAgent(req), req, res, context);
 }
 
 // default permissions
