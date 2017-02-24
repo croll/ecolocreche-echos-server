@@ -175,6 +175,10 @@ module.exports = function(server, epilogue, models, permchecks) {
                 if (node_hist.get("type") == "directory") {
                     return node_hist;
                 } else {
+                    if (!Array.isArray(req.params.choices)) {
+                        return node_hist;
+                    }
+
                     // update choices
                     var p = new Promise(function (resolve, reject) {
                         resolve();
