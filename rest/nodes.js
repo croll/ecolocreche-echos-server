@@ -179,7 +179,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                     var p = new Promise(function (resolve, reject) {
                         resolve();
                     });
-                    var ids_choice=[];
+                    var ids_choice=[-1]; // -1 to make sure that sequelize will work
                     req.params.choices.forEach(function(param_choice) {
 
                         if ('id_choice' in param_choice) {
