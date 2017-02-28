@@ -146,8 +146,8 @@ module.exports = function(server, epilogue, models, permchecks) {
 
 Votre compte sur Echo(s) est maintenant créé.
 
-Votre nom d'utilisateur est "`+req.param.name+`" et votre mot de passe est `+req.param.password+`
-Vous pouvez vous connecter à l'addresse suivante: http://echos.dev.rhack.net/connexion
+Votre nom d'utilisateur est "`+context.instance.get('name')+`" et votre mot de passe est `+req.param.password+`
+Vous pouvez vous connecter à l'addresse suivante: `+config.httpd.url+`/connexion
 
 Cordialement,
 
