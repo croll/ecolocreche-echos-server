@@ -141,11 +141,25 @@ module.exports = function(server, epilogue, models, permchecks) {
         transporter.sendMail({
             from: config.email.from,
             to: context.instance.get('email'),
-            subject: 'Votre compte sur echos',
-            text: 'Je suis heureux de vous apprendre que votre compte echos à été créé.'
+            subject: `ECHO(S): Identifiants de connexion de votre compte`,
+            text: `Bonjour,
+
+Votre compte sur Echo(s) est maintenant créé.
+
+Votre nom d'utilisateur est "`+req.param.name+`" et votre mot de passe est `+req.param.password+`
+Vous pouvez vous connecter à l'addresse suivante: http://echos.dev.rhack.net/connexion
+
+Cordialement,
+
+Echo(s)
+`
         }, (err, info) => {
-            console.log(info.envelope);
-            console.log(info.messageId);
+            if (err) {
+                console.error("error while sending mail : ", err);
+            } else {
+                console.log(info.envelope);
+                console.log(info.messageId);
+            }
         });
 
         return context.continue;
