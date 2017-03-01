@@ -14,7 +14,8 @@
       "dialect": "mysql"
   },
   "httpd": {
-      "secret": "ksdfoQjskqssd_çD9zDzed23eDZdcj8skZ8_JSdc8sduQSzd8sdKQSuizd8zdlnvbqgapmqsdfhyzejk8kDNj"
+      "secret": "ksdfoQjskqssd_çD9zDzed23eDZdcj8skZ8_JSdc8sduQSzd8sdKQSuizd8zdlnvbqgapmqsdfhyzejk8kDNj",
+      "url": "http://echos.dev.rhack.net"
   },
   "email": {
       "transport": {
