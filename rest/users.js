@@ -136,33 +136,39 @@ module.exports = function(server, epilogue, models, permchecks) {
      * send mail to user on user create
      */
     userResource.create.complete(function(req, res, context) {
-        console.log("sending email...");
-        var transporter = nodemailer.createTransport(config.email.transport);
-        transporter.sendMail({
-            from: config.email.from,
-            to: context.instance.get('email'),
-            subject: `ECHO(S): Identifiants de connexion de votre compte`,
-            text: `Bonjour,
+        return new Promise(function(resolve, reject) {
+            console.log("sending email...");
+            try {
+                var transporter = nodemailer.createTransport(config.email.transport);
+                transporter.sendMail({
+                    from: config.email.from,
+                    to: context.instance.get('email'),
+                    subject: `ECHO(S): Identifiants de connexion de votre compte`,
+                    text: `Bonjour,
 
-Votre compte sur Echo(s) est maintenant créé.
+    Votre compte sur Echo(s) est maintenant créé.
 
-Votre nom d'utilisateur est "`+context.instance.get('name')+`" et votre mot de passe est `+req.param.password+`
-Vous pouvez vous connecter à l'addresse suivante: `+config.httpd.url+`/connexion
+    Votre nom d'utilisateur est "`+context.instance.get('name')+`" et votre mot de passe est `+req.params.password+`
+    Vous pouvez vous connecter à l'addresse suivante: `+config.httpd.url+`/connexion
 
-Cordialement,
+    Cordialement,
 
-Echo(s)
-`
-        }, (err, info) => {
-            if (err) {
+    Echo(s)
+    `
+                }, (err, info) => {
+                    if (err) {
+                        console.error("error while sending mail : ", err);
+                    } else {
+                        console.log(info.envelope);
+                        console.log(info.messageId);
+                    }
+                    resolve(context.continue);
+                });
+            } catch (err) {
                 console.error("error while sending mail : ", err);
-            } else {
-                console.log(info.envelope);
-                console.log(info.messageId);
+                resolve(context.continue);
             }
         });
-
-        return context.continue;
     });
 
     /* exemple send.before
