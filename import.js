@@ -233,6 +233,7 @@ function import_themes() {
                         type: 'directory',
                         title: theme.intitule ? theme.intitule : '',
                         description: theme.description ? theme.description : '',
+                        family: "environnementales",
                         position: theme.position ? theme.position : 0,
                         color: theme.couleur ? theme.couleur : "",
                         createdAt: theme.horodatage,
