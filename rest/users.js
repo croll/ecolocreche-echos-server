@@ -1,8 +1,7 @@
 const bcrypt = require('bcryptjs');
 const Promise = require("bluebird");
-const nodemailer = require('nodemailer');
-var config    = require(__dirname + '/../config/config.json');
-
+const config    = require(__dirname + '/../config/config.json');
+const mail = require("../lib/mail");
 
 module.exports = function(server, epilogue, models, permchecks) {
     // login
@@ -195,39 +194,30 @@ module.exports = function(server, epilogue, models, permchecks) {
      * send mail to user on user create
      */
     userResource.create.complete(function(req, res, context) {
-        return new Promise(function(resolve, reject) {
-            console.log("sending email...");
-            try {
-                var transporter = nodemailer.createTransport(config.email.transport);
-                transporter.sendMail({
-                    from: config.email.from,
-                    to: context.instance.get('email'),
-                    subject: `ECHO(S): Identifiants de connexion de votre compte`,
-                    text: `Bonjour,
+        try {
+        return mail.send({
+            from: config.email.from,
+            to: context.instance.get('email'),
+            subject: `ECHO(S): Identifiants de connexion de votre compte`,
+            text: `Bonjour,
 
-    Votre compte sur Echo(s) est maintenant créé.
+Votre compte sur Echo(s) est maintenant créé.
 
-    Votre nom d'utilisateur est "`+context.instance.get('name')+`" et votre mot de passe est `+req.params.password+`
-    Vous pouvez vous connecter à l'addresse suivante: `+config.httpd.url+`/connexion
+Votre nom d'utilisateur est "`+context.instance.get('name')+`" et votre mot de passe est `+req.params.password+`
+Vous pouvez vous connecter à l'addresse suivante: `+config.httpd.url+`/connexion
 
-    Cordialement,
+Cordialement,
 
-    Echo(s)
-    `
-                }, (err, info) => {
-                    if (err) {
-                        console.error("error while sending mail : ", err);
-                    } else {
-                        console.log(info.envelope);
-                        console.log(info.messageId);
-                    }
-                    resolve(context.continue);
-                });
-            } catch (err) {
-                console.error("error while sending mail : ", err);
-                resolve(context.continue);
-            }
+Echo(s)
+`
+        }).then(function(res) {
+            return context.continue;
+        }, function(err) {
+            return context.continue;
         });
+    } catch(err) {
+        console.error(err);
+    }
     });
 
     /* exemple send.before
