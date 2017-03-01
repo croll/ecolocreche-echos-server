@@ -48,7 +48,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     password_reset_timestamp: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.TIME,
       allowNull: true
     }
   }, {
