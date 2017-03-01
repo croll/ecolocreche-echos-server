@@ -194,7 +194,6 @@ module.exports = function(server, epilogue, models, permchecks) {
      * send mail to user on user create
      */
     userResource.create.complete(function(req, res, context) {
-        try {
         return mail.send({
             from: config.email.from,
             to: context.instance.get('email'),
@@ -215,9 +214,6 @@ Echo(s)
         }, function(err) {
             return context.continue;
         });
-    } catch(err) {
-        console.error(err);
-    }
     });
 
     /* exemple send.before
