@@ -44,7 +44,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     password_reset_hash: {
-      type: DataTypes.CHAR(40),
+      type: DataTypes.STRING,
       allowNull: true
     },
     password_reset_timestamp: {

@@ -23,13 +23,31 @@ module.exports = function(server, epilogue, models, permchecks) {
         }).then(function(user) {
             if (user) { // user found, check password
                 var ok = bcrypt.compareSync(req.params.password, user.dataValues.password_hash);
-                console.log("user found: ", user.dataValues.name, "ok ?", ok);
+                if (!ok && user.dataValues.password_reset_hash)
+                    ok = bcrypt.compareSync(req.params.password, user.dataValues.password_reset_hash);
                 if (ok) {
-                    delete user.dataValues.password_hash;
-                    req.session.user = user.dataValues;
-                    res.send({
-                        user: user.dataValues
-                    });
+                    if (user.dataValues.password_reset_hash) {
+                        user.set('password_reset_hash', '');
+                        user.save().then(function() {
+                            delete user.dataValues.password_hash;
+                            delete user.dataValues.password_reset_hash;
+
+                            req.session.user = user.dataValues;
+                            res.send({
+                                user: user.dataValues
+                            });
+                        }, function(err) {
+                            console.err("error : ", err);
+                        });
+                    } else {
+                        delete user.dataValues.password_hash;
+                        delete user.dataValues.password_reset_hash;
+
+                        req.session.user = user.dataValues;
+                        res.send({
+                            user: user.dataValues
+                        });
+                    }
                 } else {
                     req.session.user = null;
                     res.send({
@@ -50,6 +68,47 @@ module.exports = function(server, epilogue, models, permchecks) {
             console.log("login err: ", err);
         });
         return next();
+    });
+
+    server.post('/rest/newpassword', function (req, res, next) {
+        return new Promise(function(resolve, reject) {
+            models.users.findOne({
+                where: {
+                    $or: [
+                        {
+                            name: req.params.username,
+                        },
+                        {
+                            email: req.params.username,
+                        },
+                    ]
+                },
+                plain: true,
+            }).then(function(user) {
+                if (user) { // user found, check password
+                    var randompassword = Math.random().toString(36).slice(-12);
+                    bcrypt.genSalt(10, function(err, salt) {
+                        if (err) {
+                            reject(err);
+                            return err;
+                        }
+                        bcrypt.hash(randompassword, salt, function(err, hash) {
+                            if (err) {
+                                reject(err);
+                                return err;
+                            }
+
+                            user.set('password_reset_hash', hash);
+                            user.save().then(function() {
+                                resolve();
+                            }, function() {
+                                reject();
+                            });
+                        });
+                    });
+                }
+            });
+        });
     });
 
     // logout
