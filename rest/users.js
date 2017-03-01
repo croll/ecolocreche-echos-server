@@ -69,8 +69,8 @@ module.exports = function(server, epilogue, models, permchecks) {
         return next();
     });
 
-    server.post('/rest/newpassword', function (req, res, next) {
-        return new Promise(function(resolve, reject) {
+    server.post('/rest/lostpassword', function (req, res, next) {
+        new Promise(function(resolve, reject) {
             models.users.findOne({
                 where: {
                     $or: [
@@ -98,15 +98,43 @@ module.exports = function(server, epilogue, models, permchecks) {
                             }
 
                             user.set('password_reset_hash', hash);
+                            user.set('password_reset_timestamp', models.sequelize.fn('NOW'));
                             user.save().then(function() {
-                                resolve();
+                                mail.send({
+                                    to: user.get('email'),
+                                    subject: "Echo(s): Mot de passe perdu ?",
+                                    text: `Bonjour,
+
+Vous signalez avoir perdu votre mot de passe sur le site Echo(s).
+Si ce n'est pas le cas, ignorez ce mail.
+Si non, voici un mot de passe provisoir : ${randompassword}
+Celui-ci ne marchera qu'une seule fois, veuillez donc à changer votre mot de passe immédiatement après vous être authentifié.
+
+Cordialement,
+
+Echo(s)
+`
+                                }).then(function() {
+                                    resolve();
+                                }, function(err) {
+                                    reject(err);
+                                });
                             }, function() {
                                 reject();
                             });
                         });
                     });
+                } else {
+                    resolve();
                 }
             });
+        }).then(function() {
+            res.send("ok");
+            next();
+        }, function(err) {
+            console.error("erreur: ", err);
+            res.send(500, "something bad appened");
+            next();
         });
     });
 
