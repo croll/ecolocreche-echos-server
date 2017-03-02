@@ -1,3 +1,6 @@
+const config    = require(__dirname + '/../config/config.json');
+const mail = require("../lib/mail");
+
 module.exports = function(server, epilogue, models, permchecks) {
 
     var auditResource = epilogue.resource({
@@ -33,20 +36,73 @@ module.exports = function(server, epilogue, models, permchecks) {
     });
 
     auditResource.create.complete(function(req, res, context) {
-        console.log("sending email...");
-        console.log(req);
-        var transporter = nodemailer.createTransport(config.email.transport);
-        transporter.sendMail({
-            from: config.email.from,
-            to: context.instance.get('email'),
-            subject: 'Un audit a été initié',
-            text: 'Un audit a été initié, vous pouvez le consulter.'
-        }, (err, info) => {
-            console.log(info.envelope);
-            console.log(info.messageId);
-        });
+        return models.audit.findOne({
+            where: {
+                id: context.instance.get('id'),
+            },
+            include: [{
+                model: models.establishment
+            }]
+        }).then(function(audit) {
+            return mail.send({
+                to: audit.establishment.get('mail'),
+                subject: `ECHO(S): Audit de `+audit.establishment.get('name'),
+                text: `Bonjour,
 
-        return context.continue;
+Voici le lien vers l'audit concernant l'établissement `+audit.establishment.get('name')+`.
+
+`+config.httpd.url+`/audit/`+audit.get('key')+`
+
+Cordialement,
+
+Echo(s)
+`
+            }).then(function(res) {
+                return context.continue;
+            }, function(err) {
+                console.error("err: ", err);
+                return context.continue;
+            });
+        });
     });
+
+    /*
+     * The REST call that send an email to the establishment of the audit, containing the url of the audit
+     * parameters :
+     *  id_audit: integer
+     */
+    server.post('/rest/auditmail',
+        permchecks.haveAgent,
+        function (req, res, next) {
+            models.audit.findOne({
+                where: {
+                    id: req.params.id_audit,
+                },
+                include: [{
+                    model: models.establishment
+                }]
+            }).then(function(audit) {
+                return mail.send({
+                    to: audit.establishment.get('mail'),
+                    subject: `ECHO(S): Audit de `+audit.establishment.get('name'),
+                    text: `Bonjour,
+
+Voici le lien vers l'audit concernant l'établissement `+audit.establishment.get('name')+`.
+
+`+config.httpd.url+`/audit/`+audit.get('key')+`
+
+Cordialement,
+
+Echo(s)
+`
+                }).then(function(res) {
+                    return next();
+                }, function(err) {
+                    console.error("err: ", err);
+                    return next();
+                });
+            });
+        }
+    );
 
 }
