@@ -223,7 +223,6 @@ Echo(s)
      */
     userResource.create.complete(function(req, res, context) {
         return mail.send({
-            from: config.email.from,
             to: context.instance.get('email'),
             subject: `ECHO(S): Identifiants de connexion de votre compte`,
             text: `Bonjour,
@@ -240,6 +239,7 @@ Echo(s)
         }).then(function(res) {
             return context.continue;
         }, function(err) {
+            console.error("err: ", err);
             return context.continue;
         });
     });
