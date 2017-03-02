@@ -1035,7 +1035,7 @@ models.sequelize.sync({
     p = p.then(function() {
         console.log("THE END");
         console.log("Maintenant, va selectionner tout les nodes dans le 'Questionnaire Orignal', puis :");
-        console.log(`update inquiryform_hist set createdAt='1975-06-02', updatedAt='1975-06-02'; update inquiryform_hist set createdAt=createdAt+id, updatedAt=updatedAt+id;`);
+        console.log(`update inquiryform_hist set createdAt='1975-06-02', updatedAt='1975-06-02'; update inquiryform_hist set createdAt=createdAt+id, updatedAt=updatedAt+id; UPDATE node_hist SET family = 'sociales' WHERE title IN ('Accueil - Qualité de vie','Communication','Formation','Gouvernance','Projet éducatif','Respect des diversités','Santé');`);
     });
     return p;
 
