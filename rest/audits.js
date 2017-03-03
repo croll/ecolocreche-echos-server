@@ -74,7 +74,7 @@ Echo(s)
     server.post('/rest/auditmail',
         permchecks.haveAgent,
         function (req, res, next) {
-            models.audit.findOne({
+            return models.audit.findOne({
                 where: {
                     id: req.params.id_audit,
                 },
@@ -95,9 +95,12 @@ Cordialement,
 
 Echo(s)
 `
-                }).then(function(res) {
-                    return next();
+                }).then(function() {
+                    res.send("ok");
+                    console.log("mail sent.");
+                    return next;
                 }, function(err) {
+                    res.send(500, "something bad appened");
                     console.error("err: ", err);
                     return next();
                 });
