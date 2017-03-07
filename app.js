@@ -153,6 +153,7 @@ require(__dirname+'/rest/inquiryforms')(server, epilogue, models, permchecks);
 require(__dirname+'/rest/audits')(server, epilogue, models, permchecks);
 require(__dirname+'/rest/establishments')(server, epilogue, models, permchecks);
 require(__dirname+'/rest/answers')(server, epilogue, models, permchecks);
+require(__dirname+'/rest/wkhtmltopdf')(server, epilogue, models, permchecks);
 
 // Create REST resource
 var inqueryformResource = epilogue.resource({

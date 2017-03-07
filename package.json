@@ -18,6 +18,7 @@
     "nodemailer": "^2.7.2",
     "restify": "^4.3.0",
     "sequelize": "^3.29.0",
-    "serve-static-restify": "^1.0.0"
+    "serve-static-restify": "^1.0.0",
+    "wkhtmltopdf": "^0.3.4"
   }
 }
