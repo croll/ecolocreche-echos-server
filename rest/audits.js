@@ -108,4 +108,16 @@ Echo(s)
         }
     );
 
+    server.post('/rest/pdf', function(req, res, next) {
+        var fs = require('fs');
+        fs.writeFile("/tmp/test.html", req.body, function(err) {
+            if(err) {
+                return console.log(err);
+            } else {
+                console.log("The file was saved!");
+            }
+        });
+        res.send("ok");
+    });
+
 }
