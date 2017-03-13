@@ -32,6 +32,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(1),
       allowNull: false
     },
+    date_end: {
+      type: DataTypes.TIME,
+      allowNull: true
+    },
     synthesis: {
       type: DataTypes.TEXT,
       allowNull: false
@@ -44,5 +48,16 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     tableName: 'audit',
     timestamps: true,
+    setterMethods : {
+        active: function(value) {
+            this.setDataValue('active', value); // always do the default behaviour
+            if (value == false && this.previous('active') == true) {
+                this.setDataValue('date_end', sequelize.fn('NOW'));
+            }
+        },
+        date_end: function(value) {
+            // do nothing, we don't allow update date_end directly
+        },
+    }
   });
 };
