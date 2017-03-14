@@ -1,4 +1,4 @@
-var wkhtmltopdf = require('wkhtmltopdf');
+var wkhtmltopdf = require('wkhtmltopdf-selfcontained');
 var fs = require('fs');
 
 module.exports = function(server, epilogue, models, permchecks) {
