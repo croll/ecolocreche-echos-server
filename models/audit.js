@@ -53,6 +53,8 @@ module.exports = function(sequelize, DataTypes) {
             this.setDataValue('active', value); // always do the default behaviour
             if (value == false && this.previous('active') == true) {
                 this.setDataValue('date_end', sequelize.fn('NOW'));
+            } else if (value == true) {
+                this.setDataValue('date_end', null);
             }
         },
         date_end: function(value) {
