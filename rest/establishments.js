@@ -8,10 +8,10 @@ module.exports = function(server, epilogue, models, permchecks) {
     //establishmentResource.use(permchecks.default_permissions);
 
     // if we don't use the default permissions above, we must set it for all possible rest call (create, list, read, update and delete)
-    establishmentResource.create.auth.before(permchecks.haveAdmin);
-    establishmentResource.list.auth.before(permchecks.haveAgent);
-    establishmentResource.read.auth.before(permchecks.haveAgent);
-    establishmentResource.update.auth.before(permchecks.haveAdmin);
-    establishmentResource.delete.auth.before(permchecks.haveAdmin);
+    establishmentResource.create.auth(permchecks.haveAdmin);
+    establishmentResource.list.auth(permchecks.haveAgent);
+    establishmentResource.read.auth(permchecks.haveAgent);
+    establishmentResource.update.auth(permchecks.haveAdmin);
+    establishmentResource.delete.auth(permchecks.haveAdmin);
 
 }

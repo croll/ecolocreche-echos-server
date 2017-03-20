@@ -15,17 +15,17 @@ module.exports = function(server, epilogue, models, permchecks) {
     //auditResource.use(permchecks.default_permissions);
 
     // if we don't use the default permissions above, we must set it for all possible rest call (create, list, read, update and delete)
-    auditResource.create.auth.before(permchecks.haveSuperAgent);
-    auditResource.list.auth.before(function(req, res, context) {
-        if (permchecks._haveSuperAgent(req, res, context))
-            return permchecks._ret(false);
+    auditResource.create.auth(permchecks.haveSuperAgent);
+    auditResource.list.auth(function(req, res, context) {
+        if (permchecks._haveAgent(req, res, context))
+            return permchecks._ret(false, req, res, context);
         if ('key' in req.params && req.params.key)
-            return permchecks._ret(false);
-        return permchecks._ret(true);
+            return permchecks._ret(false, req, res, context);
+        return permchecks._ret(true, req, res, context);
     });
-    auditResource.read.auth.before(permchecks.haveAgent);
-    auditResource.update.auth.before(permchecks.haveAdmin);
-    auditResource.delete.auth.before(permchecks.haveAdmin);
+    auditResource.read.auth(permchecks.haveAgent);
+    auditResource.update.auth(permchecks.haveAdmin);
+    auditResource.delete.auth(permchecks.haveAdmin);
 
     // toutefois, on autorise pas un agent de créer un audit avec un status que 'en cours'
     auditResource.create.write.before(function(req, res, context) {

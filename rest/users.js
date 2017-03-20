@@ -179,8 +179,8 @@ Echo(s)
         return context.continue; // passe aux checks suivants (haveAdmin)
     }
 
-    userResource.read.auth.before(auth_selfuseredit);
-    userResource.update.auth.before(auth_selfuseredit);
+    userResource.read.auth(auth_selfuseredit);
+    userResource.update.auth(auth_selfuseredit);
 
     userResource.update.write.before(function(req, res, context) {
         if (req.session.user.account_type != 'admin') {
