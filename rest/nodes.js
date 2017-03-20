@@ -30,11 +30,15 @@ module.exports = function(server, epilogue, models, permchecks) {
                 return permchecks._ret(false, req, res, next);
             }
             if (req.params.id_audit && req.params.audit_key) {
+                var where = {
+                    id: req.params.id_audit,
+                    key: req.params.audit_key,
+                };
+                if (!permchecks._haveSuperAgent(req, res, next)) {
+                    where.active = true;
+                }
                 models.audit.findOne({
-                    where: {
-                        id: req.params.id_audit,
-                        key: req.params.audit_key,
-                    }
+                    where: where
                 }).then(function(audit) {
                     if (audit) {
                         req.audit = audit;
