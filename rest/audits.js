@@ -24,7 +24,7 @@ module.exports = function(server, epilogue, models, permchecks) {
         return permchecks._ret(true, req, res, context);
     });
     auditResource.read.auth(permchecks.haveAgent);
-    auditResource.update.auth(permchecks.haveAdmin);
+    auditResource.update.auth(permchecks.haveSuperAgent);
     auditResource.delete.auth(permchecks.haveAdmin);
 
     // toutefois, on autorise pas un agent de créer un audit avec un status que 'en cours'
