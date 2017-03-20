@@ -159,7 +159,7 @@ Echo(s)
       endpoints: ['/rest/users', '/rest/users/:id'],
       pagination: false
     });
-    userResource.use(permchecks.default_permissions);
+    //userResource.use(permchecks.default_permissions);
 
     /*
      * custom permision for self user edit
@@ -176,11 +176,14 @@ Echo(s)
                 break;
             }
         }
-        return context.continue; // passe aux checks suivants (haveAdmin)
+        return permchecks.haveAdmin(req, res, context);
     }
 
+    userResource.create.auth(permchecks.haveAdmin);
+    userResource.list.auth(permchecks.haveAdmin);
     userResource.read.auth(auth_selfuseredit);
     userResource.update.auth(auth_selfuseredit);
+    userResource.delete.auth(permchecks.haveAdmin);
 
     userResource.update.write.before(function(req, res, context) {
         if (req.session.user.account_type != 'admin') {
