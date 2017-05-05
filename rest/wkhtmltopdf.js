@@ -8,7 +8,7 @@ module.exports = function(server, epilogue, models, permchecks) {
       function (req, res, next) {
         try {
             // for debug, save html file in /tmp
-            fs.writeFile("/tmp/test.html", req.body, function(err) {
+            fs.writeFile("/tmp/test-"+(new Date())+".html", req.body, function(err) {
                 if(err) {
                     return console.log(err);
                 } else {
