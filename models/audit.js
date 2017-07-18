@@ -33,11 +33,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     date_start: {
-      type: DataTypes.TIME,
-      allowNull: true
+      type: DataTypes.DATE,
+      allowNull: false
     },
     date_end: {
-      type: DataTypes.TIME,
+      type: DataTypes.DATE,
       allowNull: true
     },
     synthesis: {
