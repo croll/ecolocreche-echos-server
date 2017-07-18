@@ -32,6 +32,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(1),
       allowNull: false
     },
+    date_start: {
+      type: DataTypes.TIME,
+      allowNull: true
+    },
     date_end: {
       type: DataTypes.TIME,
       allowNull: true

@@ -58,6 +58,12 @@
 <row name="synthesis" null="0" autoincrement="0">
 <datatype>MEDIUMTEXT</datatype>
 </row>
+<row name="date_start" null="0" autoincrement="0">
+<datatype>DATETIME</datatype>
+</row>
+<row name="date_end" null="1" autoincrement="0">
+<datatype>DATETIME</datatype>
+<default>NULL</default></row>
 <row name="cached_percent_complete" null="0" autoincrement="0">
 <datatype>DOUBLE</datatype>
 <default>0</default></row>
