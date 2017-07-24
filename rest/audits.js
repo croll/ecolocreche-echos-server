@@ -38,22 +38,15 @@ module.exports = function(server, epilogue, models, permchecks) {
 
     auditResource.update.write.before(function(req, res, context) {
 
-	// update du champ date
-        if (permchecks._haveAdmin(req, res, context)) {
-	    if ('createdAt' in req.body) {
-		// hack sequelize to set createdAt, this is dangerous, we set private instance variable to make it working...
-		context.instance.createdAt = req.body.createdAt;
-		context.instance.dataValues.createdAt = req.body.createdAt;
-		context.instance._changed.createdAt = true;
-	    }
+        // only admin can change date_start
+        if (!permchecks._haveAdmin(req, res, context)) {
+            if ('date_start' in req.body)
+                delete req.body['date_start'];
         }
 
-        //console.log("createdAt: ", context.instance);
-        //console.log("datavalues: ", context.instance.dataValues);
-	
         return context.continue;
     });
-    
+
     auditResource.create.complete(function(req, res, context) {
         return models.audit.findOne({
             where: {
