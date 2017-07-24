@@ -33,6 +33,16 @@ module.exports = function(server, epilogue, models, permchecks) {
             req.body.active = true;
         }
 
+        // only admin can set date_start
+        if (!permchecks._haveAdmin(req, res, context)) {
+            if ('date_start' in req.body)
+                delete req.body['date_start'];
+        }
+
+        if (!('date_start' in req.body)) {
+            req.body['date_start'] = new Date();
+        }
+
         return context.continue;
     });
 
