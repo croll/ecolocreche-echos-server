@@ -33,12 +33,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     type: {
-      type: DataTypes.ENUM('creche','halte-garderie','micro-creche','multi-accueil','relais-d-assistante','autre'),
+      type: DataTypes.ENUM('creche','halte-garderie','micro-creche','multi-accueil','relais-d-assistante','autre','assistant-maternel'),
       allowNull: false,
       defaultValue: "autre"
     },
     status: {
-      type: DataTypes.ENUM('association','association-parentale','entreprise','publique','indetermine','autre'),
+      type: DataTypes.ENUM('association','association-parentale','entreprise','publique','indetermine','autre','domicile','creche-familiale','mam'),
       allowNull: false,
       defaultValue: "autre"
     }
