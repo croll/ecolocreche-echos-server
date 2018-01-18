@@ -8,6 +8,11 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
+    inquiry_type: {
+      type: DataTypes.ENUM('audit','recapaction'),
+      allowNull: false,
+      defaultValue: "audit"
+    },
   }, {
     tableName: 'inquiryform',
     timestamps: true,

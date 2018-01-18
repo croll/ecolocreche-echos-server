@@ -50,6 +50,14 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: true
     },
+    linked_to_node_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+      references: {
+        model: 'node',
+        key: 'id'
+      }
+    },
   }, {
     tableName: 'node_hist',
     timestamps: true,

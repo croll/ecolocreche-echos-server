@@ -1,45 +1,35 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('answer', {
-    id_audit: {
+  return sequelize.define('labelingfile_comment', {
+    id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
+      autoIncrement: true
+    },
+    id_labelingfile: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
       references: {
-        model: 'audit',
+        model: 'labelingfile',
         key: 'id'
       }
     },
     id_node: {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
-      primaryKey: true,
+      allowNull: true,
       references: {
         model: 'node',
         key: 'id'
       }
     },
-    ignored: {
-      type: DataTypes.INTEGER(1),
-      allowNull: false
-    },
-    value: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
     comment: {
       type: DataTypes.TEXT,
-      allowNull: false
-    },
-    status: {
-      type: DataTypes.ENUM('saved','not-saved'),
       allowNull: false,
-      defaultValue: "saved"
-    }
-
+    },
   }, {
-    tableName: 'answer',
+    tableName: 'labelingfile_comment',
     timestamps: true,
   });
 };

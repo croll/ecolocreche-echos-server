@@ -24,6 +24,19 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
+    id_audit_src: {
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+      references: {
+        model: 'audit',
+        key: 'id'
+      }
+    },
+    inquiry_type: {
+      type: DataTypes.ENUM('audit','recapaction'),
+      allowNull: false,
+      defaultValue: "audit"
+    },
     key: {
       type: DataTypes.STRING,
       allowNull: false
@@ -45,6 +58,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     cached_percent_complete: {
+        type: DataTypes.DOUBLE,
+        allowNull: false,
+        defaultValue: 0,
+    },
+    cached_percent_ignored: {
         type: DataTypes.DOUBLE,
         allowNull: false,
         defaultValue: 0,
