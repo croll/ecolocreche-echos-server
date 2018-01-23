@@ -44,6 +44,7 @@ module.exports = function(server, epilogue, models, permchecks) {
         permchecks.haveAdmin,
         function (req, res, next) {
             return models.inquiryform.create({
+                inquiry_type: req.params.inquiry_type,
             }).then(function(inquiryform) {
                 return models.inquiryform_hist.create({
                     id_inquiryform: inquiryform.get('id'),

@@ -68,3 +68,9 @@ CREATE TABLE `labelingfile_comment` (
   CONSTRAINT `labelingfile_comment_ibfk_1` FOREIGN KEY (`id_labelingfile`) REFERENCES `labelingfile` (`id`),
   CONSTRAINT `labelingfile_comment_ibfk_2` FOREIGN KEY (`id_node`) REFERENCES `node` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+--
+-- Update mail default content
+--
+UPDATE `inquiryform_hist` SET `mail_title` = 'ECHO(S): Audit de {establishment_name}', `mail_body` = 'Bonjour,\r\n\r\nVoici le lien vers l\'audit concernant l\'établissement {establishment_name}.\r\n\r\n{audit_url}\r\n\r\nCordialement,\r\n\r\nEcho(s)\r\n';
