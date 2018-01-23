@@ -1,6 +1,18 @@
 const config    = require(__dirname + '/../config/config.json');
 const mail = require("../lib/mail");
 
+const default_audit_mail_subject = `ECHO(S): Audit de {establishment_name}`;
+const default_audit_mail_body = `Bonjour,
+
+Voici le lien vers l'audit concernant l'établissement {establishment_name}.
+
+{audit_url}
+
+Cordialement,
+
+Echo(s)
+`;
+
 module.exports = function(server, epilogue, models, permchecks) {
 
     var auditResource = epilogue.resource({
@@ -57,6 +69,23 @@ module.exports = function(server, epilogue, models, permchecks) {
         return context.continue;
     });
 
+    function audit_mail(audit) {
+        return dbtools.getLatestInquiryformHist(models, {
+            id_inquiryform: audit.id_inquiryform
+        }).then(function(inquiryform_hist) {
+            return mail.tplsend({
+                to: audit.establishment.get('mail'),
+                subject: inquiryform_hist.mail_title ? inquiryform_hist.mail_title : default_audit_mail_subject,
+                text: inquiryform_hist.mail_body  ? inquiryform_hist.mail_body  : default_audit_mail_body,
+                replaces: {
+                    establishment_name: audit.establishment.get('name'),
+                    audit_url: config.httpd.url+`/audit/`+audit.get('key'),
+                }
+            });
+
+        });
+    }
+
     auditResource.create.complete(function(req, res, context) {
         return models.audit.findOne({
             where: {
@@ -66,25 +95,15 @@ module.exports = function(server, epilogue, models, permchecks) {
                 model: models.establishment
             }]
         }).then(function(audit) {
-            return mail.send({
-                to: audit.establishment.get('mail'),
-                subject: `ECHO(S): Audit de `+audit.establishment.get('name'),
-                text: `Bonjour,
-
-Voici le lien vers l'audit concernant l'établissement `+audit.establishment.get('name')+`.
-
-`+config.httpd.url+`/audit/`+audit.get('key')+`
-
-Cordialement,
-
-Echo(s)
-`
-            }).then(function(res) {
+            if (audit.establishment.get('mail')) {
+                audit_mail(audit).then(function() {
+                    return context.continue;
+                }, function(err) {
+                    throw new epilogue.Errors.EpilogueError(500, err);
+                });
+            } else {
                 return context.continue;
-            }, function(err) {
-                console.error("err: ", err);
-                return context.continue;
-            });
+            }
         });
     });
 
@@ -104,42 +123,19 @@ Echo(s)
                     model: models.establishment
                 }]
             }).then(function(audit) {
-                return mail.send({
-                    to: audit.establishment.get('mail'),
-                    subject: `ECHO(S): Audit de `+audit.establishment.get('name'),
-                    text: `Bonjour,
-
-Voici le lien vers l'audit concernant l'établissement `+audit.establishment.get('name')+`.
-
-`+config.httpd.url+`/audit/`+audit.get('key')+`
-
-Cordialement,
-
-Echo(s)
-`
-                }).then(function() {
-                    res.send("ok");
-                    console.log("mail sent.");
-                    return next;
-                }, function(err) {
-                    res.send(500, "something bad appened");
-                    console.error("err: ", err);
-                    return next();
-                });
+                if (audit.establishment.get('mail')) {
+                    audit_mail(audit).then(function() {
+                        return next();
+                    }, function(err) {
+                        console.error("err: ", err);
+                        return next();
+                    });
+                } else {
+                    return context.continue;
+                }
             });
         }
     );
 
-    // server.post('/rest/pdf', function(req, res, next) {
-    //     var fs = require('fs');
-    //     fs.writeFile("/tmp/test.html", req.body, function(err) {
-    //         if(err) {
-    //             return console.log(err);
-    //         } else {
-    //             console.log("The file was saved!");
-    //         }
-    //     });
-    //     res.send("ok");
-    // });
 
 }

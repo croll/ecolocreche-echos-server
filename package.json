@@ -21,6 +21,7 @@
     "restify": "^4.3.0",
     "sequelize": "^3.29.0",
     "serve-static-restify": "^1.0.0",
+    "stringinject": "^2.0.2",
     "tmp-promise": "^1.0.4",
     "wkhtmltopdf": "^0.3.4",
     "wkhtmltopdf-selfcontained": "^0.1.6"
