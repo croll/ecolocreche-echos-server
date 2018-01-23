@@ -1,4 +1,5 @@
 const config    = require(__dirname + '/../config/config.json');
+const dbtools = require(__dirname + '/../lib/dbtools.js');
 const mail = require("../lib/mail");
 
 const default_audit_mail_subject = `ECHO(S): Audit de {establishment_name}`;
@@ -79,7 +80,9 @@ module.exports = function(server, epilogue, models, permchecks) {
                 text: inquiryform_hist.mail_body  ? inquiryform_hist.mail_body  : default_audit_mail_body,
                 replaces: {
                     establishment_name: audit.establishment.get('name'),
+                    establishment_mail: audit.establishment.get('mail'),
                     audit_url: config.httpd.url+`/audit/`+audit.get('key'),
+                    audit_synthesis: audit.synthesis,
                 }
             });
 
