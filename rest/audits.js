@@ -83,6 +83,9 @@ module.exports = function(server, epilogue, models, permchecks) {
                     establishment_mail: audit.establishment.get('mail'),
                     audit_url: config.httpd.url+`/audit/`+audit.get('key'),
                     audit_synthesis: audit.synthesis,
+                    inquiryform_title: inquiryform_hist.title,
+                    inquiryform_description: inquiryform_hist.description,
+                    inquiryform_comment: inquiryform_hist.comment,
                 }
             });
 
