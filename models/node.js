@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    type: {
+    inquiry_type: {
       type: DataTypes.ENUM('audit','recapaction'),
       allowNull: false,
       defaultValue: "audit"
