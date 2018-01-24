@@ -74,3 +74,9 @@ CREATE TABLE `labelingfile_comment` (
 -- Update mail default content
 --
 UPDATE `inquiryform_hist` SET `mail_title` = 'ECHO(S): Audit de {establishment_name}', `mail_body` = 'Bonjour,\r\n\r\nVoici le lien vers l\'audit concernant l\'établissement {establishment_name}.\r\n\r\n{audit_url}\r\n\r\nCordialement,\r\n\r\nEcho(s)\r\n';
+
+
+--
+-- inquiry_type doit aussi être dans node
+--
+ALTER TABLE `node` ADD `inquiry_type` ENUM('audit','recapaction') NOT NULL DEFAULT 'audit' AFTER `id_node_parent`;

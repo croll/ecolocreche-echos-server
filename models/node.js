@@ -15,7 +15,12 @@ module.exports = function(sequelize, DataTypes) {
         model: 'node',
         key: 'id'
       }
-    }
+    },
+    type: {
+      type: DataTypes.ENUM('audit','recapaction'),
+      allowNull: false,
+      defaultValue: "audit"
+    },
   }, {
     tableName: 'node',
     timestamps: true, // sequelize want timestamps ON if we want paranoid, so, timestamps is ON here
