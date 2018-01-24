@@ -123,6 +123,9 @@ module.exports = function(server, epilogue, models, permchecks) {
     /*
      * add a new node
      *
+     * required params :
+     *  - inquiry_type : 'audit' or 'recapaction'
+     *
      * optional params :
      *  - id_node_parent : null by default
      */
@@ -157,6 +160,7 @@ module.exports = function(server, epilogue, models, permchecks) {
 
                 return models.node.create({
                     id_node_parent: 'id_node_parent' in req.params && req.params.id_node_parent ? req.params.id_node_parent : null,
+                    inquiry_type: req.params.inquiry_type,
                 });
             }).then(function(node) {
                 return models.node_hist.create({
