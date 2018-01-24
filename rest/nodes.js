@@ -230,6 +230,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                     privcomment: req.params.privcomment,
                     position: req.params.position,
                     color: req.params.color,
+                    linked_to_node_id: 'linked_to_node_id' in req.params ? req.params.linked_to_node_id : null,
                 });
             }).then(function(node_hist) {
                 if (node_hist.get("type") == "directory") {
