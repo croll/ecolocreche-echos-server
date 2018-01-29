@@ -58,7 +58,25 @@ module.exports = function(server, epilogue, models, permchecks) {
             if (!('id_node_parent' in req.params)) {
                 req.params.id_node_parent="null";
             }
-            return dbtools.getLatestNodeHist(models, req.params).then(function(dirs) {
+            var p;
+            if ('id_inquiryform' in req.params) {
+                var inquiryform_params={
+                    id_inquiryform: req.params.id_inquiryform,
+                };
+                if ('date' in req.params) {
+                    inquiryform_params.date = req.params.date;
+                }
+                p=dbtools.getLatestInquiryformHist(models, inquiryform_params);
+                p=p.then(function(inquiryform) {
+                    var nodeslist=JSON.parse(inquiryform.nodeslist);
+                    req.params.nodeslist = nodeslist;
+                    return dbtools.getLatestNodeHist(models, req.params);
+                });
+            } else {
+                p=dbtools.getLatestNodeHist(models, req.params);
+            }
+
+            return p.then(function(dirs) {
                 res.send(dirs);
             }, function(err) {
                 console.error(err);
