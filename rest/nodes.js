@@ -498,7 +498,10 @@ module.exports = function(server, epilogue, models, permchecks) {
 
         await getRecurse(nodes, 1, '');
 
-        return data;
+        return {
+            data: data,
+            inquiryform: inquiryform,
+        };
     }
 
 
@@ -509,11 +512,26 @@ module.exports = function(server, epilogue, models, permchecks) {
       function (req, res, next) {
           var data;
 
-          getInquiryformAOA(req.params).then(function(data) {
+          getInquiryformAOA(req.params).then(function(all) {
               /* generate workbook */
-              var ws = XLSX.utils.aoa_to_sheet(data);
+              var ws = XLSX.utils.aoa_to_sheet(all.data);
+
+              // set col width
+              ws['!cols'] = [
+                {wch:4},
+                {wch:32},
+                {wch:40},
+                {wch:40},
+                {wch:40},
+                {wch:12},
+                {wch:12},
+                {wch:32},
+                {wch:12},
+                {wch:40},
+              ];
+
               var wb = XLSX.utils.book_new();
-              XLSX.utils.book_append_sheet(wb, ws, "Feuille 1");
+              XLSX.utils.book_append_sheet(wb, ws, all.inquiryform.title.substring(0,30));
 
               /* generate buffer */
               var buf = XLSX.write(wb, {type:'buffer', bookType:"xlsx"});
