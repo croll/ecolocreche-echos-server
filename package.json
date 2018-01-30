@@ -24,6 +24,7 @@
     "stringinject": "^2.0.2",
     "tmp-promise": "^1.0.4",
     "wkhtmltopdf": "^0.3.4",
-    "wkhtmltopdf-selfcontained": "^0.1.6"
+    "wkhtmltopdf-selfcontained": "^0.1.6",
+    "xlsx": "^0.11.18"
   }
 }

@@ -1,6 +1,7 @@
 var dbtools = require(__dirname + '/../lib/dbtools.js');
 var restify = require('restify');
 var Promise = require("bluebird");
+var XLSX = require('xlsx');
 
 module.exports = function(server, epilogue, models, permchecks) {
 
@@ -362,4 +363,174 @@ module.exports = function(server, epilogue, models, permchecks) {
             });
         }
     );
+
+
+    async function getInquiryformAOA(params) {
+        if ('id_inquiryform' in params) {
+            var inquiryform_params={
+                id_inquiryform: params.id_inquiryform,
+            };
+            if ('date' in params) {
+                inquiryform_params.date = params.date;
+            }
+            var inquiryform = await dbtools.getLatestInquiryformHist(models, inquiryform_params);
+            //console.log("inquiryform : ", inquiryform);
+            var nodeslist=JSON.parse(inquiryform.nodeslist);
+            params.nodeslist = nodeslist;
+        }
+
+        params.recurse=1;
+        params.id_node_parent=null;
+        var nodes = await dbtools.getLatestNodeHist(models, params);
+
+        //console.log(nodes);
+
+        var data=[];
+
+        data.push([
+            "ID",
+            "Type de question",
+            "Chemin",
+            "Titre Question",
+            "Description",
+            "Commentaire privé",
+            "Famille",
+            "Réponses possibles",
+            "Impact",
+            "Commentaire (de réponse possible)",
+        ]);
+
+        async function getRecurse(nodes, level, path) {
+            for (var i_node in nodes) {
+                var n = nodes[i_node];
+                //console.log("added i_node: ", n);
+
+                var type = 'unknown';
+                if (n.type == 'directory') {
+                    type = (level == 1 ? 'Thème' : 'Rubrique');
+                } else {
+                    if (n.type == 'q_radio') type = "Question fermée à choix unique";
+                    else if (n.type == 'q_checkbox') type = "Question fermée à choix multiple";
+                    else if (n.type == 'q_percents') type = "Question fermée à choix multiple pondéré";
+                    else if (n.type == 'q_text') type = "Question ouverte";
+                    else if (n.type == 'q_numeric') type = "Question ouverte numérique";
+                    else type = n.type;
+                }
+
+                var line=[
+                    n.id,
+                    type,
+                    path,
+                    n.title,
+                    n.description,
+                    n.privcomment,
+                    n.family,
+                    'c.title',
+                    'c.impact',
+                    'c.comment',
+                ];
+
+                if (n.type == 'q_radio' || n.type == 'q_checkbox' || n.type == 'q_percents') {
+                    var choices = await models.choice.findAll({
+                        where: {
+                            id_node: n.id_node,
+                        },
+                        raw: true,
+                    });
+
+                    var choices_hist = [];
+                    for (var i_choice in choices) {
+                        var choice = choices[i_choice];
+                        var choice_params = {
+                            id_choice: choice.id,
+                        };
+                        if ('date' in params) {
+                            choice_params.date = params.date;
+                        }
+                        var choices_dir = await dbtools.getLatestChoiceHist(models, choice_params);
+                        choices_hist.push(choices_dir);
+                    }
+
+                    if (choices_hist.length > 0) {
+                        choices_hist.forEach(function(choice) {
+                            var subline = line.slice();
+                            subline[7]=choice.title;
+                            subline[8]=choice.impact;
+                            subline[9]=choice.comment;
+
+                            if (choice.impact == 0) {
+                                subline[8]="Aucun";
+                            } else if (choice.impact == 1) {
+                                subline[8]="Très faible";
+                            } else if (choice.impact == 2) {
+                                subline[8]="Faible";
+                            } else if (choice.impact == 3) {
+                                subline[8]="Neutre";
+                            } else if (choice.impact == 4) {
+                                subline[8]="Fort";
+                            } else if (choice.impact == 5) {
+                                subline[8]="Très fort";
+                            }
+
+                            data.push(subline);
+                        });
+                    } else { // in case no choice are available, we want to print at least one line of this node
+                        var subline = line.slice();
+                        subline[7]='';
+                        subline[8]='';
+                        subline[9]='';
+                        data.push(subline);
+                    }
+                } else {
+                    var subline = line.slice();
+                    subline[7]='';
+                    subline[8]='';
+                    subline[9]='';
+                    data.push(subline);
+                }
+
+                if (n.childs) {
+                    await getRecurse(n.childs, level+1, path+'/'+n.title);
+                }
+
+            }
+        }
+
+        await getRecurse(nodes, 1, '');
+
+        return data;
+    }
+
+
+
+
+    server.post('/rest/export/nodes',
+      permchecks.haveAdmin,
+      function (req, res, next) {
+          var data;
+
+          getInquiryformAOA(req.params).then(function(data) {
+              /* generate workbook */
+              var ws = XLSX.utils.aoa_to_sheet(data);
+              var wb = XLSX.utils.book_new();
+              XLSX.utils.book_append_sheet(wb, ws, "Feuille 1");
+
+              /* generate buffer */
+              var buf = XLSX.write(wb, {type:'buffer', bookType:"xlsx"});
+              //var buf = XLSX.write(wb, {type:'buffer', bookType:"csv"});
+              //console.log("buf: ", buf);
+
+              /* send to client */
+              res.setHeader('content-type', 'application/octet-stream');
+              res.send(buf);
+
+          }, function(err) {
+              console.log("err: ", err);
+              res.send(500);
+              return;
+          });
+
+      }
+    );
+
 }
