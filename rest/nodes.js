@@ -72,7 +72,12 @@ module.exports = function(server, epilogue, models, permchecks) {
                     if (!inquiryform) {
                         return null;
                     }
-                    var nodeslist=JSON.parse(inquiryform.nodeslist);
+                    var nodeslist;
+                    try {
+                        nodeslist=JSON.parse(inquiryform.nodeslist);
+                    } catch(err) {
+                        nodeslist=[];
+                    }
                     req.params.nodeslist = nodeslist;
                     return dbtools.getLatestNodeHist(models, req.params);
                 });
