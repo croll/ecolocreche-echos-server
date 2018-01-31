@@ -207,44 +207,73 @@ module.exports = function(server, epilogue, models, permchecks) {
                 });
             }).then(function(node_hist) {
                 if (node_hist.get("type") == "directory") {
-                    if (req.params.inquiry_type == 'recapaction') {
-                        var p1=models.node.create({
-                            id_node_parent: node_hist.id_node,
-                            inquiry_type: req.params.inquiry_type,
-                        }).then(function(node_question) {
-                            return models.node_hist.create({
-                                id_node: node_question.get('id'),
-                                type: 'q_wysiwyg',
-                                title: 'Actions à réaliser',
-                                description: '',
-                                family: '',
-                                privcomment: '',
-                                position: 1,
-                                color: '777777',
-                                linked_to_node_id: null,
-                            });
-                        });
 
-                        var p2=models.node.create({
-                            id_node_parent: node_hist.id_node,
-                            inquiry_type: req.params.inquiry_type,
-                        }).then(function(node_question) {
-                            return models.node_hist.create({
-                                id_node: node_question.get('id'),
-                                type: 'q_wysiwyg',
-                                title: 'Actions réalisées',
-                                description: '',
-                                family: '',
-                                privcomment: '',
-                                position: 2,
-                                color: '777777',
-                                linked_to_node_id: null,
-                            });
-                        });
+                    // pour recap actions, on ajoute 2 questions, et on update le nodeslist du inquiryform
+                    if (req.params.inquiry_type == 'recapaction' && req.params.id_inquiryform) {
+                        return dbtools.getLatestInquiryformHist(models, {
+                            id_inquiryform: req.params.id_inquiryform,
+                        }).then(function(inquiryform) {
 
-                        return Promise.all([p1,p2]).then(function() {
-                            return node_hist;
-                        });
+                            var p1=models.node.create({
+                                id_node_parent: node_hist.id_node,
+                                inquiry_type: req.params.inquiry_type,
+                            }).then(function(node_question) {
+                                return models.node_hist.create({
+                                    id_node: node_question.get('id'),
+                                    type: 'q_wysiwyg',
+                                    title: 'Actions à réaliser',
+                                    description: '',
+                                    family: '',
+                                    privcomment: '',
+                                    position: 1,
+                                    color: '777777',
+                                    linked_to_node_id: null,
+                                });
+                            });
+
+                            var p2=models.node.create({
+                                id_node_parent: node_hist.id_node,
+                                inquiry_type: req.params.inquiry_type,
+                            }).then(function(node_question) {
+                                return models.node_hist.create({
+                                    id_node: node_question.get('id'),
+                                    type: 'q_wysiwyg',
+                                    title: 'Actions réalisées',
+                                    description: '',
+                                    family: '',
+                                    privcomment: '',
+                                    position: 2,
+                                    color: '777777',
+                                    linked_to_node_id: null,
+                                });
+                            });
+
+                            return Promise.all([p1,p2]).then(function(nodes) {
+                                // update here inquiryform_hist with nodeslist
+
+                                var nodeslist;
+                                try {
+                                    nodeslist=JSON.parse(inquiryform.nodeslist);
+                                } catch(err) {
+                                    nodeslist=[];
+                                }
+
+                                nodeslist.push(nodes[0].get('id_node'));
+                                nodeslist.push(nodes[1].get('id_node'));
+
+                                return models.inquiryform_hist.update({
+                                        nodeslist: JSON.stringify(nodeslist),
+                                    },{
+                                    where: {
+                                        id: inquiryform.id,
+                                    }
+                                });
+                            }).then(function() {
+                                return node_hist;
+                            });
+
+                        })
+
                     } else {
                         return node_hist;
                     }
