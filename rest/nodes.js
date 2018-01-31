@@ -206,6 +206,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                     linked_to_node_id: 'linked_to_node_id' in req.params ? req.params.linked_to_node_id : null,
                 });
             }).then(function(node_hist) {
+
                 if (node_hist.get("type") == "directory") {
 
                     // pour recap actions, on ajoute 2 questions, et on update le nodeslist du inquiryform
@@ -258,6 +259,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                                     nodeslist=[];
                                 }
 
+                                nodeslist.push(node_hist.id_node);
                                 nodeslist.push(nodes[0].get('id_node'));
                                 nodeslist.push(nodes[1].get('id_node'));
 
@@ -277,11 +279,14 @@ module.exports = function(server, epilogue, models, permchecks) {
                     } else {
                         return node_hist;
                     }
-                } else {
+
+                } else { // this is not a directory
+
                     // create choices
                     var p = new Promise(function (resolve, reject) {
                         resolve();
                     });
+
                     req.params.choices.forEach(function(param_choice) {
                         p=p.then(function() {
                             return models.choice.create({
