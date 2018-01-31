@@ -263,13 +263,17 @@ module.exports = function(server, epilogue, models, permchecks) {
                                 nodeslist.push(nodes[0].get('id_node'));
                                 nodeslist.push(nodes[1].get('id_node'));
 
-                                return models.inquiryform_hist.update({
-                                        nodeslist: JSON.stringify(nodeslist),
-                                    },{
-                                    where: {
-                                        id: inquiryform.id,
-                                    }
+                                return models.inquiryform_hist.create({
+                                    id_inquiryform: inquiryform.id_inquiryform,
+                                    title: inquiryform.title,
+                                    description: inquiryform.description,
+                                    comment: inquiryform.comment,
+                                    mail_title: inquiryform.mail_title,
+                                    mail_body: inquiryform.mail_body,
+                                    nodeslist: JSON.stringify(nodeslist),
+                                    position: inquiryform.position,
                                 });
+
                             }).then(function() {
                                 return node_hist;
                             });
@@ -423,23 +427,79 @@ module.exports = function(server, epilogue, models, permchecks) {
         }
     );
 
+    function recurse_delete_node(id_node, deleteds) {
+        id_node=parseInt(id_node);
+
+        return models.node.findAll({
+            where: {
+                id_node_parent: id_node,
+            }
+        }).then(function(nodes) {
+
+            var p = new Promise(function (resolve, reject) {
+                resolve();
+            });
+
+            nodes.forEach(function(node) {
+                p = p.then(function() {
+                    return recurse_delete_node(node.id, deleteds);
+                });
+            })
+
+            return p.then(function() {
+                return deleteds;
+            });
+        }).then(function() {
+            return models.node.findById(id_node);
+        }).then(function(node) {
+            return node.destroy();
+        }).then(function() {
+            deleteds.push(id_node);
+        }).then(function() {
+            return dbtools.getLatestNodeHist(models, {
+                id_node: id_node,
+                with_deleteds: 1,
+            });
+        });
+    }
+
     server.del('/rest/hist/nodes/:id_node',
         permchecks.haveAdmin,
         function (req, res, next) {
-            return models.node.findOne({
-                where: {
-                    id: req.params.id_node,
-                }
-            }).then(function(node) {
-                if (node) {
-                    return node.destroy();
+            var nodes_deleteds = [];
+            return recurse_delete_node(req.params.id_node, nodes_deleteds).then(function(dir_hist) {
+
+                // pour recap actions, on update le nodeslist du inquiryform
+                if (dir_hist.inquiry_type == 'recapaction' && req.params.id_inquiryform) {
+                    return dbtools.getLatestInquiryformHist(models, {
+                        id_inquiryform: req.params.id_inquiryform,
+                    }).then(function(inquiryform) {
+                        var nodeslist;
+                        try {
+                            nodeslist=JSON.parse(inquiryform.nodeslist);
+                        } catch(err) {
+                            nodeslist=[];
+                        }
+
+                        nodeslist = nodeslist.filter(id => nodes_deleteds.indexOf(id) == -1);
+
+                        return models.inquiryform_hist.create({
+                            id_inquiryform: inquiryform.id_inquiryform,
+                            title: inquiryform.title,
+                            description: inquiryform.description,
+                            comment: inquiryform.comment,
+                            mail_title: inquiryform.mail_title,
+                            mail_body: inquiryform.mail_body,
+                            nodeslist: JSON.stringify(nodeslist),
+                            position: inquiryform.position,
+                        });
+
+                    }).then(function() {
+                        return dir_hist;
+                    });
                 } else {
-                    return false;
+                    return dir_hist;
                 }
-            }).then(function(res) {
-                return dbtools.getLatestNodeHist(models, {
-                    id_node: req.params.id_node,
-                });
             }).then(function(dir_hist) {
                 res.send(dir_hist);
             }, function(err) {
