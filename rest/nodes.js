@@ -545,9 +545,12 @@ module.exports = function(server, epilogue, models, permchecks) {
               XLSX.utils.book_append_sheet(wb, ws, all.inquiryform.title.substring(0,30));
 
               /* generate buffer */
-              var buf = XLSX.write(wb, {type:'buffer', bookType:"xlsx"});
-              //var buf = XLSX.write(wb, {type:'buffer', bookType:"csv"});
-              //console.log("buf: ", buf);
+              var buf;
+              if (req.params.format == 'xlsx') {
+                  buf = XLSX.write(wb, {type:'buffer', bookType:"xlsx"});
+              } else if (req.params.format == 'csv') {
+                  buf = XLSX.write(wb, {type:'buffer', bookType:"csv"});
+              }
 
               /* send to client */
               res.setHeader('content-type', 'application/octet-stream');
