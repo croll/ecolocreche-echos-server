@@ -69,6 +69,9 @@ module.exports = function(server, epilogue, models, permchecks) {
                 }
                 p=dbtools.getLatestInquiryformHist(models, inquiryform_params);
                 p=p.then(function(inquiryform) {
+                    if (!inquiryform) {
+                        return null;
+                    }
                     var nodeslist=JSON.parse(inquiryform.nodeslist);
                     req.params.nodeslist = nodeslist;
                     return dbtools.getLatestNodeHist(models, req.params);
@@ -78,7 +81,10 @@ module.exports = function(server, epilogue, models, permchecks) {
             }
 
             return p.then(function(dirs) {
-                res.send(dirs);
+                if (dirs)
+                    res.send(dirs);
+                else
+                    return next(new restify.NotFoundError("Not found"));
             }, function(err) {
                 console.error(err);
                 return next(new restify.InternalServerError(err));
