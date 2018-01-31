@@ -17,7 +17,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     type: {
-      type: DataTypes.ENUM('directory','q_radio','q_checkbox','q_percents','q_text','q_numeric'),
+      type: DataTypes.ENUM('directory','q_radio','q_checkbox','q_percents','q_text','q_numeric','q_wysiwyg'),
       allowNull: false,
       defaultValue: "directory"
     },

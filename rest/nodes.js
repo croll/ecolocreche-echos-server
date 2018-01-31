@@ -207,7 +207,47 @@ module.exports = function(server, epilogue, models, permchecks) {
                 });
             }).then(function(node_hist) {
                 if (node_hist.get("type") == "directory") {
-                    return node_hist;
+                    if (req.params.inquiry_type == 'recapaction') {
+                        var p1=models.node.create({
+                            id_node_parent: node_hist.id_node,
+                            inquiry_type: req.params.inquiry_type,
+                        }).then(function(node_question) {
+                            return models.node_hist.create({
+                                id_node: node_question.get('id'),
+                                type: 'q_wysiwyg',
+                                title: 'Actions à réaliser',
+                                description: '',
+                                family: '',
+                                privcomment: '',
+                                position: 1,
+                                color: '777777',
+                                linked_to_node_id: null,
+                            });
+                        });
+
+                        var p2=models.node.create({
+                            id_node_parent: node_hist.id_node,
+                            inquiry_type: req.params.inquiry_type,
+                        }).then(function(node_question) {
+                            return models.node_hist.create({
+                                id_node: node_question.get('id'),
+                                type: 'q_wysiwyg',
+                                title: 'Actions réalisées',
+                                description: '',
+                                family: '',
+                                privcomment: '',
+                                position: 2,
+                                color: '777777',
+                                linked_to_node_id: null,
+                            });
+                        });
+
+                        return Promise.all([p1,p2]).then(function() {
+                            return node_hist;
+                        });
+                    } else {
+                        return node_hist;
+                    }
                 } else {
                     // create choices
                     var p = new Promise(function (resolve, reject) {
