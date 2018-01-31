@@ -1,3 +1,4 @@
+var restify = require('restify');
 var dbtools = require(__dirname + '/../lib/dbtools.js');
 
 module.exports = function(server, epilogue, models, permchecks) {
@@ -30,7 +31,11 @@ module.exports = function(server, epilogue, models, permchecks) {
         //permchecks.haveAgent,
         function (req, res, next) {
             return dbtools.getLatestInquiryformHist(models, req.params).then(function(dir_hist) {
-                res.send(dir_hist);
+                if (!dir_hist) {
+                    return next(new restify.NotFoundError("Not found"));
+                } else {
+                    res.send(dir_hist);
+                }
             }, function(err) {
                 throw new epilogue.Errors.EpilogueError(500, err);
             });
