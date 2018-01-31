@@ -80,3 +80,8 @@ UPDATE `inquiryform_hist` SET `mail_title` = 'ECHO(S): Audit de {establishment_n
 -- inquiry_type doit aussi être dans node
 --
 ALTER TABLE `node` ADD `inquiry_type` ENUM('audit','recapaction') NOT NULL DEFAULT 'audit' AFTER `id_node_parent`;
+
+--
+-- type q_wysiwyg
+--
+ALTER TABLE `node_hist` CHANGE `type` `type` ENUM('directory','q_radio','q_checkbox','q_percents','q_text','q_numeric','q_wysiwyg') NOT NULL DEFAULT 'directory';
