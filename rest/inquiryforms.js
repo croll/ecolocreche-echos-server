@@ -58,6 +58,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                     comment: req.params.comment,
                     nodeslist: req.params.nodeslist,
                     position: req.params.position,
+                    mail_from: req.params.mail_from,
                     mail_title: req.params.mail_title,
                     mail_body: req.params.mail_body,
                 });
@@ -85,6 +86,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                     comment: req.params.comment,
                     nodeslist: req.params.nodeslist,
                     position: req.params.position,
+                    mail_from: req.params.mail_from,
                     mail_title: req.params.mail_title,
                     mail_body: req.params.mail_body,
                 });

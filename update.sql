@@ -97,4 +97,4 @@ ALTER TABLE `labelingfile` ADD `datajson` MEDIUMTEXT NOT NULL AFTER `id_audit_re
 --
 -- oubli mail_from
 --
-ALTER TABLE `inquiryform_hist` ADD `mail_from` VARCHAR NOT NULL AFTER `comment`;
+ALTER TABLE `inquiryform_hist` ADD `mail_from` VARCHAR(256) NOT NULL AFTER `comment`;
