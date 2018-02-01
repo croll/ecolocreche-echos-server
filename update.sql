@@ -85,3 +85,10 @@ ALTER TABLE `node` ADD `inquiry_type` ENUM('audit','recapaction') NOT NULL DEFAU
 -- type q_wysiwyg
 --
 ALTER TABLE `node_hist` CHANGE `type` `type` ENUM('directory','q_radio','q_checkbox','q_percents','q_text','q_numeric','q_wysiwyg') NOT NULL DEFAULT 'directory';
+
+--
+-- labelingfiles
+--
+ALTER TABLE `labelingfile` CHANGE `id_audit_actionrecap` `id_audit_recapaction` INT(11) NULL DEFAULT NULL;
+ALTER TABLE `labelingfile` DROP INDEX `id_audit_actionrecap`, ADD INDEX `id_audit_recapaction` (`id_audit_recapaction`) USING BTREE;
+ALTER TABLE `labelingfile` ADD `datajson` MEDIUMTEXT NOT NULL AFTER `id_audit_recapaction`;

@@ -40,13 +40,18 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    id_audit_actionrecap: {
+    id_audit_recapaction: {
       type: DataTypes.INTEGER(11),
       allowNull: true,
       references: {
         model: 'audit',
         key: 'id'
       }
+    },
+    datajson: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: '',
     },
   }, {
     tableName: 'labelingfile',
