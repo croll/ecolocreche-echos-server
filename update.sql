@@ -92,3 +92,9 @@ ALTER TABLE `node_hist` CHANGE `type` `type` ENUM('directory','q_radio','q_check
 ALTER TABLE `labelingfile` CHANGE `id_audit_actionrecap` `id_audit_recapaction` INT(11) NULL DEFAULT NULL;
 ALTER TABLE `labelingfile` DROP INDEX `id_audit_actionrecap`, ADD INDEX `id_audit_recapaction` (`id_audit_recapaction`) USING BTREE;
 ALTER TABLE `labelingfile` ADD `datajson` MEDIUMTEXT NOT NULL AFTER `id_audit_recapaction`;
+
+
+--
+-- oubli mail_from
+--
+ALTER TABLE `inquiryform_hist` ADD `mail_from` VARCHAR NOT NULL AFTER `comment`;

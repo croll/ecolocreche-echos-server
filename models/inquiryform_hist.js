@@ -31,6 +31,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: '',
     },
+    mail_from: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '',
+    },
     mail_title: {
       type: DataTypes.TEXT,
       allowNull: false,
