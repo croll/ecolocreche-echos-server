@@ -96,6 +96,61 @@ module.exports = function(server, epilogue, models, permchecks) {
         });
     }
 
+    function copyAudit(id_audit_src, id_audit_dst) {
+        var audit_src, audit_dst;
+
+        id_audit_src=parseInt(id_audit_src);
+        id_audit_dst=parseInt(id_audit_dst);
+
+        return models.audit.findById(id_audit_src).then((_audit_src) => {
+            audit_src=_audit_src;
+        }).then(() => {
+            return models.audit.findById(id_audit_dst).then((_audit_dst) => {
+                audit_dst=_audit_dst;
+            });
+        }).then(() => {
+            return dbtools.getLatestNodeHist(models, {
+                id_inquiryform: audit_dst.id_inquiryform,
+            }).then((nodes) => {
+                var p = new Promise(function (resolve, reject) {
+                    resolve();
+                });
+                nodes.forEach(node => {
+                    p=p.then(models.answer.findOne({
+                        where: {
+                            id_audit: id_audit_src,
+                            id_node: node.id_node,
+                            ignored: false,
+                        }
+                    }).then(answer => {
+                        if (answer) {
+                            var _answer = JSON.parse(JSON.stringify(answer.dataValues));
+                            _answer.id_audit = id_audit_dst;
+                            _answer.status = 'not-saved';
+                            return models.answer.create(_answer);
+                        } else {
+                        }
+                    }));
+                });
+                return p;
+                //console.log("nodes: ", nodes);
+            });
+        });
+    }
+
+    auditResource.create.write.after(function(req, res, context) {
+        var audit_dst = context.instance;
+        if (req.params.id_audit_src) {
+            return copyAudit(parseInt(req.params.id_audit_src), audit_dst.id).then(() => {
+                return context.continue;
+            }, function(err) {
+                console.error("auditResource.create.write.after end: ", err);
+                return context.error(500, err);
+            });
+        }
+        return context.continue;
+    });
+
     auditResource.create.complete(function(req, res, context) {
         return models.audit.findOne({
             where: {
@@ -109,11 +164,16 @@ module.exports = function(server, epilogue, models, permchecks) {
                 audit_mail(audit).then(function() {
                     return context.continue;
                 }, function(err) {
-                    throw new epilogue.Errors.EpilogueError(500, err);
+                    console.error(err);
+                    return context.error(500, err);
                 });
             } else {
                 return context.continue;
             }
+        }, function(err) {
+            console.error("auditResource.create.complete end: ", err);
+            //return context.error(500, err);
+            return context.continue;
         });
     });
 

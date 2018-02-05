@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     ignored: {
-      type: DataTypes.INTEGER(1),
+      type: DataTypes.BOOLEAN,
       allowNull: false
     },
     value: {

@@ -40,7 +40,7 @@ module.exports = function(server, epilogue, models, permchecks) {
             return models.answer.upsert(
                 req.params,
                 {
-                    fields: [ 'id_audit', 'id_node', 'ignored', 'value', 'comment'],
+                    fields: [ 'id_audit', 'id_node', 'ignored', 'value', 'comment', 'status'],
                 }
             ).then(function() {
                 return models.answer.findOne({
