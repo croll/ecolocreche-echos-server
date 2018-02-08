@@ -71,6 +71,25 @@ module.exports = function(server, epilogue, models, permchecks) {
         return context.continue;
     });
 
+
+    auditResource.delete.write.before(function(req, res, context) {
+        //console.log("instance to delete : ", context.instance);
+        if (context.instance) {
+            var id_audit=context.instance.get('id');
+            return models.audit.update({
+                id_audit_src: null,
+            }, {
+                where: {
+                    id_audit_src: id_audit,
+                }
+            }).then(() => {
+                return context.continue;
+            });
+        }
+        return context.continue;
+    });
+
+
     function audit_mail(audit) {
         return dbtools.getLatestInquiryformHist(models, {
             id_inquiryform: audit.id_inquiryform
