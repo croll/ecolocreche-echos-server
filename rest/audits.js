@@ -140,7 +140,7 @@ module.exports = function(server, epilogue, models, permchecks) {
 
     auditResource.create.write.after(function(req, res, context) {
         var audit_dst = context.instance;
-        if (req.params.id_audit_src) {
+        if (req.params.id_audit_src && req.params.inquiry_type == 'audit') {
             return copyAudit(parseInt(req.params.id_audit_src), audit_dst.id).then(() => {
                 return context.continue;
             }, function(err) {
