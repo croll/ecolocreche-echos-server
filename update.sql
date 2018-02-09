@@ -103,3 +103,8 @@ ALTER TABLE `inquiryform_hist` ADD `mail_from` VARCHAR(256) NOT NULL AFTER `comm
 -- vrai boolean
 --
 ALTER TABLE `answer` CHANGE `ignored` `ignored` BOOLEAN NOT NULL;
+
+--
+-- Ajout de header éditable dans les rapport d'audits
+--
+ALTER TABLE `inquiryform_hist` ADD `audit_report_header` TEXT NOT NULL AFTER `mail_body`;

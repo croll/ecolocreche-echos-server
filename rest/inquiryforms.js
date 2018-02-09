@@ -61,6 +61,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                     mail_from: req.params.mail_from,
                     mail_title: req.params.mail_title,
                     mail_body: req.params.mail_body,
+                    audit_report_header: req.params.audit_report_header,
                 });
             }).then(function(inquiryform_hist) {
                 res.send(inquiryform_hist);
@@ -89,6 +90,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                     mail_from: req.params.mail_from,
                     mail_title: req.params.mail_title,
                     mail_body: req.params.mail_body,
+                    audit_report_header: req.params.audit_report_header,
                 });
             }).then(function(inquiryform_hist) {
                     res.send(inquiryform_hist);

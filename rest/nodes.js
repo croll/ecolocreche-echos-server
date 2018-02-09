@@ -271,6 +271,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                                     mail_from: inquiryform.mail_from,
                                     mail_title: inquiryform.mail_title,
                                     mail_body: inquiryform.mail_body,
+                                    audit_report_header: inquiryform.audit_report_header,
                                     nodeslist: JSON.stringify(nodeslist),
                                     position: inquiryform.position,
                                 });
@@ -492,6 +493,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                             mail_from: inquiryform.mail_from,
                             mail_title: inquiryform.mail_title,
                             mail_body: inquiryform.mail_body,
+                            audit_report_header: inquiryform.audit_report_header,
                             nodeslist: JSON.stringify(nodeslist),
                             position: inquiryform.position,
                         });

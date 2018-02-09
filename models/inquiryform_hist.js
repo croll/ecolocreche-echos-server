@@ -46,6 +46,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: '',
     },
+    audit_report_header: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+      defaultValue: '',
+    },
     nodeslist: {
       type: DataTypes.TEXT,
       allowNull: false,
