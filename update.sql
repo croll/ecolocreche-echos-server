@@ -108,3 +108,14 @@ ALTER TABLE `answer` CHANGE `ignored` `ignored` BOOLEAN NOT NULL;
 -- Ajout de header éditable dans les rapport d'audits
 --
 ALTER TABLE `inquiryform_hist` ADD `audit_report_header` TEXT NOT NULL AFTER `mail_body`;
+
+
+--
+-- move templates to not historisable (inquiryform)
+--
+ALTER TABLE `inquiryform` ADD `mail_from` VARCHAR(255) NOT NULL AFTER `inquiry_type`, ADD `mail_subject` TEXT NOT NULL AFTER `mail_from`, ADD `mail_body` TEXT NOT NULL AFTER `mail_subject`, ADD `audit_report_header` TEXT NOT NULL AFTER `mail_body`;
+ALTER TABLE `inquiryform_hist`
+  DROP `mail_from`,
+  DROP `mail_title`,
+  DROP `mail_body`,
+  DROP `audit_report_header`;

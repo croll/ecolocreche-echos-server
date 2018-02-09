@@ -48,20 +48,12 @@ module.exports = function(server, epilogue, models, permchecks) {
     server.post('/rest/hist/inquiryforms',
         permchecks.haveAdmin,
         function (req, res, next) {
-            return models.inquiryform.create({
-                inquiry_type: req.params.inquiry_type,
+            return models.inquiryform.create(req.params, {
+                fields: ['inquiry_type', 'mail_from', 'mail_subject', 'mail_body', 'audit_report_header'],
             }).then(function(inquiryform) {
-                return models.inquiryform_hist.create({
-                    id_inquiryform: inquiryform.get('id'),
-                    title: req.params.title,
-                    description: req.params.description,
-                    comment: req.params.comment,
-                    nodeslist: req.params.nodeslist,
-                    position: req.params.position,
-                    mail_from: req.params.mail_from,
-                    mail_title: req.params.mail_title,
-                    mail_body: req.params.mail_body,
-                    audit_report_header: req.params.audit_report_header,
+                req.params.id_inquiryform = inquiryform.get('id');
+                return models.inquiryform_hist.create(req.params, {
+                    fields: ['id_inquiryform', 'title', 'description', 'comment', 'nodeslist', 'position']
                 });
             }).then(function(inquiryform_hist) {
                 res.send(inquiryform_hist);
@@ -80,20 +72,22 @@ module.exports = function(server, epilogue, models, permchecks) {
             return dbtools.getLatestInquiryformHist(models, {
                 id_inquiryform: req.params.id_inquiryform,
             }).then(function(dir_hist) {
-                return models.inquiryform_hist.create({
-                    id_inquiryform: dir_hist.id_inquiryform,
-                    title: req.params.title,
-                    description: req.params.description,
-                    comment: req.params.comment,
-                    nodeslist: req.params.nodeslist,
-                    position: req.params.position,
-                    mail_from: req.params.mail_from,
-                    mail_title: req.params.mail_title,
-                    mail_body: req.params.mail_body,
-                    audit_report_header: req.params.audit_report_header,
+                return models.inquiryform.update(req.params, {
+                    where: {
+                        id: dir_hist.id_inquiryform,
+                    },
+                    fields: ['mail_from', 'mail_subject', 'mail_body', 'audit_report_header'],
                 });
-            }).then(function(inquiryform_hist) {
-                    res.send(inquiryform_hist);
+            }).then(function(new_inquiryform) {
+                return models.inquiryform_hist.create(req.params, {
+                    fields: ['id_inquiryform', 'title', 'description', 'comment', 'nodeslist', 'position']
+                });
+            }).then(function(new_inquiryform_hist) {
+                return dbtools.getLatestInquiryformHist(models, {
+                    id_inquiryform: req.params.id_inquiryform,
+                });
+            }).then(function(new_dir_hist) {
+                    res.send(new_dir_hist);
             }, function(err) {
                 throw new epilogue.Errors.EpilogueError(500, err);
             });

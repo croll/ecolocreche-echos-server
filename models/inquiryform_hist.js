@@ -31,26 +31,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: '',
     },
-    mail_from: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: '',
-    },
-    mail_title: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-      defaultValue: '',
-    },
-    mail_body: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-      defaultValue: '',
-    },
-    audit_report_header: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-      defaultValue: '',
-    },
     nodeslist: {
       type: DataTypes.TEXT,
       allowNull: false,
