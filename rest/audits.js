@@ -222,7 +222,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                         return next();
                     });
                 } else {
-                    return context.continue;
+                    return next();
                 }
             });
         }
