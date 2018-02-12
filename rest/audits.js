@@ -216,12 +216,15 @@ module.exports = function(server, epilogue, models, permchecks) {
             }).then(function(audit) {
                 if (audit.establishment.get('mail')) {
                     audit_mail(audit).then(function() {
+                        res.send("ok");
                         return next();
                     }, function(err) {
+                        res.send(err);
                         console.error("err: ", err);
                         return next();
                     });
                 } else {
+                    res.send("pas de mail dans etablissement");
                     return next();
                 }
             });
