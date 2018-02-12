@@ -154,6 +154,8 @@ module.exports = function(server, epilogue, models, permchecks) {
                 return p;
                 //console.log("nodes: ", nodes);
             });
+        }).then(() => {
+            return dbtools.update_audit_cached_complete(models, id_audit_dst);
         });
     }
 
