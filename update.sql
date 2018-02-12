@@ -119,3 +119,9 @@ ALTER TABLE `inquiryform_hist`
   DROP `mail_title`,
   DROP `mail_body`,
   DROP `audit_report_header`;
+
+
+--
+-- remove unused Table
+--
+DROP TABLE `labelingfile_comment`;
