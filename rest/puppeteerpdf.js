@@ -19,6 +19,8 @@ module.exports = function(server, epilogue, models, permchecks) {
             var homeurl="http://"+domain+":1242";
             if ((req.body.what == 'audit') && (parseInt(req.body.id) > 0)) {
                 url="/audit/"+parseInt(req.body.id)+"/rapport";
+            } else if ((req.body.what == 'compare') && (parseInt(req.body.id) > 0)) {
+                url="/dossier_de_labelisation/"+parseInt(req.body.id);
             } else if ((req.body.what == 'recapaction') && (parseInt(req.body.id) > 0)) {
                 url="/recap_actions/"+parseInt(req.body.id);
             }
