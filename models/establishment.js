@@ -38,7 +38,7 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: "autre"
     },
     status: {
-      type: DataTypes.ENUM('association','association-parentale','entreprise','publique','indetermine','autre','domicile','creche-familiale','mam'),
+      type: DataTypes.ENUM('association','association-parentale','entreprise','publique','indetermine','autre','domicile','creche-familiale','ram','mam'),
       allowNull: false,
       defaultValue: "autre"
     }
