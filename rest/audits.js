@@ -22,6 +22,9 @@ module.exports = function(server, epilogue, models, permchecks) {
       endpoints: ['/rest/audits', '/rest/audits/:id'],
       include: [{
           model: models.establishment
+      },{
+          model: models.audit,
+          as: 'audit_src',
       }],
       pagination: false
     });

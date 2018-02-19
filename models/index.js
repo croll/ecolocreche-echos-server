@@ -48,4 +48,5 @@ module.exports = db;
 // associations
 db.node.hasMany(db.node_hist, { foreignKey: "id_node"});
 db.audit.belongsTo(db.establishment, { foreignKey: "id_establishment", onDelete: "cascade"});
+db.audit.belongsTo(db.audit, { as: 'audit_src', foreignKey: "id_audit_src" });
 db.answer.belongsTo(db.audit, { foreignKey: "id_audit", onDelete: "cascade"});
