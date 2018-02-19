@@ -141,3 +141,9 @@ UPDATE `inquiryform_hist` SET comment='L\'audit de votre établissement est dés
 -- set le header par defaut par l'ancienne version html
 --
 UPDATE `inquiryform` SET `audit_report_header` = '<h1>Rapport de l\'audit de {establishment_name}</h1>\r\n\r\n<ul>\r\n<li>Date de création de l\'audit : {audit_date_start}</li>\r\n<li>Finalisé le : {audit_date_end}</li>\r\n</ul>\r\n';
+
+
+--
+-- ajout du code de labelisation dans establishment
+--
+ALTER TABLE `establishment` ADD `labelcode` VARCHAR(255) NOT NULL AFTER `mail`;

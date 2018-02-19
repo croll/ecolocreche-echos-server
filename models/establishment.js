@@ -32,6 +32,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     },
+    labelcode: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     type: {
       type: DataTypes.ENUM('creche','halte-garderie','micro-creche','multi-accueil','relais-d-assistante','autre','assistant-maternel'),
       allowNull: false,
