@@ -22,8 +22,8 @@ module.exports = function(server, epilogue, models, permchecks) {
                 url="/audit/"+parseInt(req.body.id)+"/rapport";
             } else if ((req.body.what == 'compare') && (parseInt(req.body.id) > 0)) {
                 url="/dossier_de_labelisation/"+parseInt(req.body.id);
-            } else if ((req.body.what == 'recapaction') && (parseInt(req.body.id) > 0)) {
-                url="/recap_actions/"+parseInt(req.body.id);
+            } else if ((req.body.what == 'recapaction') && req.body.id) {
+                url="/recap_actions/"+req.body.id;
                 landscape = true;
             }
 
