@@ -159,11 +159,11 @@ require(__dirname+'/rest/puppeteerpdf')(server, epilogue, models, permchecks);
 require(__dirname+'/rest/labelingfile')(server, epilogue, models, permchecks);
 
 // Create REST resource
-var inqueryformResource = epilogue.resource({
+var inquiryformResource = epilogue.resource({
   model: models.inquiryform,
   endpoints: ['/rest/inquiryforms', '/rest/inquiryforms/:id']
 });
-inqueryformResource.use(permchecks.default_permissions);
+inquiryformResource.use(permchecks.default_permissions);
 
 var nodeResource = epilogue.resource({
   model: models.node,
