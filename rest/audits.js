@@ -235,4 +235,27 @@ module.exports = function(server, epilogue, models, permchecks) {
     );
 
 
+    /*
+     * The REST call that send an email to the establishment of the audit, containing the url of the audit
+     * parameters :
+     *  id_audit: integer
+     */
+    server.post('/rest/auditcomment',
+        function (req, res, next) {
+            return models.audit.findOne({
+                where: {
+                    key: req.params.key,
+                },
+            }).then(function(audit) {
+                audit.synthesis = req.params.synthesis;
+                return audit.save();
+            }).then(function(audit) {
+                //console.log("audit: ", audit);
+                res.send(audit);
+                return next();
+            });
+        }
+    );
+
+
 }
