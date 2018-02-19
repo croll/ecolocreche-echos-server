@@ -125,3 +125,10 @@ ALTER TABLE `inquiryform_hist`
 -- remove unused Table
 --
 DROP TABLE `labelingfile_comment`;
+
+
+--
+-- change le varchar en text
+--
+ALTER TABLE `inquiryform_hist` CHANGE `comment` `comment` TEXT CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '';
+UPDATE `inquiryform_hist` SET comment='L\'audit de votre établissement est désormais terminé. Cela nous permet à présent de vous envoyer ce rapport d’audit, composé de 8 thématiques environnementales (bâtiment, eau, énergies, déchets, alimentation, activités et jeux, entretien des locaux, hygiène) et 7 thématiques sociales (accueil, projet éducatif, respect des diversités, santé, gouvernance, formation, communication).\r\nDes diagrammes représentant l\'impact environnemental et l’impact social de votre établissement sont visibles à la fin du document.';
