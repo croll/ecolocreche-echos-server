@@ -46,6 +46,9 @@ module.exports = function(server, epilogue, models, permchecks) {
 
     // toutefois, on autorise pas un agent de créer un audit avec un status que 'en cours'
     auditResource.create.write.before(function(req, res, context) {
+        delete req.body.audit_src;
+        delete req.body.establishment;
+
         if (req.session.user.account_type != 'admin') {
             req.body.active = true;
         }
@@ -64,6 +67,8 @@ module.exports = function(server, epilogue, models, permchecks) {
     });
 
     auditResource.update.write.before(function(req, res, context) {
+        delete req.body.audit_src;
+        delete req.body.establishment;
 
         // only admin can change date_start
         if (!permchecks._haveAdmin(req, res, context)) {
@@ -119,6 +124,8 @@ module.exports = function(server, epilogue, models, permchecks) {
     }
 
     function copyAudit(id_audit_src, id_audit_dst) {
+        console.log("copyAudit");
+
         var audit_src, audit_dst;
 
         id_audit_src=parseInt(id_audit_src);
@@ -163,6 +170,7 @@ module.exports = function(server, epilogue, models, permchecks) {
     }
 
     auditResource.create.write.after(function(req, res, context) {
+        console.log("auditResource.create.write.after");
         var audit_dst = context.instance;
         if (req.params.id_audit_src && req.params.inquiry_type == 'audit') {
             return copyAudit(parseInt(req.params.id_audit_src), audit_dst.id).then(() => {
@@ -176,6 +184,7 @@ module.exports = function(server, epilogue, models, permchecks) {
     });
 
     auditResource.create.complete(function(req, res, context) {
+        console.log("auditResource.create.complete");
         return models.audit.findOne({
             where: {
                 id: context.instance.get('id'),
