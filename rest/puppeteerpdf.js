@@ -50,6 +50,12 @@ module.exports = function(server, epilogue, models, permchecks) {
                     secure: false,
                     sameSite: "Lax",
                 });
+
+                if (landscape)
+                    await page.setViewport({width: 794, height: 1122, deviceScaleFactor: 2});
+                else
+                    await page.setViewport({width: 1122, height: 794, deviceScaleFactor: 2});
+
                 await page.goto(url, {waitUntil: 'networkidle2'});
                 await timeout(5000);
                 var tmpfile = await tmpfs.file();
