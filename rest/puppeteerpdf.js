@@ -51,16 +51,17 @@ module.exports = function(server, epilogue, models, permchecks) {
                     sameSite: "Lax",
                 });
 
-/*
                 if (landscape)
                     await page.setViewport({width: 794, height: 1122, deviceScaleFactor: 2});
                 else
                     await page.setViewport({width: 1122, height: 794, deviceScaleFactor: 2});
-*/
+                    /*
                 if (landscape)
-                    await page.setViewport({width: 1414, height: 1040, deviceScaleFactor: 2});
+                    await page.setViewport({width: 1414, height: 1000, deviceScaleFactor: 2});
                 else
-                    await page.setViewport({width: 1040, height: 1414, deviceScaleFactor: 2});
+                    await page.setViewport({width: 1000, height: 1414, deviceScaleFactor: 2});
+                    */
+
 
                 await page.goto(url, {waitUntil: 'networkidle2'});
                 await timeout(5000);
