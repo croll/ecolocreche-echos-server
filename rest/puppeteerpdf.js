@@ -52,9 +52,9 @@ module.exports = function(server, epilogue, models, permchecks) {
                 });
 
                 if (landscape)
-                    await page.setViewport({width: 794, height: 1122, deviceScaleFactor: 2});
+                    await page.setViewport({width: 794, height: 1122, deviceScaleFactor: 2, isLandscape: true});
                 else
-                    await page.setViewport({width: 1122, height: 794, deviceScaleFactor: 2});
+                    await page.setViewport({width: 1122, height: 794, deviceScaleFactor: 2, isLandscape: false});
                     /*
                 if (landscape)
                     await page.setViewport({width: 1414, height: 1000, deviceScaleFactor: 2});
