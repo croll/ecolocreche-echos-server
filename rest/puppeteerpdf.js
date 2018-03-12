@@ -66,6 +66,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                 await page.goto(url, {waitUntil: 'networkidle2'});
                 await timeout(5000);
                 var tmpfile = await tmpfs.file();
+		//console.log("tmpfile: ", tmpfile);
                 await page.pdf({path: tmpfile.path, format: 'A4', printBackground: true, landscape: landscape});
 
                 await browser.close();
@@ -73,8 +74,10 @@ module.exports = function(server, epilogue, models, permchecks) {
                 var readStream = fs.createReadStream(tmpfile.path);
                 // We replaced all the event handlers with a simple call to readStream.pipe()
                 res.setHeader('content-type', 'application/pdf');
-                readStream.pipe(res);
-                tmpfile.cleanup();
+                readStream.pipe(res);		    
+		setTimeout(() => {
+                    tmpfile.cleanup();
+		}, 5000);
             })().then(function(ok) {
                 console.log("print pdf ok");
 
