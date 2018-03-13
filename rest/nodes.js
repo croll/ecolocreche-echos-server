@@ -470,7 +470,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                 // pour recap actions, on update le nodeslist du inquiryform
                 if (dir_hist.inquiry_type == 'recapaction' && req.params.id_inquiryform) {
                     return dbtools.getLatestInquiryformHist(models, {
-                        id_inquiryform: req.params.id_inquiryform,
+                        id_inquiryform: parseInt(req.params.id_inquiryform),
                     }).then(function(inquiryform) {
                         var nodeslist;
                         try {
