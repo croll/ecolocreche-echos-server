@@ -105,7 +105,7 @@ module.exports = function(server, epilogue, models, permchecks) {
             return mail.tplsend({
                 from: inquiryform_hist.mail_from ? inquiryform_hist.mail_from : default_audit_mail_from,
                 to: audit.establishment.get('mail'),
-                subject: inquiryform_hist.mail_title ? inquiryform_hist.mail_title : default_audit_mail_subject,
+                subject: inquiryform_hist.mail_subject ? inquiryform_hist.mail_subject : default_audit_mail_subject,
                 text: inquiryform_hist.mail_body  ? inquiryform_hist.mail_body  : default_audit_mail_body,
                 replaces: {
                     establishment_name: audit.establishment.get('name'),
