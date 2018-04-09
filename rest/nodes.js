@@ -36,7 +36,7 @@ module.exports = function(server, epilogue, models, permchecks) {
                     key: req.params.audit_key,
                 };
                 if (!permchecks._haveSuperAgent(req, res, next)) {
-                    where.active = true;
+                    //where.active = true;
                 }
                 models.audit.findOne({
                     where: where
