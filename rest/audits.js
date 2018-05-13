@@ -36,8 +36,10 @@ module.exports = function(server, epilogue, models, permchecks) {
     auditResource.list.auth(function(req, res, context) {
         if (permchecks._haveAgent(req, res, context))
             return permchecks._ret(false, req, res, context);
-        if ('key' in req.params && req.params.key)
+        if ('key' in req.params && req.params.key) {
+            context.criteria.active=1;
             return permchecks._ret(false, req, res, context);
+        }
         return permchecks._ret(true, req, res, context);
     });
     auditResource.read.auth(permchecks.haveAgent);
